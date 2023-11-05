@@ -5,12 +5,12 @@ plugins {
 
 android {
     namespace = "hr.foi.aitsg"
-    compileSdk = 33
+    compileSdk = 34
 
     defaultConfig {
         applicationId = "hr.foi.aitsg"
         minSdk = 28
-        targetSdk = 33
+        targetSdk = 34
         versionCode = 1
         versionName = "1.0"
 
@@ -50,6 +50,7 @@ android {
 }
 
 dependencies {
+    val nav_version = "2.7.4"
 
     implementation("androidx.core:core-ktx:1.9.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.1")
@@ -66,4 +67,5 @@ dependencies {
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
+    implementation("androidx.navigation:navigation-compose:$nav_version")
 }
