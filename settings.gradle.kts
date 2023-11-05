@@ -16,6 +16,6 @@ dependencyResolutionManagement {
 rootProject.name = "AI TSG"
 include(":app")
 include(":core:repository")
-include(":menu")
 include(":core:models")
 include(":authentication")
+include(":menu")
