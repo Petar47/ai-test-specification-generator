@@ -50,6 +50,7 @@ android {
 }
 
 dependencies {
+    implementation(project(mapOf("path" to ":authentication")))
     val nav_version = "2.7.4"
 
     implementation("androidx.core:core-ktx:1.9.0")

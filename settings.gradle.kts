@@ -17,5 +17,5 @@ rootProject.name = "AI TSG"
 include(":app")
 include(":core:repository")
 include(":core:models")
-include(":authentication")
 include(":menu")
+include(":authentication")
