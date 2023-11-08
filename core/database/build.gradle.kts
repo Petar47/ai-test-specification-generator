@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "hr.foi.authentication"
+    namespace = "hr.foi.database"
     compileSdk = 33
 
     defaultConfig {
