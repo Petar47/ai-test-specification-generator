@@ -50,6 +50,7 @@ android {
 }
 
 dependencies {
+    implementation(project(mapOf("path" to ":authentication")))
     implementation(project(mapOf("path" to ":core:database")))
     val nav_version = "2.7.4"
 
