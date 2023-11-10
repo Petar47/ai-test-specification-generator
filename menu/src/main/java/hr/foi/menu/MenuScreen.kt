@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Create
@@ -77,9 +78,9 @@ public fun MenuScreen(menuScreenItem: String, onMenuButtonClick: (page: String) 
             ) {
                 items(menuItems) { (k, v) ->
                     val color = if (k == menuScreenItem) {
-                        Color.Blue
-                    } else { //TODO add colors from the theme
-                        Color.Gray
+                        MaterialTheme.colorScheme.onSecondary
+                    } else {
+                        MaterialTheme.colorScheme.secondary
                     }
                     MenuItem(text=v, color=color, icon = Icons.Default.Menu) { onMenuButtonClick(k.lowercase(Locale.getDefault())) }
                     Log.d("MenuScreen", "$k - $menuScreenItem")
@@ -96,18 +97,18 @@ public fun MenuScreen(menuScreenItem: String, onMenuButtonClick: (page: String) 
 fun TopAppBar(user: MockUser, onReturn: () -> Unit, onEdit: () -> Unit){ //TODO replace with real user class
     Column (
         modifier = Modifier
-            .background(Color.Red) //TODO add proper color
+            .background(MaterialTheme.colorScheme.tertiary)
             .fillMaxWidth()
     ){
         Row (
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth().padding(10.dp)
         ){
             IconButton(onClick = { onReturn() }) {
                 Icon(
-                    imageVector = Icons.Default.Close,
+                    imageVector = Icons.Default.ArrowBack,
                     contentDescription = "Return",
                     modifier = Modifier.size(45.dp),
-                    tint = Color.White // TODO add proper color
+                    tint = MaterialTheme.colorScheme.primary
                 )
             }
         }
@@ -138,7 +139,7 @@ fun TopAppBar(user: MockUser, onReturn: () -> Unit, onEdit: () -> Unit){ //TODO 
                     imageVector = Icons.Default.Create,
                     contentDescription = "Edit profile",
                     modifier = Modifier.size(40.dp),
-                    tint = Color.White // TODO add proper color
+                    tint = MaterialTheme.colorScheme.primary
                     )
             }
         }
@@ -151,7 +152,7 @@ fun UserInformation(text: String) {
         text = text,
         fontSize = 20.sp,
         fontWeight = FontWeight.Bold,
-        color = Color.White //TODO add proper color
+        color = MaterialTheme.colorScheme.secondary
     )
 }
 
@@ -169,13 +170,15 @@ fun BottomAppBar(logOutEvent: () -> Unit){
             Icon(
                 imageVector = Icons.Default.ExitToApp,
                 contentDescription = "Log Out",
-                modifier = Modifier.size(30.dp)
+                modifier = Modifier.size(30.dp),
+                tint = MaterialTheme.colorScheme.inversePrimary
             )
             Spacer(modifier = Modifier.width(8.dp))
             Text(
                 text = "Odjava",
                 fontSize = 18.sp,
-                fontWeight = FontWeight.Bold
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.inversePrimary
             )
         }
     }
@@ -196,7 +199,7 @@ fun MenuItem(
             .padding(16.dp)
             .clickable { onClick() },
         elevation = CardDefaults.cardElevation(
-            defaultElevation = 10.dp
+            defaultElevation = 6.dp
         )
     ) {
         Row(
@@ -216,7 +219,7 @@ fun MenuItem(
             Spacer(modifier = Modifier.width(8.dp))
             Text(
                 text = text,
-                color = Color.White,
+                color = MaterialTheme.colorScheme.primary,
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold
             )

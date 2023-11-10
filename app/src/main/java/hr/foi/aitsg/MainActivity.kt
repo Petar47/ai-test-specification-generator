@@ -47,7 +47,7 @@ class MainActivity : ComponentActivity() {
                         }
                         composable("profile"){
                             //TODO add workspaces page and redirections when finished
-                            Text("Profile")
+                            Text("Profile", color = MaterialTheme.colorScheme.primary)
                         }
                         composable("menu"){
                             //TODO add menu page and redirections when finished
