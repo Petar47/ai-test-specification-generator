@@ -29,8 +29,7 @@ class MainActivity : ComponentActivity() {
 
                     NavHost(navController, startDestination = "login"){
                         composable("login"){
-                            //TODO add login page and redirections when finished
-                            Text("Test")
+                            LoginPage(navController)
                         }
                         composable("register"){
                             //TODO add register page and redirections when finished
