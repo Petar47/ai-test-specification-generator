@@ -45,6 +45,10 @@ class MainActivity : ComponentActivity() {
                             //TODO add workspaces page and redirections when finished
                             Text("Projects")
                         }
+                        composable("profile"){
+                            //TODO add workspaces page and redirections when finished
+                            Text("Profile")
+                        }
                         composable("menu"){
                             //TODO add menu page and redirections when finished
                             MenuScreen("workspaces", onMenuButtonClick =  {page ->
@@ -57,6 +61,18 @@ class MainActivity : ComponentActivity() {
                                     ).show()
                                     //TODO add navigation for profile, history and statistics
                                 }
+                            }, onLogOutButtonClick = {
+                                //TODO implement logout
+                                Toast.makeText(
+                                    applicationContext,
+                                    "Log Out",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }, onReturnButtonClick = {page ->
+                                navController.navigate(page)
+                            }, onEditProfileButtonClick = {
+                                //TODO navigate to the profile page
+                                navController.navigate("profile")
                             })
                         }
                     }
