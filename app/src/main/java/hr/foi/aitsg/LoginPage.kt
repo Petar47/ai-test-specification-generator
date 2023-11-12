@@ -82,11 +82,7 @@ fun LoginPage(navController: NavHostController, viewModel: DataViewModel){
         )
         Button(
             onClick = {
-                //user = LoginHandler().LogInUser(email, password, viewModel)
-                //Authenticated.loggedInUser = user
-                //navController.navigate("home")
-                //viewModel.getUserByEmail(email)
-                //funkcija(viewModel)
+
             },
             modifier = Modifier
                 .fillMaxWidth()
@@ -124,5 +120,6 @@ fun LoginPage(navController: NavHostController, viewModel: DataViewModel){
             Text(text = "Registracija")
         }
     }
+
 }
 
