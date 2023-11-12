@@ -1,5 +1,6 @@
 package hr.foi.aitsg
 
+import android.util.Size
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -22,18 +23,14 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import hr.foi.authentication.LoginHandler
-import hr.foi.database.DataViewModel
-import hr.foi.database.User
-
+import androidx.navigation.compose.rememberNavController
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LoginPage(navController: NavHostController, viewModel: DataViewModel){
-    var email by remember { mutableStateOf("") }
-    var password by remember{ mutableStateOf("") }
-    var user : User
+fun LoginPage(navController: NavHostController){
+    var email by remember { mutableStateOf("ihorvat@gmail.com") }
+    var password by remember{ mutableStateOf("test") }
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -63,10 +60,10 @@ fun LoginPage(navController: NavHostController, viewModel: DataViewModel){
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(10.dp),
-            label = { Text("email")},
+            label = { Text("username")},
             colors = TextFieldDefaults.outlinedTextFieldColors(
-                focusedBorderColor = hr.foi.aitsg.ui.theme.Cyan,
-                unfocusedBorderColor = hr.foi.aitsg.ui.theme.Grey)
+                focusedBorderColor = hr.foi.aitsg.ui.theme.PurpleGrey40,
+                unfocusedBorderColor = hr.foi.aitsg.ui.theme.PurpleGrey80)
         )
         OutlinedTextField(
             value = password,
@@ -74,25 +71,23 @@ fun LoginPage(navController: NavHostController, viewModel: DataViewModel){
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(10.dp),
-            label = { Text("lozinka")},
+            label = { Text("password")},
             visualTransformation = PasswordVisualTransformation(),
             colors = TextFieldDefaults.outlinedTextFieldColors(
-                focusedBorderColor = hr.foi.aitsg.ui.theme.Black,
-                unfocusedBorderColor = hr.foi.aitsg.ui.theme.Cyan)
+                focusedBorderColor = hr.foi.aitsg.ui.theme.PurpleGrey40,
+                unfocusedBorderColor = hr.foi.aitsg.ui.theme.PurpleGrey80)
         )
         Button(
-            onClick = {
-
-            },
+            onClick = { },
             modifier = Modifier
                 .fillMaxWidth()
-                    .height(50.dp)
-                    .padding(5.dp)
+                .height(50.dp)
+                .padding(5.dp)
         )
         {
             Text(text = "Prijava")
         }
-        Row(
+        Row (
             Modifier
                 .height(150.dp)
                 .padding(10.dp),
@@ -116,10 +111,7 @@ fun LoginPage(navController: NavHostController, viewModel: DataViewModel){
                 .padding(5.dp)
         )
         {
-
             Text(text = "Registracija")
         }
     }
-
 }
-
