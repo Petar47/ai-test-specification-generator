@@ -1,6 +1,11 @@
 plugins {
     id("com.android.library")
     id("org.jetbrains.kotlin.android")
+
+    kotlin("plugin.serialization") version "1.6.0"
+    kotlin("kapt")
+    id("com.google.dagger.hilt.android")
+
 }
 
 android {
@@ -40,4 +45,18 @@ dependencies {
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
+
+
+    implementation("io.github.jan-tennert.supabase:postgrest-kt:1.4.7")
+    implementation("io.ktor:ktor-client-cio:2.3.6")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
+    val livedata_version = "2.2.0-alpha02"
+    implementation ("androidx.lifecycle:lifecycle-viewmodel-ktx:$livedata_version")
+    implementation ("androidx.lifecycle:lifecycle-runtime-ktx:$livedata_version")
+    implementation ("androidx.lifecycle:lifecycle-livedata-ktx:$livedata_version")
+
+    implementation("com.google.dagger:hilt-android:2.44")
+    kapt("com.google.dagger:hilt-android-compiler:2.44")
+
+
 }

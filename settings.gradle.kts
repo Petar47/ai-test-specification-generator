@@ -18,6 +18,8 @@ include(":app")
 include(":core:repository")
 include(":core:models")
 include(":authentication")
-include(":core:database")
+
 
 include(":menu")
+include(":core:database")
+
