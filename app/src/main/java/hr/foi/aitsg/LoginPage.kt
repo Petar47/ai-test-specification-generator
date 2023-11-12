@@ -31,7 +31,7 @@ import hr.foi.database.User
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LoginPage(navController: NavHostController, viewModel: DataViewModel){
-    var email by remember { mutableStateOf("ihorvat@gmail.com") }
+    var email by remember { mutableStateOf("") }
     var password by remember{ mutableStateOf("") }
     var user : User
     Column(
