@@ -52,6 +52,7 @@ android {
 dependencies {
     implementation(project(mapOf("path" to ":authentication")))
     implementation(project(mapOf("path" to ":core:database")))
+    implementation(project(mapOf("path" to ":core:models")))
     val nav_version = "2.7.4"
 
     implementation("androidx.core:core-ktx:1.9.0")

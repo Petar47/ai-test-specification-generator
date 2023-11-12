@@ -1,6 +1,5 @@
 package hr.foi.aitsg
 
-import android.util.Size
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -23,7 +22,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
+import hr.foi.authentication.LoginHandler
+import hr.foi.models.User
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -31,6 +31,7 @@ import androidx.navigation.compose.rememberNavController
 fun LoginPage(navController: NavHostController){
     var email by remember { mutableStateOf("ihorvat@gmail.com") }
     var password by remember{ mutableStateOf("test") }
+    var user : User
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -60,7 +61,7 @@ fun LoginPage(navController: NavHostController){
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(10.dp),
-            label = { Text("username")},
+            label = { Text("email")},
             colors = TextFieldDefaults.outlinedTextFieldColors(
                 focusedBorderColor = hr.foi.aitsg.ui.theme.PurpleGrey40,
                 unfocusedBorderColor = hr.foi.aitsg.ui.theme.PurpleGrey80)
@@ -71,23 +72,27 @@ fun LoginPage(navController: NavHostController){
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(10.dp),
-            label = { Text("password")},
+            label = { Text("lozinka")},
             visualTransformation = PasswordVisualTransformation(),
             colors = TextFieldDefaults.outlinedTextFieldColors(
                 focusedBorderColor = hr.foi.aitsg.ui.theme.PurpleGrey40,
                 unfocusedBorderColor = hr.foi.aitsg.ui.theme.PurpleGrey80)
         )
         Button(
-            onClick = { },
+            onClick = {
+                user = LoginHandler().LogInUser(email, password)
+                Authenticated.loggedInUser = user
+                navController.navigate("home")
+            },
             modifier = Modifier
                 .fillMaxWidth()
-                .height(50.dp)
-                .padding(5.dp)
+                    .height(50.dp)
+                    .padding(5.dp)
         )
         {
             Text(text = "Prijava")
         }
-        Row (
+        Row(
             Modifier
                 .height(150.dp)
                 .padding(10.dp),
@@ -111,7 +116,9 @@ fun LoginPage(navController: NavHostController){
                 .padding(5.dp)
         )
         {
+
             Text(text = "Registracija")
         }
     }
+
 }
