@@ -1,6 +1,6 @@
 package hr.foi.aitsg
 
-import android.util.Size
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -23,14 +23,22 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
+import hr.foi.authentication.LoginHandler
+import hr.foi.database.APIResult
+import hr.foi.database.DataViewModel
+import hr.foi.database.User
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
+import java.security.MessageDigest
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LoginPage(navController: NavHostController){
+fun LoginPage(navController: NavHostController, viewModel: DataViewModel){
     var email by remember { mutableStateOf("ihorvat@gmail.com") }
     var password by remember{ mutableStateOf("test") }
+    var message by remember { mutableStateOf("") }
+    var user : User
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -60,10 +68,10 @@ fun LoginPage(navController: NavHostController){
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(10.dp),
-            label = { Text("username")},
+            label = { Text("email")},
             colors = TextFieldDefaults.outlinedTextFieldColors(
-                focusedBorderColor = hr.foi.aitsg.ui.theme.PurpleGrey40,
-                unfocusedBorderColor = hr.foi.aitsg.ui.theme.PurpleGrey80)
+                focusedBorderColor = hr.foi.aitsg.ui.theme.Cyan,
+                unfocusedBorderColor = hr.foi.aitsg.ui.theme.Grey)
         )
         OutlinedTextField(
             value = password,
@@ -71,14 +79,43 @@ fun LoginPage(navController: NavHostController){
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(10.dp),
-            label = { Text("password")},
+            label = { Text("lozinka")},
             visualTransformation = PasswordVisualTransformation(),
             colors = TextFieldDefaults.outlinedTextFieldColors(
-                focusedBorderColor = hr.foi.aitsg.ui.theme.PurpleGrey40,
-                unfocusedBorderColor = hr.foi.aitsg.ui.theme.PurpleGrey80)
+                focusedBorderColor = hr.foi.aitsg.ui.theme.Black,
+                unfocusedBorderColor = hr.foi.aitsg.ui.theme.Cyan)
         )
+        Text(text = message)
+        val coroutine = rememberCoroutineScope()
         Button(
-            onClick = { },
+            onClick = {
+                viewModel.getUserByEmail(email)
+                coroutine.launch{
+                    viewModel.uiState.collectLatest { data ->
+                        when(data){
+                            is APIResult.Error -> {
+                                Log.e("Error data", "mess ${data}")
+                            }
+                            APIResult.Loading -> {
+                                Log.e("Error Data", "loading")
+                            }
+                            is APIResult.Success -> {
+                                val user = data.data as User
+                                password = MessageDigest.getInstance("SHA-256").digest(password.toByteArray()).fold("", { str, it -> str + "%02x".format(it) })
+                                password += MessageDigest.getInstance("SHA-256").digest(email.toByteArray()).fold("", { str, it -> str + "%02x".format(it) })
+                                password = MessageDigest.getInstance("SHA-256").digest(password.toByteArray()).fold("", { str, it -> str + "%02x".format(it) })
+                                if(password == user.password){
+                                    Authenticated.loggedInUser = user
+                                    navController.navigate("workspaces")
+                                }
+                                else{
+                                    message = "Neispravna lozinka!"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
             modifier = Modifier
                 .fillMaxWidth()
                 .height(50.dp)
@@ -87,7 +124,7 @@ fun LoginPage(navController: NavHostController){
         {
             Text(text = "Prijava")
         }
-        Row (
+        Row(
             Modifier
                 .height(150.dp)
                 .padding(10.dp),
@@ -111,7 +148,10 @@ fun LoginPage(navController: NavHostController){
                 .padding(5.dp)
         )
         {
+
             Text(text = "Registracija")
         }
     }
+
 }
+

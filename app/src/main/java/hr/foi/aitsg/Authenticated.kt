@@ -1,6 +1,6 @@
 package hr.foi.aitsg
 
-import hr.foi.models.User
+import hr.foi.database.User
 
 object Authenticated {
     var loggedInUser : User? = null
