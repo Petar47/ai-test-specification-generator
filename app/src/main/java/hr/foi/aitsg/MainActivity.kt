@@ -30,14 +30,14 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             AITSGTheme {
-                // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
                     val navController = rememberNavController()
+                    var returnPage: String = ""
 
-                    NavHost(navController, startDestination = "menu"){
+                    NavHost(navController, startDestination = "workspaces"){
                         composable("login"){
                             //TODO add login page and redirections when finished
                             Column(modifier = Modifier.fillMaxSize()){
@@ -50,16 +50,18 @@ class MainActivity : ComponentActivity() {
                         }
                         composable("workspaces"){
 
-                            PrikazProjekata(navController)
+                            PrikazProjekata(onMenuClick={page ->
+                                returnPage = page
+                                navController.navigate("menu")
+                            })
 
                         }
                         composable("profile"){
-                            //TODO add workspaces page and redirections when finished
+                            //TODO add profile page and redirections when finished
                             Text("Profile", color = MaterialTheme.colorScheme.primary)
                         }
                         composable("menu"){
-                            //TODO add menu page and redirections when finished
-                            MenuScreen("workspaces", onMenuButtonClick =  {page ->
+                            MenuScreen(returnPage, onMenuButtonClick =  {page ->
                                 when(page){
                                     "workspaces" -> navController.navigate("workspaces")
                                     else -> Toast.makeText(
