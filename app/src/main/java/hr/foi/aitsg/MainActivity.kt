@@ -41,7 +41,7 @@ class MainActivity : ComponentActivity() {
                             }
                         }
                         composable("register"){
-                            RegistrationPage(navController)
+                            RegistrationPage(navController, viewModel)
                         }
                         composable("workspaces"){
                             //TODO add workspaces page and redirections when finished
