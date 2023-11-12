@@ -20,7 +20,6 @@ import androidx.navigation.compose.rememberNavController
 import dagger.hilt.android.AndroidEntryPoint
 import hr.foi.aitsg.ui.theme.AITSGTheme
 import hr.foi.database.DataViewModel
-import hr.foi.menu.MenuScreen
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -61,7 +60,7 @@ class MainActivity : ComponentActivity() {
                             Text("Profile", color = MaterialTheme.colorScheme.primary)
                         }
                         composable("menu"){
-                            MenuScreen(returnPage, onMenuButtonClick =  {page ->
+                            MenuPage(returnPage, onMenuButtonClick =  {page ->
                                 when(page){
                                     "workspaces" -> navController.navigate("workspaces")
                                     else -> Toast.makeText(
