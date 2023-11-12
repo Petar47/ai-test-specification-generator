@@ -9,9 +9,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -30,7 +28,7 @@ class MainActivity : ComponentActivity() {
                 ) {
                     val navController = rememberNavController()
 
-                    NavHost(navController, startDestination = "menu"){
+                    NavHost(navController, startDestination = "register"){
                         composable("login"){
                             //TODO add login page and redirections when finished
                             Column(modifier = Modifier.fillMaxSize()){
@@ -38,8 +36,7 @@ class MainActivity : ComponentActivity() {
                             }
                         }
                         composable("register"){
-                            //TODO add register page and redirections when finished
-                            Text("Register")
+                            RegistrationPage(navController)
                         }
                         composable("workspaces"){
                             //TODO add workspaces page and redirections when finished
