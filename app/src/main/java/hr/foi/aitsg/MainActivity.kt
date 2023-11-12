@@ -38,10 +38,8 @@ class MainActivity : ComponentActivity() {
 
                     NavHost(navController, startDestination = "workspaces"){
                         composable("login"){
-                            //TODO add login page and redirections when finished
-                            Column(modifier = Modifier.fillMaxSize()){
-                                Text("Login")
-                            }
+                            LoginPage(navController = navController, viewModel = viewModel)
+
                         }
                         composable("register"){
                             //TODO add register page and redirections when finished
@@ -77,6 +75,8 @@ class MainActivity : ComponentActivity() {
                                     "Log Out",
                                     Toast.LENGTH_SHORT
                                 ).show()
+                                Authenticated.loggedInUser = null
+                                navController.navigate("login")
                             }, onReturnButtonClick = {page ->
                                 navController.navigate(page)
                             }, onEditProfileButtonClick = {
