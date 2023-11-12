@@ -20,8 +20,8 @@ private val DarkColorScheme = darkColorScheme(
     secondary = White,
     onSecondary = LightGrey,
     tertiary = Grey,
-    background = White,
-    inversePrimary = Black
+    background = Black,
+    inversePrimary = White
 )
 
 /* Other default colors to override
