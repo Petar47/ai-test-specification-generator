@@ -36,6 +36,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -49,9 +51,9 @@ public fun MenuScreen(menuScreenItem: String, onMenuButtonClick: (page: String) 
     val loggedInUser = MockUser("Pero", "Peric", "pperic@email.com") //TODO add logged in user object
 
     val menuItems = listOf(
-        "workspaces" to "Projekti",
-        "history" to "Povijest",
-        "statistics" to "Statistika"
+        "workspaces" to listOf("Projekti", R.drawable.projects_icon),
+        "history" to listOf("Povijest", R.drawable.history_icon),
+        "statistics" to listOf("Statistika", R.drawable.statistics_icon)
     )
 
     Column(
@@ -82,7 +84,7 @@ public fun MenuScreen(menuScreenItem: String, onMenuButtonClick: (page: String) 
                     } else {
                         MaterialTheme.colorScheme.secondary
                     }
-                    MenuItem(text=v, color=color, icon = Icons.Default.Menu) { onMenuButtonClick(k.lowercase(Locale.getDefault())) }
+                    MenuItem(text=v.first().toString(), color=color, icon = ImageVector.vectorResource(id = v.last().toString().toInt())) { onMenuButtonClick(k.lowercase(Locale.getDefault())) }
                     Log.d("MenuScreen", "$k - $menuScreenItem")
                 }
             }
@@ -101,7 +103,9 @@ fun TopAppBar(user: MockUser, onReturn: () -> Unit, onEdit: () -> Unit){ //TODO 
             .fillMaxWidth()
     ){
         Row (
-            modifier = Modifier.fillMaxWidth().padding(10.dp)
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(10.dp)
         ){
             IconButton(onClick = { onReturn() }) {
                 Icon(
