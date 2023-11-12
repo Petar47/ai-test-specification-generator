@@ -2,22 +2,22 @@ package hr.foi.authentication
 
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.ViewModel
+import hr.foi.database.DataViewModel
 import hr.foi.models.User
+import kotlinx.coroutines.flow.collectLatest
+import androidx.lifecycle.lifecycleScope
+
 
 class LoginHandler : ViewModel() {
-    fun LogInUser ( email : String, password : String): User {
-        // provjera u korisnika u bazi podataka
-        val user = User("fe", "fegtr", "fweg");
-        if(user != null){
-            return user
-        }
-        else
-        {
-            return user
-        }
+    @Composable
+    fun LogInUser ( email : String, password : String, viewModel: DataViewModel): User {
+        viewModel.getUserByEmail(email)
+        funkcija(viewModel)
+    }
+
+    private fun funkcija(viewModel: DataViewModel) {
+        lifecycleScope.
     }
 }
-@Composable
-public fun loginfe(){
 
-}
+

@@ -22,8 +22,10 @@ import hr.foi.database.DataViewModel
 import hr.foi.menu.MenuScreen
 
 class MainActivity : ComponentActivity() {
+    private val viewModel by viewModels<DataViewModel>()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setContent {
             AITSGTheme {
                 // A surface container using the 'background' color from the theme
@@ -35,7 +37,7 @@ class MainActivity : ComponentActivity() {
 
                     NavHost(navController, startDestination = "login"){
                         composable("login"){
-                            LoginPage(navController)
+                            LoginPage(navController, viewModel)
                         }
                         composable("register"){
                             //TODO add register page and redirections when finished

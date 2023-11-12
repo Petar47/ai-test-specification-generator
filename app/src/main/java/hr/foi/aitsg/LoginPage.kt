@@ -23,12 +23,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import hr.foi.authentication.LoginHandler
+import hr.foi.database.DataViewModel
 import hr.foi.models.User
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LoginPage(navController: NavHostController){
+fun LoginPage(navController: NavHostController, viewModel: DataViewModel){
     var email by remember { mutableStateOf("ihorvat@gmail.com") }
     var password by remember{ mutableStateOf("test") }
     var user : User
@@ -63,8 +64,8 @@ fun LoginPage(navController: NavHostController){
                 .padding(10.dp),
             label = { Text("email")},
             colors = TextFieldDefaults.outlinedTextFieldColors(
-                focusedBorderColor = hr.foi.aitsg.ui.theme.PurpleGrey40,
-                unfocusedBorderColor = hr.foi.aitsg.ui.theme.PurpleGrey80)
+                focusedBorderColor = hr.foi.aitsg.ui.theme.Cyan,
+                unfocusedBorderColor = hr.foi.aitsg.ui.theme.Grey)
         )
         OutlinedTextField(
             value = password,
@@ -75,14 +76,16 @@ fun LoginPage(navController: NavHostController){
             label = { Text("lozinka")},
             visualTransformation = PasswordVisualTransformation(),
             colors = TextFieldDefaults.outlinedTextFieldColors(
-                focusedBorderColor = hr.foi.aitsg.ui.theme.PurpleGrey40,
-                unfocusedBorderColor = hr.foi.aitsg.ui.theme.PurpleGrey80)
+                focusedBorderColor = hr.foi.aitsg.ui.theme.Black,
+                unfocusedBorderColor = hr.foi.aitsg.ui.theme.Cyan)
         )
         Button(
             onClick = {
-                user = LoginHandler().LogInUser(email, password)
+                user = LoginHandler().LogInUser(email, password, viewModel)
                 Authenticated.loggedInUser = user
                 navController.navigate("home")
+                viewModel.getUserByEmail(email)
+                funkcija(viewModel)
             },
             modifier = Modifier
                 .fillMaxWidth()
@@ -121,4 +124,8 @@ fun LoginPage(navController: NavHostController){
         }
     }
 
+}
+
+fun funkcija(viewModel: DataViewModel) {
+    lifecycleScope.
 }
