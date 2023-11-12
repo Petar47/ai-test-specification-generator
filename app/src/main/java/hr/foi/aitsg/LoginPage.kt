@@ -32,7 +32,7 @@ import hr.foi.database.User
 @Composable
 fun LoginPage(navController: NavHostController, viewModel: DataViewModel){
     var email by remember { mutableStateOf("ihorvat@gmail.com") }
-    var password by remember{ mutableStateOf("test") }
+    var password by remember{ mutableStateOf("") }
     var user : User
     Column(
         modifier = Modifier
