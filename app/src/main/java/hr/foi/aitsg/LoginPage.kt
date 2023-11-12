@@ -24,7 +24,8 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import hr.foi.authentication.LoginHandler
 import hr.foi.database.DataViewModel
-import hr.foi.models.User
+import hr.foi.database.User
+
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -81,11 +82,11 @@ fun LoginPage(navController: NavHostController, viewModel: DataViewModel){
         )
         Button(
             onClick = {
-                user = LoginHandler().LogInUser(email, password, viewModel)
-                Authenticated.loggedInUser = user
-                navController.navigate("home")
-                viewModel.getUserByEmail(email)
-                funkcija(viewModel)
+                //user = LoginHandler().LogInUser(email, password, viewModel)
+                //Authenticated.loggedInUser = user
+                //navController.navigate("home")
+                //viewModel.getUserByEmail(email)
+                //funkcija(viewModel)
             },
             modifier = Modifier
                 .fillMaxWidth()
@@ -123,9 +124,5 @@ fun LoginPage(navController: NavHostController, viewModel: DataViewModel){
             Text(text = "Registracija")
         }
     }
-
 }
 
-fun funkcija(viewModel: DataViewModel) {
-    lifecycleScope.
-}
