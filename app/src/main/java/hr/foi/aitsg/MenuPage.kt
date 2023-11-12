@@ -1,4 +1,6 @@
-package hr.foi.menu
+package hr.foi.aitsg
+
+
 
 import android.util.Log
 import androidx.compose.foundation.background
@@ -19,39 +21,34 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowForward
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Create
 import androidx.compose.material.icons.filled.ExitToApp
-import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CardElevation
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import java.util.Locale
 
 @Composable
-public fun MenuScreen(menuScreenItem: String, onMenuButtonClick: (page: String) -> Unit, onLogOutButtonClick: () -> Unit, onReturnButtonClick: (page: String) -> Unit, onEditProfileButtonClick: () -> Unit) {
-    val loggedInUser = MockUser("Pero", "Peric", "pperic@email.com") //TODO add logged in user object
+public fun MenuPage(menuScreenItem: String, onMenuButtonClick: (page: String) -> Unit, onLogOutButtonClick: () -> Unit, onReturnButtonClick: (page: String) -> Unit, onEditProfileButtonClick: () -> Unit) {
+    val loggedInUser = MockUser(email = "pperic@email.com", first_name = "Pero", last_name = "Peric") //TODO add logged in user object
 
     val menuItems = listOf(
-        "workspaces" to "Projekti",
-        "history" to "Povijest",
-        "statistics" to "Statistika"
+        "workspaces" to listOf("Projekti", R.drawable.projects_icon),
+        "history" to listOf("Povijest", R.drawable.history_icon),
+        "statistics" to listOf("Statistika", R.drawable.statistics_icon)
     )
 
     Column(
@@ -74,7 +71,7 @@ public fun MenuScreen(menuScreenItem: String, onMenuButtonClick: (page: String) 
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(20.dp),
-                    verticalArrangement = Arrangement.Center
+                verticalArrangement = Arrangement.Center
             ) {
                 items(menuItems) { (k, v) ->
                     val color = if (k == menuScreenItem) {
@@ -82,7 +79,7 @@ public fun MenuScreen(menuScreenItem: String, onMenuButtonClick: (page: String) 
                     } else {
                         MaterialTheme.colorScheme.secondary
                     }
-                    MenuItem(text=v, color=color, icon = Icons.Default.Menu) { onMenuButtonClick(k.lowercase(Locale.getDefault())) }
+                    MenuItem(text=v.first().toString(), color=color, icon = ImageVector.vectorResource(id = v.last().toString().toInt())) { onMenuButtonClick(k.lowercase(Locale.getDefault())) }
                     Log.d("MenuScreen", "$k - $menuScreenItem")
                 }
             }
@@ -101,7 +98,9 @@ fun TopAppBar(user: MockUser, onReturn: () -> Unit, onEdit: () -> Unit){ //TODO 
             .fillMaxWidth()
     ){
         Row (
-            modifier = Modifier.fillMaxWidth().padding(10.dp)
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(10.dp)
         ){
             IconButton(onClick = { onReturn() }) {
                 Icon(
@@ -123,7 +122,7 @@ fun TopAppBar(user: MockUser, onReturn: () -> Unit, onEdit: () -> Unit){ //TODO 
                 modifier = Modifier.fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                UserInformation(user.getFullName())
+                UserInformation("${user.first_name} ${user.last_name}")
                 Spacer(modifier = Modifier.height(10.dp))
                 UserInformation(user.email)
             }
@@ -140,7 +139,7 @@ fun TopAppBar(user: MockUser, onReturn: () -> Unit, onEdit: () -> Unit){ //TODO 
                     contentDescription = "Edit profile",
                     modifier = Modifier.size(40.dp),
                     tint = MaterialTheme.colorScheme.primary
-                    )
+                )
             }
         }
     }
@@ -236,6 +235,12 @@ fun MenuItem(
 
 @Preview(showBackground = true)
 @Composable
-fun MenuScreenPreview() {
-    MenuScreen("workspaces", {}, {}, {}, {})
+fun MenuPagePreview() {
+    MenuPage("workspaces", {}, {}, {}, {})
 }
+
+data class MockUser(
+    val first_name: String,
+    val last_name: String,
+    val email: String
+)

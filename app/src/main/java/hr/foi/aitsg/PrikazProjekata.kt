@@ -26,12 +26,12 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 
 @Composable
-fun PrikazProjekata(navController: NavHostController) {
+fun PrikazProjekata(onMenuClick: (page: String) -> Unit) {
     Surface(
         modifier = Modifier.fillMaxSize(),
         color = MaterialTheme.colorScheme.background
     ) {
-        ProjectList(navController,listOf(Project(999999,"Test"),Project(1, "Projekt 1"), Project(2, "Projekt 2"),Project(3, "Projekt 3")))
+        ProjectList(listOf(Project(999999,"Test"),Project(1, "Projekt 1"), Project(2, "Projekt 2"),Project(3, "Projekt 3")), onMenuClick={onMenuClick("workspaces")})
     }
 }
 
@@ -40,7 +40,7 @@ data class Project(val id: Int, val name: String)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ProjectList(navController: NavHostController,projects: List<Project>) {
+fun ProjectList(projects: List<Project>, onMenuClick: () -> Unit) {
     Scaffold(
         topBar = {
             TopAppBar(
@@ -49,7 +49,7 @@ fun ProjectList(navController: NavHostController,projects: List<Project>) {
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
-                        IconButton(onClick = {navController.navigate("menu")}) {
+                        IconButton(onClick = {onMenuClick()}) {
                             Icon(imageVector = Icons.Default.Menu, contentDescription = null)
                         }
 

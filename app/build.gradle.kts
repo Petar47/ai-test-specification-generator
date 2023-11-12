@@ -1,6 +1,9 @@
+import org.jetbrains.kotlin.kapt3.base.Kapt.kapt
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
+
     kotlin("kapt")
     id("com.google.dagger.hilt.android")
 }
@@ -53,9 +56,9 @@ android {
 
 dependencies {
     implementation(project(mapOf("path" to ":authentication")))
-    implementation(project(mapOf("path" to ":menu")))
+
     implementation(project(mapOf("path" to ":core:database")))
-    implementation(project(mapOf("path" to ":core:models")))
+
     val nav_version = "2.7.4"
 
     implementation("androidx.core:core-ktx:1.9.0")
@@ -84,4 +87,5 @@ dependencies {
 }
 kapt {
     correctErrorTypes = true
+
 }
