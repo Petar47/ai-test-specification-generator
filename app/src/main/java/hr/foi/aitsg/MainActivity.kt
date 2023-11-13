@@ -36,7 +36,7 @@ class MainActivity : ComponentActivity() {
                     val navController = rememberNavController()
                     var returnPage: String = ""
 
-                    NavHost(navController, startDestination = "workspaces"){
+                    NavHost(navController, startDestination = "login"){
                         composable("login"){
                             LoginPage(navController = navController, viewModel = viewModel)
 
@@ -53,8 +53,14 @@ class MainActivity : ComponentActivity() {
 
                         }
                         composable("profile"){
-                            //TODO add profile page and redirections when finished
-                            Text("Profile", color = MaterialTheme.colorScheme.primary)
+                                UpdateProfile(navHostController = navController, viewModel = viewModel,
+                                onUpdateUser = {
+                                    Toast.makeText(
+                                        applicationContext,
+                                        "Ažurirani podaci korisnika",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                })
                         }
                         composable("menu"){
                             MenuPage(returnPage, onMenuButtonClick =  {page ->

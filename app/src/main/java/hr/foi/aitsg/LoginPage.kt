@@ -35,8 +35,8 @@ import java.security.MessageDigest
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LoginPage(navController: NavHostController, viewModel: DataViewModel){
-    var email by remember { mutableStateOf("ihorvat@gmail.com") }
-    var password by remember{ mutableStateOf("test") }
+    var email by remember { mutableStateOf("") }
+    var password by remember{ mutableStateOf("") }
     var message by remember { mutableStateOf("") }
     var user : User
     Column(
@@ -89,6 +89,7 @@ fun LoginPage(navController: NavHostController, viewModel: DataViewModel){
         val coroutine = rememberCoroutineScope()
         Button(
             onClick = {
+                var hashPassword : String
                 viewModel.getUserByEmail(email)
                 coroutine.launch{
                     viewModel.uiState.collectLatest { data ->
@@ -101,10 +102,10 @@ fun LoginPage(navController: NavHostController, viewModel: DataViewModel){
                             }
                             is APIResult.Success -> {
                                 val user = data.data as User
-                                password = MessageDigest.getInstance("SHA-256").digest(password.toByteArray()).fold("", { str, it -> str + "%02x".format(it) })
-                                password += MessageDigest.getInstance("SHA-256").digest(email.toByteArray()).fold("", { str, it -> str + "%02x".format(it) })
-                                password = MessageDigest.getInstance("SHA-256").digest(password.toByteArray()).fold("", { str, it -> str + "%02x".format(it) })
-                                if(password == user.password){
+                                hashPassword = MessageDigest.getInstance("SHA-256").digest(password.toByteArray()).fold("", { str, it -> str + "%02x".format(it) })
+                                hashPassword += MessageDigest.getInstance("SHA-256").digest(email.toByteArray()).fold("", { str, it -> str + "%02x".format(it) })
+                                hashPassword = MessageDigest.getInstance("SHA-256").digest(hashPassword.toByteArray()).fold("", { str, it -> str + "%02x".format(it) })
+                                if(hashPassword == user.password){
                                     Authenticated.loggedInUser = user
                                     navController.navigate("workspaces")
                                 }
