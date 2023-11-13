@@ -46,8 +46,7 @@ fun UpdateProfile(navHostController: NavHostController, viewModel: DataViewModel
     var new_password by remember { mutableStateOf("") }
     var confirm_password by remember { mutableStateOf("") }
     email = Authenticated.loggedInUser!!.email.toString()
-    //first_name = Authenticated.loggedInUser!!.first_name.toString()
-    //last_name = Authenticated.loggedInUser!!.last_name.toString()
+
     Column(
         modifier = Modifier
             .fillMaxSize()
