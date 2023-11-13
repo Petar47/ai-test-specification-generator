@@ -36,13 +36,17 @@ class MainActivity : ComponentActivity() {
                     val navController = rememberNavController()
                     var returnPage: String = ""
 
+<<<<<<< HEAD
+                    NavHost(navController, startDestination = "register"){
+=======
                     NavHost(navController, startDestination = "workspaces"){
+>>>>>>> develop
                         composable("login"){
                             LoginPage(navController = navController, viewModel = viewModel)
 
                         }
                         composable("register"){
-                            RegistrationPage(navController = navController, viewModel = viewModel)
+                            RegistrationPage(navController, viewModel)
                         }
                         composable("workspaces"){
 
