@@ -39,11 +39,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import hr.foi.database.User
 import java.util.Locale
 
 @Composable
 public fun MenuPage(menuScreenItem: String, onMenuButtonClick: (page: String) -> Unit, onLogOutButtonClick: () -> Unit, onReturnButtonClick: (page: String) -> Unit, onEditProfileButtonClick: () -> Unit) {
-    val loggedInUser = MockUser(email = "pperic@email.com", first_name = "Pero", last_name = "Peric") //TODO add logged in user object
+    val loggedInUser = Authenticated.loggedInUser as User
 
     val menuItems = listOf(
         "workspaces" to listOf("Projekti", R.drawable.projects_icon),
@@ -91,7 +92,7 @@ public fun MenuPage(menuScreenItem: String, onMenuButtonClick: (page: String) ->
 }
 
 @Composable
-fun TopAppBar(user: MockUser, onReturn: () -> Unit, onEdit: () -> Unit){ //TODO replace with real user class
+fun TopAppBar(user: User, onReturn: () -> Unit, onEdit: () -> Unit){ //TODO replace with real user class
     Column (
         modifier = Modifier
             .background(MaterialTheme.colorScheme.tertiary)
@@ -238,9 +239,3 @@ fun MenuItem(
 fun MenuPagePreview() {
     MenuPage("workspaces", {}, {}, {}, {})
 }
-
-data class MockUser(
-    val first_name: String,
-    val last_name: String,
-    val email: String
-)
