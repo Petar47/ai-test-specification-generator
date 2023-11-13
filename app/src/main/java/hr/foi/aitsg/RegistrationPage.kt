@@ -2,6 +2,7 @@ package hr.foi.aitsg
 
 import android.util.Log
 import android.widget.Toast
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
@@ -10,6 +11,7 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -97,17 +99,26 @@ fun RegistrationPage(navController: NavHostController, viewModel: DataViewModel)
                     password = MessageDigest.getInstance("SHA-256").digest(password.toByteArray()).fold("", { str, it -> str + "%02x".format(it) })
                     val user = User(null, email, password, firstName, lastName)
                     viewModel.insertUser(user)
+                    navController.popBackStack()
                 }
                 else {
                     Log.e("Fail:", "Epic fail bro")
                 }
-
             },
             modifier = Modifier
                 .fillMaxWidth()
                 .height(56.dp)
         ) {
             Text(stringResource(R.string.register))
+        }
+
+        Row(
+            modifier = Modifier.clickable {
+                navController.navigate("login")
+            }
+        ) {
+            Text("Already have an account? ", fontWeight = FontWeight.Bold)
+            Text("Login", color = MaterialTheme.colorScheme.primary)
         }
     }
 }
