@@ -44,16 +44,14 @@ class MainActivity : ComponentActivity() {
                         composable("register"){
                             RegistrationPage(navController = navController, viewModel = viewModel)
                         }
+                        composable("addProject"){
+                            AddProject(navController = navController,viewModel =viewModel)
+                        }
                         composable("workspaces"){
-
-                            PrikazProjekata(onMenuClick={page ->
-                                returnPage = page
-                                navController.navigate("menu")
-                            })
-
+                            ListofProjects(navController = navController,viewModel =viewModel)
                         }
                         composable("profile"){
-                                UpdateProfile(navHostController = navController, viewModel = viewModel,
+                            UpdateProfile(navHostController = navController, viewModel = viewModel,
                                 onUpdateUser = {
                                     Toast.makeText(
                                         applicationContext,

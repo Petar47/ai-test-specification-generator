@@ -101,16 +101,17 @@ fun LoginPage(navController: NavHostController, viewModel: DataViewModel){
                                 Log.e("Error Data", "loading")
                             }
                             is APIResult.Success -> {
-                                val user = data.data as User
+                                val user = data.data as? User
                                 hashPassword = MessageDigest.getInstance("SHA-256").digest(password.toByteArray()).fold("", { str, it -> str + "%02x".format(it) })
                                 hashPassword += MessageDigest.getInstance("SHA-256").digest(email.toByteArray()).fold("", { str, it -> str + "%02x".format(it) })
                                 hashPassword = MessageDigest.getInstance("SHA-256").digest(hashPassword.toByteArray()).fold("", { str, it -> str + "%02x".format(it) })
-                                if(hashPassword == user.password){
-                                    Authenticated.loggedInUser = user
-                                    navController.navigate("workspaces")
-                                }
-                                else{
-                                    message = "Neispravna lozinka!"
+                                if (user != null) {
+                                    if(hashPassword == user.password){
+                                        Authenticated.loggedInUser = user
+                                        navController.navigate("workspaces")
+                                    } else{
+                                        message = "Neispravna lozinka!"
+                                    }
                                 }
                             }
                         }
@@ -155,4 +156,3 @@ fun LoginPage(navController: NavHostController, viewModel: DataViewModel){
     }
 
 }
-
