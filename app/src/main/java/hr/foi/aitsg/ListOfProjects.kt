@@ -137,6 +137,7 @@ fun ProjectListView(projects: List<Project>) {
             Spacer(modifier = Modifier.height(65.dp))
         }
         items(projects) { project ->
+            Divider(modifier = Modifier.fillMaxWidth())
             ProjectItem(project)
         }
     }
