@@ -38,6 +38,7 @@ import kotlinx.coroutines.launch
 import hr.foi.database.DataViewModel
 import hr.foi.database.Project
 import androidx.navigation.compose.rememberNavController
+import hr.foi.aitsg.composables.CircularLoadingBar
 
 @SuppressLint("CoroutineCreationDuringComposition")
 @Composable
@@ -52,30 +53,28 @@ fun ListofProjects(navController: NavHostController, viewModel: DataViewModel, o
         viewModel.getProjects(id)
     }
     var projects by remember { mutableStateOf<List<Project>>(emptyList()) }
+    var isLoading by remember { mutableStateOf(false) }
     val coroutine = rememberCoroutineScope()
-    var loading = false
     coroutine.launch{
         viewModel.uiState.collectLatest { data ->
             when(data){
                 is APIResult.Error -> {
+                    isLoading = false
                     Log.e("Error data", "mess ${data}")
                 }
                 APIResult.Loading -> {
-                    loading = true
+                    isLoading = true
                     Log.e("Error Data", "loading")
                 }
                 is APIResult.Success -> {
-                    loading = false
+                    isLoading = false
                     projects=data.data as List<Project>
                 }
             }
         }
     }
-    if (loading){
-        CircularProgressIndicator(
-            modifier = Modifier.width(64.dp),
-            color = MaterialTheme.colorScheme.secondary
-        )
+    if (isLoading){
+        CircularLoadingBar()
     }
     Surface(
         modifier = Modifier.fillMaxSize(),
