@@ -26,7 +26,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -42,7 +44,7 @@ import hr.foi.aitsg.composables.CircularLoadingBar
 
 @SuppressLint("CoroutineCreationDuringComposition")
 @Composable
-fun ListofProjects(navController: NavHostController, viewModel: DataViewModel, onMenuClick: (page:String) -> Unit) {
+fun ListofProjects(navController: NavHostController, viewModel: DataViewModel) {
     val user : User
     var id : Int? = 8
     if(Authenticated.loggedInUser!=null){
@@ -80,14 +82,14 @@ fun ListofProjects(navController: NavHostController, viewModel: DataViewModel, o
         modifier = Modifier.fillMaxSize(),
         color = MaterialTheme.colorScheme.background
     ) {
-        ProjectList(projects, navController, onMenu = {onMenuClick("workspaces")})
+        ProjectList(projects, navController)
     }
 }
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ProjectList(projects: List<Project>, navController: NavHostController, onMenu: () -> Unit) {
+fun ProjectList(projects: List<Project>, navController: NavHostController) {
     Scaffold(
         topBar = {
             TopAppBar(
@@ -97,18 +99,18 @@ fun ProjectList(projects: List<Project>, navController: NavHostController, onMen
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        IconButton(onClick = {onMenu()}) {
-                            Icon(imageVector = Icons.Default.Menu, contentDescription = null, tint = Color.White)
+                        IconButton(onClick = {navController.navigate("menu")}) {
+                            Icon(imageVector = Icons.Default.Menu, contentDescription = null, tint = Color.White, modifier = Modifier.size(45.dp))
                         }
 
                         Text(
                             text = "Projekti",
                             color = MaterialTheme.colorScheme.onSecondary,
-
+                            fontWeight = FontWeight.Bold
                         )
 
                         IconButton(onClick = { }) {
-                            Icon(imageVector = Icons.Default.Search, contentDescription = null, tint = Color.White)
+                            Icon(imageVector = Icons.Default.Search, contentDescription = null, tint = Color.White, modifier = Modifier.size(45.dp))
                         }
                     }
                 },
@@ -158,7 +160,8 @@ fun ProjectItem(project: Project) {
                 .size(40.dp)
                 .clip(shape = CircleShape)
                 .background(MaterialTheme.colorScheme.primary)
-                .padding(5.dp)
+                .padding(5.dp),
+            colorFilter = ColorFilter.tint(Color.White)
         )
 
         Spacer(modifier = Modifier.width(16.dp))

@@ -46,8 +46,9 @@ fun AddProject(navController: NavHostController, viewModel: DataViewModel) {
                     ) {
                         IconButton(onClick = { navController.navigate("workspaces")
                         }) {
-                            Icon(imageVector = Icons.Default.ArrowBack, contentDescription = null, tint = Color.White)
+                            Icon(imageVector = Icons.Default.ArrowBack, contentDescription = null, tint = Color.White, modifier = Modifier.size(45.dp))
                         }
+                        Spacer(modifier = Modifier.width(15.dp))
                         Text(text = "Dodavanje novog projekta", color = Color.White, textAlign = TextAlign.Center)
                     }
                 },

@@ -2,6 +2,7 @@ package hr.foi.aitsg
 
 import android.util.Log
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -61,10 +62,10 @@ fun LoginPage(navController: NavHostController, viewModel: DataViewModel){
     {
         Row (
             Modifier
-                .height(250.dp)
+                .fillMaxWidth()
                 .padding(10.dp),
             horizontalArrangement = Arrangement.Center,
-            verticalAlignment = Alignment.Bottom
+            verticalAlignment = Alignment.CenterVertically
         ){
             Text(
                 text = "Prijava",
@@ -72,7 +73,8 @@ fun LoginPage(navController: NavHostController, viewModel: DataViewModel){
                     .fillMaxWidth()
                     .padding(5.dp),
                 fontSize = 30.sp,
-                textAlign = TextAlign.Center
+                textAlign = TextAlign.Center,
+                color = MaterialTheme.colorScheme.inversePrimary
             )
         }
         OutlinedTextField(
@@ -147,28 +149,39 @@ fun LoginPage(navController: NavHostController, viewModel: DataViewModel){
             },
             modifier = Modifier
                 .fillMaxWidth()
-                .height(50.dp)
+                .height(56.dp)
                 .padding(5.dp)
         )
         {
-            Text(text = "Prijava")
+            Text(text = "Prijava",
+                fontSize = 16.sp)
         }
+        
+        Spacer(modifier = Modifier.height(25.dp))
+        
         Row(
             Modifier
-                .height(150.dp)
+                .fillMaxWidth()
                 .padding(10.dp),
             horizontalArrangement = Arrangement.Center,
-            verticalAlignment = Alignment.Bottom
+            verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
                 text = "Nemate račun?",
                 modifier = Modifier
-                    .fillMaxWidth()
                     .padding(5.dp),
-                fontStyle = FontStyle.Italic
+                fontStyle = FontStyle.Italic,
+                color = MaterialTheme.colorScheme.inversePrimary
             )
+            Text(
+                text = "Registracija",
+                modifier = Modifier.clickable {
+                    navController.navigate("register")
+                },
+                color = MaterialTheme.colorScheme.primary
+                )
         }
-        Button(
+        /*Button(
             onClick = {
                 navController.navigate("register")
             },
@@ -179,7 +192,7 @@ fun LoginPage(navController: NavHostController, viewModel: DataViewModel){
         {
 
             Text(text = "Registracija")
-        }
+        }*/
     }
 
     if (isLoading){
