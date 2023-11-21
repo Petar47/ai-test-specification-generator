@@ -25,7 +25,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
@@ -39,7 +41,7 @@ import androidx.navigation.compose.rememberNavController
 
 @SuppressLint("CoroutineCreationDuringComposition")
 @Composable
-fun ListofProjects(navController: NavHostController, viewModel: DataViewModel) {
+fun ListofProjects(navController: NavHostController, viewModel: DataViewModel, onMenuClick: (page:String) -> Unit) {
     val user : User
     var id : Int? = 8
     if(Authenticated.loggedInUser!=null){
@@ -51,6 +53,7 @@ fun ListofProjects(navController: NavHostController, viewModel: DataViewModel) {
     }
     var projects by remember { mutableStateOf<List<Project>>(emptyList()) }
     val coroutine = rememberCoroutineScope()
+    var loading = false
     coroutine.launch{
         viewModel.uiState.collectLatest { data ->
             when(data){
@@ -58,42 +61,55 @@ fun ListofProjects(navController: NavHostController, viewModel: DataViewModel) {
                     Log.e("Error data", "mess ${data}")
                 }
                 APIResult.Loading -> {
+                    loading = true
                     Log.e("Error Data", "loading")
                 }
                 is APIResult.Success -> {
+                    loading = false
                     projects=data.data as List<Project>
                 }
             }
         }
     }
+    if (loading){
+        CircularProgressIndicator(
+            modifier = Modifier.width(64.dp),
+            color = MaterialTheme.colorScheme.secondary
+        )
+    }
     Surface(
         modifier = Modifier.fillMaxSize(),
         color = MaterialTheme.colorScheme.background
     ) {
-        ProjectList(projects, navController)
+        ProjectList(projects, navController, onMenu = {onMenuClick("workspaces")})
     }
 }
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ProjectList(projects: List<Project>, navController: NavHostController) {
+fun ProjectList(projects: List<Project>, navController: NavHostController, onMenu: () -> Unit) {
     Scaffold(
         topBar = {
             TopAppBar(
                 title = {
                     Row(
                         modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
-                        IconButton(onClick = {navController.navigate("menu")}) {
-                            Icon(imageVector = Icons.Default.Menu, contentDescription = null)
+                        IconButton(onClick = {onMenu()}) {
+                            Icon(imageVector = Icons.Default.Menu, contentDescription = null, tint = Color.White)
                         }
 
-                        Text(text = "Projekti", color = MaterialTheme.colorScheme.onSecondary)
+                        Text(
+                            text = "Projekti",
+                            color = MaterialTheme.colorScheme.onSecondary,
+
+                        )
 
                         IconButton(onClick = { }) {
-                            Icon(imageVector = Icons.Default.Search, contentDescription = null)
+                            Icon(imageVector = Icons.Default.Search, contentDescription = null, tint = Color.White)
                         }
                     }
                 },
@@ -104,7 +120,8 @@ fun ProjectList(projects: List<Project>, navController: NavHostController) {
             FloatingActionButton(
                 onClick = {
                     navController.navigate("addProject") },
-                content = { Icon(imageVector = Icons.Default.Add, contentDescription = null) }
+                content = { Icon(imageVector = Icons.Default.Add, contentDescription = null) },
+                containerColor = MaterialTheme.colorScheme.primary
             )
         }
     ) {
@@ -131,7 +148,8 @@ fun ProjectItem(project: Project) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(16.dp)
+            .padding(16.dp),
+        verticalAlignment = Alignment.CenterVertically
     ) {
         Image(
             painter = painterResource(id = R.drawable.file),
@@ -140,6 +158,7 @@ fun ProjectItem(project: Project) {
                 .size(40.dp)
                 .clip(shape = CircleShape)
                 .background(MaterialTheme.colorScheme.primary)
+                .padding(5.dp)
         )
 
         Spacer(modifier = Modifier.width(16.dp))
@@ -151,4 +170,10 @@ fun ProjectItem(project: Project) {
             modifier = Modifier.align(Alignment.CenterVertically)
         )
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun ProjectItemPreview() {
+    ProjectItem(Project(1, "ime","marko", 1))
 }

@@ -48,7 +48,10 @@ class MainActivity : ComponentActivity() {
                             AddProject(navController = navController,viewModel =viewModel)
                         }
                         composable("workspaces"){
-                            ListofProjects(navController = navController,viewModel =viewModel)
+                            ListofProjects(navController = navController,viewModel =viewModel, onMenuClick={page ->
+                                returnPage = page
+                                navController.navigate("menu")
+                            })
                         }
                         composable("profile"){
                             UpdateProfile(navHostController = navController, viewModel = viewModel,
