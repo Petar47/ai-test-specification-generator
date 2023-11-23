@@ -119,13 +119,14 @@ fun LoginPage(navController: NavHostController, dataViewModel: DataViewModel, su
             onClick = {
 
                     message = viewModel.logInUser(
-                    dataViewModel= dataViewModel,
-                    email = email,
-                    password = password,
-                    successfulLogin = {
+                        dataViewModel= dataViewModel,
+                        email = email,
+                        password = password,
+                        isLoading,
+                        successfulLogin = {
                         navController.navigate("workspaces")
-                    },
-                    coroutine)
+                        },
+                        coroutine)
 
 
             },

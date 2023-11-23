@@ -13,10 +13,11 @@ import kotlinx.coroutines.launch
 
 class LoginViewModel : ViewModel() {
     var message : String = ""
-    fun logInUser(dataViewModel: DataViewModel, email:String, password:String,successfulLogin: () -> Unit, coroutine: CoroutineScope) : String
+    fun logInUser(dataViewModel: DataViewModel, email:String, password:String, isLoading: Boolean, successfulLogin: () -> Unit, coroutine: CoroutineScope) : String
     {
         var user : User? = null
         var hashPassword = getHashPassword(email,password)
+        var isLoading = isLoading
         dataViewModel.getUserByEmail(email)
         coroutine.launch{
             dataViewModel.uiState.collectLatest { data ->
@@ -26,8 +27,10 @@ class LoginViewModel : ViewModel() {
                     }
                     APIResult.Loading -> {
                         Log.e("Error Data", "loading")
+                        isLoading = true
                     }
                     is APIResult.Success -> {
+                        isLoading = false
                         user = data.data as? User
                         if (user != null) {
                             if(hashPassword == user!!.password){
