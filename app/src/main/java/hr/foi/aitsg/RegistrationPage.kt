@@ -102,7 +102,7 @@ fun RegistrationPage(navController: NavHostController, viewModel: DataViewModel)
                     navController.popBackStack()
                 }
                 else {
-                    Log.e("Fail:", "Epic fail bro")
+                    Log.e("Fail:", "Registracija nije valjana")
                 }
             },
             modifier = Modifier

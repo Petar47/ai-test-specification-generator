@@ -1,6 +1,5 @@
 package hr.foi.aitsg
 
-import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -22,23 +21,19 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import hr.foi.authentication.LoginHandler
-import hr.foi.database.APIResult
+import hr.foi.aitsg.auth.LoginViewModel
 import hr.foi.database.DataViewModel
-import hr.foi.database.User
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
-import java.security.MessageDigest
-
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LoginPage(navController: NavHostController, viewModel: DataViewModel){
+fun LoginPage(navController: NavHostController, dataViewModel: DataViewModel, successfulLogin : ()-> Unit){
     var email by remember { mutableStateOf("") }
     var password by remember{ mutableStateOf("") }
     var message by remember { mutableStateOf("") }
-    var user : User
+    val coroutine = rememberCoroutineScope()
+    val viewModel : LoginViewModel = viewModel()
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -86,37 +81,20 @@ fun LoginPage(navController: NavHostController, viewModel: DataViewModel){
                 unfocusedBorderColor = hr.foi.aitsg.ui.theme.Cyan)
         )
         Text(text = message)
-        val coroutine = rememberCoroutineScope()
+
         Button(
             onClick = {
-                var hashPassword : String
-                viewModel.getUserByEmail(email)
-                coroutine.launch{
-                    viewModel.uiState.collectLatest { data ->
-                        when(data){
-                            is APIResult.Error -> {
-                                Log.e("Error data", "mess ${data}")
-                            }
-                            APIResult.Loading -> {
-                                Log.e("Error Data", "loading")
-                            }
-                            is APIResult.Success -> {
-                                val user = data.data as? User
-                                hashPassword = MessageDigest.getInstance("SHA-256").digest(password.toByteArray()).fold("", { str, it -> str + "%02x".format(it) })
-                                hashPassword += MessageDigest.getInstance("SHA-256").digest(email.toByteArray()).fold("", { str, it -> str + "%02x".format(it) })
-                                hashPassword = MessageDigest.getInstance("SHA-256").digest(hashPassword.toByteArray()).fold("", { str, it -> str + "%02x".format(it) })
-                                if (user != null) {
-                                    if(hashPassword == user.password){
-                                        Authenticated.loggedInUser = user
-                                        navController.navigate("workspaces")
-                                    } else{
-                                        message = "Neispravna lozinka!"
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
+
+                    message = viewModel.logInUser(
+                    dataViewModel= dataViewModel,
+                    email = email,
+                    password = password,
+                    successfulLogin = {
+                        navController.navigate("workspaces")
+                    },
+                    coroutine)
+
+
             },
             modifier = Modifier
                 .fillMaxWidth()
@@ -154,5 +132,4 @@ fun LoginPage(navController: NavHostController, viewModel: DataViewModel){
             Text(text = "Registracija")
         }
     }
-
 }

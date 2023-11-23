@@ -38,7 +38,9 @@ class MainActivity : ComponentActivity() {
 
                     NavHost(navController, startDestination = "login"){
                         composable("login"){
-                            LoginPage(navController = navController, viewModel = viewModel)
+                            LoginPage(navController = navController, dataViewModel = viewModel, successfulLogin = {
+                                navController.navigate("workspaces")
+                            })
 
                         }
                         composable("register"){
