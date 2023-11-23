@@ -43,7 +43,7 @@ import hr.foi.database.User
 import java.util.Locale
 
 @Composable
-public fun MenuPage(menuScreenItem: String, onMenuButtonClick: (page: String) -> Unit, onLogOutButtonClick: () -> Unit, onReturnButtonClick: (page: String) -> Unit, onEditProfileButtonClick: () -> Unit) {
+public fun MenuPage(onMenuButtonClick: (page: String) -> Unit, onLogOutButtonClick: () -> Unit, onReturnButtonClick: () -> Unit, onEditProfileButtonClick: () -> Unit) {
     val loggedInUser = Authenticated.loggedInUser as User
 
     val menuItems = listOf(
@@ -56,7 +56,7 @@ public fun MenuPage(menuScreenItem: String, onMenuButtonClick: (page: String) ->
         modifier = Modifier.fillMaxSize()
     ) {
         TopAppBar(loggedInUser, onReturn = {
-            onReturnButtonClick(menuScreenItem)
+            onReturnButtonClick()
         }, onEdit = {
             onEditProfileButtonClick()
         })
@@ -75,13 +75,7 @@ public fun MenuPage(menuScreenItem: String, onMenuButtonClick: (page: String) ->
                 verticalArrangement = Arrangement.Center
             ) {
                 items(menuItems) { (k, v) ->
-                    val color = if (k == menuScreenItem) {
-                        MaterialTheme.colorScheme.onSecondary
-                    } else {
-                        MaterialTheme.colorScheme.secondary
-                    }
-                    MenuItem(text=v.first().toString(), color=color, icon = ImageVector.vectorResource(id = v.last().toString().toInt())) { onMenuButtonClick(k.lowercase(Locale.getDefault())) }
-                    Log.d("MenuScreen", "$k - $menuScreenItem")
+                    MenuItem(text=v.first().toString(), icon = ImageVector.vectorResource(id = v.last().toString().toInt())) { onMenuButtonClick(k.lowercase(Locale.getDefault())) }
                 }
             }
         }
@@ -92,7 +86,7 @@ public fun MenuPage(menuScreenItem: String, onMenuButtonClick: (page: String) ->
 }
 
 @Composable
-fun TopAppBar(user: User, onReturn: () -> Unit, onEdit: () -> Unit){ //TODO replace with real user class
+fun TopAppBar(user: User, onReturn: () -> Unit, onEdit: () -> Unit){
     Column (
         modifier = Modifier
             .background(MaterialTheme.colorScheme.tertiary)
@@ -188,7 +182,6 @@ fun BottomAppBar(logOutEvent: () -> Unit){
 @Composable
 fun MenuItem(
     text: String,
-    color: Color,
     icon: ImageVector,
     onClick: () -> Unit
 ) {
@@ -199,13 +192,13 @@ fun MenuItem(
             .padding(16.dp)
             .clickable { onClick() },
         elevation = CardDefaults.cardElevation(
-            defaultElevation = 6.dp
+            defaultElevation = 5.dp
         )
     ) {
         Row(
             modifier = Modifier
                 .fillMaxSize()
-                .background(color)
+                .background(MaterialTheme.colorScheme.background)
                 .padding(16.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
@@ -237,5 +230,5 @@ fun MenuItem(
 @Preview(showBackground = true)
 @Composable
 fun MenuPagePreview() {
-    MenuPage("workspaces", {}, {}, {}, {})
+    MenuPage( {}, {}, {}, {})
 }
