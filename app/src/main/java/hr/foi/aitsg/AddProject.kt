@@ -19,6 +19,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import hr.foi.database.DataViewModel
 import hr.foi.database.Project
@@ -86,6 +87,7 @@ fun AddProject(navController: NavHostController, viewModel: DataViewModel) {
                         keyboardType = KeyboardType.Text // Specify the keyboard type as Text
                     )
                 )*/
+                Spacer(modifier = Modifier.height(5.dp))
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -98,12 +100,13 @@ fun AddProject(navController: NavHostController, viewModel: DataViewModel) {
                         ))
                         //showMessage = true
                         scope.launch { snackbarHostState.showSnackbar("Projekt uspješno spremljen") }
-                    }) {
-                        Text("Spremi")
-                    }
-
-                    Button(onClick = { navController.navigate("workspaces") }) {
-                        Text("Odustani")
+                    },
+                        modifier = Modifier.fillMaxWidth().height(56.dp).padding(5.dp)
+                        ) {
+                        Text(
+                            text ="Kreiraj",
+                            fontSize = 16.sp
+                            )
                     }
                     /*if (showMessage) {
                         Snackbar(
