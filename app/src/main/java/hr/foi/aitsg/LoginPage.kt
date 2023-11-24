@@ -34,8 +34,9 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import hr.foi.aitsg.composables.CircularLoadingBar
+import hr.foi.aitsg.auth.LoginViewModel
 import hr.foi.authentication.LoginHandler
 import hr.foi.database.APIResult
 import hr.foi.database.DataViewModel
@@ -47,11 +48,12 @@ import java.security.MessageDigest
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LoginPage(navController: NavHostController, viewModel: DataViewModel){
+fun LoginPage(navController: NavHostController, dataViewModel: DataViewModel, successfulLogin : ()-> Unit){
     var email by remember { mutableStateOf("") }
     var password by remember{ mutableStateOf("") }
     var message by remember { mutableStateOf("") }
-    var user : User
+    val coroutine = rememberCoroutineScope()
+    val viewModel : LoginViewModel = viewModel()
     var isLoading by remember { mutableStateOf(false) }
     Column(
         modifier = Modifier
@@ -115,37 +117,18 @@ fun LoginPage(navController: NavHostController, viewModel: DataViewModel){
         val coroutine = rememberCoroutineScope()
         Button(
             onClick = {
-                var hashPassword : String
-                viewModel.getUserByEmail(email)
-                coroutine.launch{
-                    viewModel.uiState.collectLatest { data ->
-                        when(data){
-                            is APIResult.Error -> {
-                                isLoading = false
-                                Log.e("Error data", "mess ${data}")
-                            }
-                            APIResult.Loading -> {
-                                isLoading = true
-                                Log.e("Error Data", "loading")
-                            }
-                            is APIResult.Success -> {
-                                isLoading = false
-                                val user = data.data as? User
-                                hashPassword = MessageDigest.getInstance("SHA-256").digest(password.toByteArray()).fold("", { str, it -> str + "%02x".format(it) })
-                                hashPassword += MessageDigest.getInstance("SHA-256").digest(email.toByteArray()).fold("", { str, it -> str + "%02x".format(it) })
-                                hashPassword = MessageDigest.getInstance("SHA-256").digest(hashPassword.toByteArray()).fold("", { str, it -> str + "%02x".format(it) })
-                                if (user != null) {
-                                    if(hashPassword == user.password){
-                                        Authenticated.loggedInUser = user
-                                        navController.navigate("workspaces")
-                                    } else{
-                                        message = "Neispravna lozinka!"
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
+
+                    message = viewModel.logInUser(
+                        dataViewModel= dataViewModel,
+                        email = email,
+                        password = password,
+                        isLoading,
+                        successfulLogin = {
+                        navController.navigate("workspaces")
+                        },
+                        coroutine)
+
+
             },
             modifier = Modifier
                 .fillMaxWidth()
@@ -156,9 +139,9 @@ fun LoginPage(navController: NavHostController, viewModel: DataViewModel){
             Text(text = "Prijava",
                 fontSize = 16.sp)
         }
-        
+
         Spacer(modifier = Modifier.height(25.dp))
-        
+
         Row(
             Modifier
                 .fillMaxWidth()
@@ -181,22 +164,5 @@ fun LoginPage(navController: NavHostController, viewModel: DataViewModel){
                 color = MaterialTheme.colorScheme.primary
                 )
         }
-        /*Button(
-            onClick = {
-                navController.navigate("register")
-            },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(5.dp)
-        )
-        {
-
-            Text(text = "Registracija")
-        }*/
     }
-
-    if (isLoading){
-        CircularLoadingBar()
-    }
-
 }
