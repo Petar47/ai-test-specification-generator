@@ -12,8 +12,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -122,8 +120,7 @@ fun LoginPage(navController: NavHostController, dataViewModel: DataViewModel, su
         val coroutine = rememberCoroutineScope()
         Button(
             onClick = {
-
-                    message = viewModel.logInUser(
+                    viewModel.logInUser(
                         dataViewModel= dataViewModel,
                         email = email,
                         password = password,
@@ -134,7 +131,8 @@ fun LoginPage(navController: NavHostController, dataViewModel: DataViewModel, su
                             navController.navigate("workspaces")
                         },
                         coroutine)
-
+                    message = viewModel.message
+                    isLoading = viewModel.isLoading
 
             },
             modifier = Modifier
@@ -170,6 +168,10 @@ fun LoginPage(navController: NavHostController, dataViewModel: DataViewModel, su
                 },
                 color = MaterialTheme.colorScheme.primary
                 )
+
+            if (isLoading){
+                CircularLoadingBar()
+            }
         }
     }
 
