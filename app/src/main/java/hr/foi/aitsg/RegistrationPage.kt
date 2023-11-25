@@ -7,15 +7,20 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import hr.foi.database.APIResult
 import hr.foi.database.DataViewModel
@@ -30,11 +35,32 @@ fun RegistrationPage(navController: NavHostController, viewModel: DataViewModel)
     var lastName by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
 
+    var message by remember { mutableStateOf("") }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp)
+            .padding(16.dp),
+        verticalArrangement = Arrangement.Center
     ) {
+        Row (
+            Modifier
+                .fillMaxWidth()
+                .padding(10.dp),
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
+        ){
+            Text(
+                text = "Register",
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(5.dp),
+                fontSize = 30.sp,
+                textAlign = TextAlign.Center,
+                color = MaterialTheme.colorScheme.inversePrimary
+            )
+        }
+
         // Email
         OutlinedTextField(
             value = email,
@@ -90,6 +116,19 @@ fun RegistrationPage(navController: NavHostController, viewModel: DataViewModel)
                 .padding(bottom = 16.dp)
         )
 
+        Spacer(modifier = Modifier.height(15.dp))
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center
+        ){
+            Text(
+                text = message,
+                color = Color.Red
+            )
+        }
+        Spacer(modifier = Modifier.height(15.dp))
+
         // Register Button
         Button(
             onClick = {
@@ -102,22 +141,30 @@ fun RegistrationPage(navController: NavHostController, viewModel: DataViewModel)
                     navController.popBackStack()
                 }
                 else {
+                    message = "Lozinka mora sadržavati najmanje 6 znakova, jedno veliko slovo, jedno malo slovo i jednu znamenku"
                     Log.e("Fail:", "Epic fail bro")
                 }
             },
             modifier = Modifier
                 .fillMaxWidth()
                 .height(56.dp)
+                .padding(5.dp)
         ) {
-            Text(stringResource(R.string.register))
+            Text(stringResource(R.string.register),
+                fontSize = 16.sp)
         }
+
+        Spacer(modifier = Modifier.height(25.dp))
 
         Row(
             modifier = Modifier.clickable {
                 navController.navigate("login")
             }
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.Center
         ) {
-            Text("Already have an account? ", fontWeight = FontWeight.Bold)
+            Text("Already have an account? ", fontStyle = FontStyle.Italic,
+                color = MaterialTheme.colorScheme.inversePrimary)
             Text("Login", color = MaterialTheme.colorScheme.primary)
         }
     }

@@ -58,11 +58,12 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
                     val navController = rememberNavController()
-                    var returnPage: String = ""
 
                     NavHost(navController, startDestination = "scanner"){
                         composable("login"){
-                            LoginPage(navController = navController, viewModel = viewModel)
+                            LoginPage(navController = navController, dataViewModel = viewModel, successfulLogin = {
+                                navController.navigate("workspaces")
+                            })
 
                         }
                         composable("register"){
@@ -87,7 +88,7 @@ class MainActivity : ComponentActivity() {
                                 })
                         }
                         composable("menu"){
-                            MenuPage(returnPage, onMenuButtonClick =  {page ->
+                            MenuPage(onMenuButtonClick =  {page ->
                                 when(page){
                                     "workspaces" -> navController.navigate("workspaces")
                                     else -> Toast.makeText(
@@ -106,8 +107,8 @@ class MainActivity : ComponentActivity() {
                                 ).show()
                                 Authenticated.loggedInUser = null
                                 navController.navigate("login")
-                            }, onReturnButtonClick = {page ->
-                                navController.navigate(page)
+                            }, onReturnButtonClick = {
+                                navController.popBackStack()
                             }, onEditProfileButtonClick = {
                                 //TODO navigate to the profile page
                                 navController.navigate("profile")
