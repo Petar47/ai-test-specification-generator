@@ -13,7 +13,7 @@ import kotlinx.coroutines.launch
 
 class LoginViewModel : ViewModel() {
     var message : String = ""
-    fun logInUser(dataViewModel: DataViewModel, email:String, password:String, isLoading: (loading : Boolean) -> Unit, successfulLogin: () -> Unit, coroutine: CoroutineScope) : String
+    fun logInUser(dataViewModel: DataViewModel, email:String, password:String, isLoading: (loading : Boolean) -> Unit, successfulLogin: () -> Unit, coroutine: CoroutineScope)
     {
         var user : User? = null
         var hashPassword = getHashPassword(email,password)

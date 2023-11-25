@@ -132,7 +132,6 @@ fun LoginPage(navController: NavHostController, dataViewModel: DataViewModel, su
                         },
                         coroutine)
                     message = viewModel.message
-                    isLoading = viewModel.isLoading
 
             },
             modifier = Modifier
@@ -168,10 +167,6 @@ fun LoginPage(navController: NavHostController, dataViewModel: DataViewModel, su
                 },
                 color = MaterialTheme.colorScheme.primary
                 )
-
-            if (isLoading){
-                CircularLoadingBar()
-            }
         }
     }
 
