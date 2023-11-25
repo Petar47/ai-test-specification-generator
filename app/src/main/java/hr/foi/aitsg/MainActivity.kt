@@ -63,13 +63,16 @@ class MainActivity : ComponentActivity() {
                 //contains the content of the test -> its use is to save the test when the app is navigating from scanner to preview
                 var testContent: String = ""
 
+
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
                     val navController = rememberNavController()
 
-                    NavHost(navController, startDestination = "tests"){
+
+
+                    NavHost(navController, startDestination = "login"){
                         composable("login"){
                             LoginPage(navController = navController, dataViewModel = viewModel, successfulLogin = {
                                 navController.navigate("workspaces")
@@ -129,23 +132,17 @@ class MainActivity : ComponentActivity() {
                                 })
                             }
 
-                            //TODO add permission logic to the add test button or when the app launches
+                            //TODO add to report page when the user chooses to scan the file with camera
                             /*
-                            //Testing permission logic
-                            Button(
-                                onClick = {
-                                    //launch permission requests if any
-                                    multiplePermissionResultLauncher.launch(
-                                        arrayOf(
-                                            android.Manifest.permission.CAMERA,
-                                            //TODO add permissions if needed
-                                        )
-                                    )
-                                }
-                            ){
-                                Text("Skeniraj")
-                            }
+                            //asks for permissions
+                            multiplePermissionResultLauncher.launch(
+                                arrayOf(
+                                    android.Manifest.permission.CAMERA,
+                                    //TODO add permissions if needed
+                                )
+                            )
                             */
+
                         }
                         composable("testPreview"){
                             Text(text = testContent)
