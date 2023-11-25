@@ -12,15 +12,18 @@ import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 
 import androidx.activity.viewModels
-
 import androidx.compose.foundation.layout.Column
+
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -30,6 +33,8 @@ import dagger.hilt.android.AndroidEntryPoint
 //import hr.foi.aitsg.Manifest.*
 import hr.foi.aitsg.ui.theme.AITSGTheme
 import hr.foi.database.DataViewModel
+import hr.foi.interfaces.TestRetriever
+import hr.foi.scanner.ScannerTestRetriever
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -59,7 +64,7 @@ class MainActivity : ComponentActivity() {
                 ) {
                     val navController = rememberNavController()
 
-                    NavHost(navController, startDestination = "scanner"){
+                    NavHost(navController, startDestination = "login"){
                         composable("login"){
                             LoginPage(navController = navController, dataViewModel = viewModel, successfulLogin = {
                                 navController.navigate("workspaces")
@@ -116,18 +121,43 @@ class MainActivity : ComponentActivity() {
                         }
 
                         composable("scanner"){
+                            //Camera scaner
+                            var textData by remember { mutableStateOf("Get data") }
+                            val testRetriever: TestRetriever = ScannerTestRetriever()
+
+                            Column(){
+                                testRetriever.showUI()
+                                Button(onClick = {textData = testRetriever.getTest()}){
+                                    Text(text = textData)
+                                }
+                            }
+
+
+                            /*
+                            //Testing permission logic
                             Button(
                                 onClick = {
                                     //launch permission requests if any
                                     multiplePermissionResultLauncher.launch(
                                         arrayOf(
                                             android.Manifest.permission.CAMERA,
-                                            //TODO add if more
+                                            //TODO add permissions if needed
                                         )
                                     )
                                 }
                             ){
                                 Text("Skeniraj")
+                            }
+                            */
+                        }
+
+                        composable("upload"){
+                            Button(
+                                onClick = {
+
+                                }
+                            ){
+                                Text("Uvezi datoteku")
                             }
                         }
                     }

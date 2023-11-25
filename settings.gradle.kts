@@ -22,3 +22,5 @@ include(":authentication")
 
 include(":core:database")
 
+include(":scanner")
+include(":core:interfaces")
