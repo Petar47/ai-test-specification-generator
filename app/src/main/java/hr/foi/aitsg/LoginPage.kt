@@ -54,6 +54,9 @@ fun LoginPage(navController: NavHostController, dataViewModel: DataViewModel, su
     val coroutine = rememberCoroutineScope()
     val viewModel : LoginViewModel = viewModel()
     var isLoading by remember { mutableStateOf(false) }
+
+
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -61,6 +64,7 @@ fun LoginPage(navController: NavHostController, dataViewModel: DataViewModel, su
         verticalArrangement = Arrangement.Center
     )
     {
+
         Row (
             Modifier
                 .fillMaxWidth()
@@ -120,8 +124,11 @@ fun LoginPage(navController: NavHostController, dataViewModel: DataViewModel, su
                         dataViewModel= dataViewModel,
                         email = email,
                         password = password,
+                        isLoading = {loading ->
+                            isLoading = loading
+                        },
                         successfulLogin = {
-                        navController.navigate("workspaces")
+                            navController.navigate("workspaces")
                         },
                         coroutine)
                     message = viewModel.message
@@ -166,5 +173,9 @@ fun LoginPage(navController: NavHostController, dataViewModel: DataViewModel, su
                 CircularLoadingBar()
             }
         }
+    }
+
+    if (isLoading){
+        CircularLoadingBar()
     }
 }

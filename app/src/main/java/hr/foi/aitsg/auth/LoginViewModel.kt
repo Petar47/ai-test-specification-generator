@@ -13,8 +13,7 @@ import kotlinx.coroutines.launch
 
 class LoginViewModel : ViewModel() {
     var message : String = ""
-    var isLoading : Boolean = false
-    fun logInUser(dataViewModel: DataViewModel, email:String, password:String, successfulLogin: () -> Unit, coroutine: CoroutineScope)
+    fun logInUser(dataViewModel: DataViewModel, email:String, password:String, isLoading: (loading : Boolean) -> Unit, successfulLogin: () -> Unit, coroutine: CoroutineScope) : String
     {
         var user : User? = null
         var hashPassword = getHashPassword(email,password)
@@ -24,14 +23,15 @@ class LoginViewModel : ViewModel() {
             dataViewModel.uiState.collectLatest { data ->
                 when(data){
                     is APIResult.Error -> {
-                        this@LoginViewModel.message="Korisnički račun ne postoji!"
+                        isLoading(false)
+                        message="Korisnički račun ne postoji!"
                     }
                     APIResult.Loading -> {
                         Log.e("Error Data", "loading")
-                        this@LoginViewModel.isLoading = true
+                        isLoading(true)
                     }
                     is APIResult.Success -> {
-                        this@LoginViewModel.isLoading = false
+                        isLoading(false)
                         user = data.data as? User
                         if (user != null) {
                             if(hashPassword == user!!.password){
