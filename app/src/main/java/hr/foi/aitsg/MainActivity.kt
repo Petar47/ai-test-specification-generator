@@ -58,13 +58,18 @@ class MainActivity : ComponentActivity() {
                             }
                     }
                 )
+                //contains the type of the retriever: scanner, import -> users selects the type and then the factory creates the type class
+                var testRetrieverType: String = "scanner"
+                //contains the content of the test -> its use is to save the test when the app is navigating from scanner to preview
+                var testContent: String = ""
+
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
                     val navController = rememberNavController()
 
-                    NavHost(navController, startDestination = "login"){
+                    NavHost(navController, startDestination = "tests"){
                         composable("login"){
                             LoginPage(navController = navController, dataViewModel = viewModel, successfulLogin = {
                                 navController.navigate("workspaces")
@@ -101,38 +106,30 @@ class MainActivity : ComponentActivity() {
                                         "Not implemented yet",
                                         Toast.LENGTH_SHORT
                                     ).show()
-                                    //TODO add navigation for profile, history and statistics
+                                    //TODO add navigation for history and statistics
                                 }
                             }, onLogOutButtonClick = {
-                                //TODO implement logout
-                                Toast.makeText(
-                                    applicationContext,
-                                    "Log Out",
-                                    Toast.LENGTH_SHORT
-                                ).show()
-                                Authenticated.loggedInUser = null
                                 navController.navigate("login")
+                                Authenticated.loggedInUser = null
                             }, onReturnButtonClick = {
                                 navController.popBackStack()
                             }, onEditProfileButtonClick = {
-                                //TODO navigate to the profile page
                                 navController.navigate("profile")
                             })
                         }
 
-                        composable("scanner"){
-                            //Camera scaner
-                            var textData by remember { mutableStateOf("Get data") }
-                            val testRetriever: TestRetriever = ScannerTestRetriever()
+                        composable("tests"){
+                            //on report page when the user tries to create new report then he chooses the type and navigates here
+                            val testRetriever: TestRetriever = TestRetrieverFactory.getRetriever(testRetrieverType)
 
                             Column(){
-                                testRetriever.showUI()
-                                Button(onClick = {textData = testRetriever.getTest()}){
-                                    Text(text = textData)
-                                }
+                                testRetriever.showUI(getTestData = {testData ->
+                                    testContent = testData
+                                    navController.navigate("testPreview")
+                                })
                             }
 
-
+                            //TODO add permission logic to the add test button or when the app launches
                             /*
                             //Testing permission logic
                             Button(
@@ -150,15 +147,8 @@ class MainActivity : ComponentActivity() {
                             }
                             */
                         }
-
-                        composable("upload"){
-                            Button(
-                                onClick = {
-
-                                }
-                            ){
-                                Text("Uvezi datoteku")
-                            }
+                        composable("testPreview"){
+                            Text(text = testContent)
                         }
                     }
 

@@ -8,9 +8,12 @@ import androidx.compose.runtime.Composable
 @Composable
 fun ScannerPage(getTestData: (testData: String) -> Unit){
     Column {
-        Text("Bok ovo je test")
-        Button(onClick = {getTestData("Ovo je testData vracen putem interfacea")}) {
-            Text("Klikni me")
+
+        Button(onClick = {
+            //TODO capture photo and scan the text convert it to string and forward it using the getTestData
+            getTestData("Ovo je testData vracen putem interfacea")
+        }) {
+            Text("Scan")
         }
     }
 }

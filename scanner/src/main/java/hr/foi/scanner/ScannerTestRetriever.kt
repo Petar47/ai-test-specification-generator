@@ -4,15 +4,11 @@ import androidx.compose.runtime.Composable
 import hr.foi.interfaces.TestRetriever
 
 class ScannerTestRetriever: TestRetriever {
-    private var testString: String = ""
-    override fun getTest(): String {
-        return testString
-    }
 
     @Composable
-    override fun showUI() {
+    override fun showUI(getTestData: (data: String) -> Unit) {
         ScannerPage(getTestData = {testData ->
-            testString = testData
+            getTestData(testData)
         })
     }
 }
