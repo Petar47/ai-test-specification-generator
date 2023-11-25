@@ -17,7 +17,7 @@ class LoginViewModel : ViewModel() {
     {
         var user : User? = null
         var hashPassword = getHashPassword(email,password)
-        var isLoading = isLoading
+
         dataViewModel.getUserByEmail(email)
         coroutine.launch{
             dataViewModel.uiState.collectLatest { data ->
@@ -39,13 +39,12 @@ class LoginViewModel : ViewModel() {
                                 successfulLogin()
                             }
                             else{
-                                message="Neispravna lozinka!"
+                                this@LoginViewModel.message="Neispravna lozinka!"
                             }
                         }
                     }
                 }
             }
         }
-        return message
     }
 }
