@@ -37,6 +37,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import hr.foi.aitsg.auth.LoginViewModel
+import hr.foi.aitsg.composables.CircularLoadingBar
 import hr.foi.authentication.LoginHandler
 import hr.foi.database.APIResult
 import hr.foi.database.DataViewModel
@@ -55,6 +56,9 @@ fun LoginPage(navController: NavHostController, dataViewModel: DataViewModel, su
     val coroutine = rememberCoroutineScope()
     val viewModel : LoginViewModel = viewModel()
     var isLoading by remember { mutableStateOf(false) }
+
+
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -62,6 +66,7 @@ fun LoginPage(navController: NavHostController, dataViewModel: DataViewModel, su
         verticalArrangement = Arrangement.Center
     )
     {
+
         Row (
             Modifier
                 .fillMaxWidth()
@@ -122,9 +127,11 @@ fun LoginPage(navController: NavHostController, dataViewModel: DataViewModel, su
                         dataViewModel= dataViewModel,
                         email = email,
                         password = password,
-                        isLoading,
+                        isLoading = {loading ->
+                            isLoading = loading
+                        },
                         successfulLogin = {
-                        navController.navigate("workspaces")
+                            navController.navigate("workspaces")
                         },
                         coroutine)
 
@@ -164,5 +171,9 @@ fun LoginPage(navController: NavHostController, dataViewModel: DataViewModel, su
                 color = MaterialTheme.colorScheme.primary
                 )
         }
+    }
+
+    if (isLoading){
+        CircularLoadingBar()
     }
 }
