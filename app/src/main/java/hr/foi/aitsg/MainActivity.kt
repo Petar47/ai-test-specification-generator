@@ -72,7 +72,7 @@ class MainActivity : ComponentActivity() {
 
 
 
-                    NavHost(navController, startDestination = "login"){
+                    NavHost(navController, startDestination = "tests"){
                         composable("login"){
                             LoginPage(navController = navController, dataViewModel = viewModel, successfulLogin = {
                                 navController.navigate("workspaces")
@@ -145,7 +145,16 @@ class MainActivity : ComponentActivity() {
 
                         }
                         composable("testPreview"){
-                            Text(text = testContent)
+                            TestPreviewPage(
+                                testData = testContent,
+                                onClickNext = {testData ->
+                                    testContent = testData
+                                    //TODO navigate to the report generation
+                                },
+                                onClickBack = {
+                                    navController.navigate("tests")
+                                }
+                            )
                         }
                     }
 
