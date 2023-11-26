@@ -127,8 +127,6 @@ fun LoginPage(navController: NavHostController, dataViewModel: DataViewModel, su
                         navController.navigate("workspaces")
                         },
                         coroutine)
-
-
             },
             modifier = Modifier
                 .fillMaxWidth()
@@ -139,7 +137,6 @@ fun LoginPage(navController: NavHostController, dataViewModel: DataViewModel, su
             Text(text = "Prijava",
                 fontSize = 16.sp)
         }
-
         Spacer(modifier = Modifier.height(25.dp))
 
         Row(

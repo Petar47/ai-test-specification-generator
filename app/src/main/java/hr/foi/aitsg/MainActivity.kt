@@ -4,9 +4,7 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-
 import androidx.activity.viewModels
-
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
@@ -24,7 +22,7 @@ import hr.foi.database.DataViewModel
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     private val viewModel by viewModels<DataViewModel>()
-
+    private val showProject: ShowProject = ShowProject()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -37,7 +35,8 @@ class MainActivity : ComponentActivity() {
 
                     NavHost(navController, startDestination = "login"){
                         composable("login"){
-                            LoginPage(navController = navController, dataViewModel = viewModel, successfulLogin = {
+                            LoginPage(navController = navController, dataViewModel = viewModel,
+                                successfulLogin = {
                                 navController.navigate("workspaces")
                             })
 
@@ -51,6 +50,21 @@ class MainActivity : ComponentActivity() {
                         composable("workspaces"){
                             ListofProjects(navController = navController,viewModel =viewModel)
                         }
+                        composable("show-project/{id}" ){ navBackStack ->
+                            val counter = navBackStack.arguments?.getString("id")
+                                showProject.showProject(
+                                    navHostController = navController,
+                                    dataViewModel = viewModel,
+                                    project_id = counter)
+                            }
+                        composable("add-users/{id}" ){ navBackStack ->
+                            val _project_id = navBackStack.arguments?.getString("id")
+                            addUsersToProject(
+                                navHostController = navController,
+                                dataViewModel = viewModel,
+                                project_id = _project_id)
+                        }
+
                         composable("profile"){
                             UpdateProfile(navHostController = navController, viewModel = viewModel,
                                 onUpdateUser = {
