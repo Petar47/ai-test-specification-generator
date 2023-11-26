@@ -109,4 +109,11 @@ class DataViewModel @Inject constructor(
             }
         }
     }
+    fun getUserByProject(projectId: Int){
+        viewModelScope.launch {
+            repository.getUserByProject(projectId).collectLatest { data ->
+                _uiState.update { data }
+            }
+        }
+    }
 }

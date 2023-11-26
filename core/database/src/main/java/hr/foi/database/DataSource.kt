@@ -1,5 +1,6 @@
 package hr.foi.database
 
+import android.service.autofill.UserData
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.postgrest.postgrest
 import io.github.jan.supabase.postgrest.query.FilterOperator
@@ -198,6 +199,28 @@ class UserDataSource @Inject constructor(
                 }
                 val reports =res.decodeList<Report>()
                 emit(APIResult.Success(reports))
+            }
+            catch (e: Exception){
+                emit(APIResult.Error(e.message))
+            }
+        }
+    }
+    fun getUserByProject(projectId: Int): Flow<APIResult<List<User>>>{
+        return flow {
+            emit(APIResult.Loading)
+            try{
+                val users = mutableListOf<User>()
+                val projectUserList = supabaseClient.postgrest["Project_user"].select{
+                    filter("id_project", FilterOperator.EQ, projectId)
+                }
+                val projectGuest = projectUserList.decodeList<Project_user>()
+                for (int in projectGuest){
+                    val pr = supabaseClient.postgrest["User"].select {
+                        filter("id_user", FilterOperator.EQ, int.id_user)
+                    }.decodeSingle<User>()
+                    users.add(pr)
+                }
+                emit(APIResult.Success(users))
             }
             catch (e: Exception){
                 emit(APIResult.Error(e.message))
