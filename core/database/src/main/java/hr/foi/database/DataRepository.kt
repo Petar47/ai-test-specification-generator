@@ -19,6 +19,7 @@ interface DataRepository {
     fun insertReport(report: Report): Flow<APIResult<Unit>>
     fun deleteReport(reportId :Int):Flow<APIResult<Unit>>
     fun getAllReports(projectId: Int): Flow<APIResult<List<Report>>>
+    fun getUserByProject(projectId: Int): Flow<APIResult<List<User>>>
 }
 
 class DefaultDataRepository @Inject constructor(
@@ -74,6 +75,10 @@ class DefaultDataRepository @Inject constructor(
 
     override fun getAllReports(projectId: Int): Flow<APIResult<List<Report>>> {
         return dataSource.getAllReports(projectId)
+    }
+
+    override fun getUserByProject(projectId: Int): Flow<APIResult<List<User>>> {
+        return dataSource.getUserByProject(projectId)
     }
 
 
