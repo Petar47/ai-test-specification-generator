@@ -48,7 +48,6 @@ class ShowProject {
                             .padding(5.dp),
                         colorFilter = ColorFilter.tint(Color.White),
                         alignment = androidx.compose.ui.Alignment.CenterEnd,
-
                     )
                 }
 
