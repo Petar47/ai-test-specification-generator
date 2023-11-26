@@ -12,8 +12,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -37,6 +35,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import hr.foi.aitsg.auth.LoginViewModel
+import hr.foi.aitsg.composables.CircularLoadingBar
 import hr.foi.authentication.LoginHandler
 import hr.foi.database.APIResult
 import hr.foi.database.DataViewModel
@@ -62,6 +61,7 @@ fun LoginPage(navController: NavHostController, dataViewModel: DataViewModel, su
         verticalArrangement = Arrangement.Center
     )
     {
+
         Row (
             Modifier
                 .fillMaxWidth()
@@ -117,16 +117,19 @@ fun LoginPage(navController: NavHostController, dataViewModel: DataViewModel, su
         val coroutine = rememberCoroutineScope()
         Button(
             onClick = {
-
-                    message = viewModel.logInUser(
+                    viewModel.logInUser(
                         dataViewModel= dataViewModel,
                         email = email,
                         password = password,
-                        isLoading,
+                        isLoading = {loading ->
+                            isLoading = loading
+                        },
                         successfulLogin = {
-                        navController.navigate("workspaces")
+                            navController.navigate("workspaces")
                         },
                         coroutine)
+                    message = viewModel.message
+
             },
             modifier = Modifier
                 .fillMaxWidth()
@@ -137,6 +140,7 @@ fun LoginPage(navController: NavHostController, dataViewModel: DataViewModel, su
             Text(text = "Prijava",
                 fontSize = 16.sp)
         }
+
         Spacer(modifier = Modifier.height(25.dp))
 
         Row(
@@ -161,5 +165,9 @@ fun LoginPage(navController: NavHostController, dataViewModel: DataViewModel, su
                 color = MaterialTheme.colorScheme.primary
                 )
         }
+    }
+
+    if (isLoading){
+        CircularLoadingBar()
     }
 }
