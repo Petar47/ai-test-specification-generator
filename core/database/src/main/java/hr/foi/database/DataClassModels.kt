@@ -1,6 +1,7 @@
 package hr.foi.database
 
 import kotlinx.serialization.Serializable
+import java.sql.Time
 
 @Serializable
 data class User(
@@ -16,4 +17,22 @@ data class Project(
     val name: String,
     val created: String?=null,
     val owner: Int?
+)
+
+@Serializable
+data class Report(
+    val id_report: Int?=null,
+    val name: String,
+    val description: String?=null,
+    val JSON_response: String,
+    val generated: String?=null,
+    val saved_time: String,
+    val id_project: Int
+
+)
+
+@Serializable
+data class Project_user(
+    val id_project: Int,
+    val id_user: Int
 )

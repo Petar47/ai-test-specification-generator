@@ -83,11 +83,25 @@ class UserDataSource @Inject constructor(
         return flow {
             emit(APIResult.Loading)
             try{
+                val projectList = mutableListOf<Project>()
                 val res = supabaseClient.postgrest["Project"].select{
                     filter("owner", FilterOperator.EQ, userId)
                 }
                 val projects =res.decodeList<Project>()
-                emit(APIResult.Success(projects))
+                for(pr in projects){
+                    projectList.add(pr)
+                }
+                val projectIdList = supabaseClient.postgrest["Project_user"].select{
+                    filter("id_user", FilterOperator.EQ, userId)
+                }
+                val projectGuest = projectIdList.decodeList<Project_user>()
+                for (int in projectGuest){
+                    val pr = supabaseClient.postgrest["Project"].select {
+                        filter("id_project", FilterOperator.EQ, int.id_project)
+                    }.decodeSingle<Project>()
+                    projectList.add(pr)
+                }
+                emit(APIResult.Success(projectList))
             }
             catch (e: Exception){
                 emit(APIResult.Error(e.message))
@@ -101,6 +115,89 @@ class UserDataSource @Inject constructor(
                 supabaseClient.postgrest["Project"].insert(project){
                 }
                 emit(APIResult.Success(Unit))
+            }
+            catch (e: Exception){
+                emit(APIResult.Error(e.message))
+            }
+        }
+    }
+    fun deleteProject(projectId: Int): Flow<APIResult<Unit>>{
+        return flow{
+            emit(APIResult.Loading)
+            try{
+                supabaseClient.postgrest["Project"].delete{
+                    filter("id_project", FilterOperator.EQ, projectId)
+                }
+                emit(APIResult.Success(Unit))
+            }
+            catch (e: Exception){
+                emit(APIResult.Error(e.message))
+            }
+        }
+    }
+    fun insertProjectUser(projectUser: Project_user): Flow<APIResult<Unit>>{
+        return flow{
+            emit(APIResult.Loading)
+            try{
+                supabaseClient.postgrest["Project_user"].insert(projectUser){
+                }
+                emit(APIResult.Success(Unit))
+            }
+            catch (e: Exception){
+                emit(APIResult.Error(e.message))
+            }
+        }
+    }
+    fun deleteProjectUser(projectUser: Project_user): Flow<APIResult<Unit>>{
+        return flow{
+            emit(APIResult.Loading)
+            try{
+                supabaseClient.postgrest["Project"].delete{
+                    projectUser
+                }
+                emit(APIResult.Success(Unit))
+            }
+            catch (e: Exception){
+                emit(APIResult.Error(e.message))
+            }
+        }
+    }
+    fun insertReport(report: Report): Flow<APIResult<Unit>>{
+        return flow{
+            emit(APIResult.Loading)
+            try{
+                supabaseClient.postgrest["Report"].insert(report){
+                }
+                emit(APIResult.Success(Unit))
+            }
+            catch (e: Exception){
+                emit(APIResult.Error(e.message))
+            }
+        }
+    }
+    fun deleteReport(reportId :Int):Flow<APIResult<Unit>>{
+        return flow{
+            emit(APIResult.Loading)
+            try{
+                supabaseClient.postgrest["Report"].delete{
+                    filter("id_report", FilterOperator.EQ, reportId)
+                }
+                emit(APIResult.Success(Unit))
+            }
+            catch (e: Exception){
+                emit(APIResult.Error(e.message))
+            }
+        }
+    }
+    fun getAllReports(projectId: Int): Flow<APIResult<List<Report>>>{
+        return flow {
+            emit(APIResult.Loading)
+            try{
+                val res = supabaseClient.postgrest["Report"].select{
+                    filter("id_project", FilterOperator.EQ, projectId)
+                }
+                val reports =res.decodeList<Report>()
+                emit(APIResult.Success(reports))
             }
             catch (e: Exception){
                 emit(APIResult.Error(e.message))
