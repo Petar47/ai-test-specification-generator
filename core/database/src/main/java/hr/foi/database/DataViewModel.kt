@@ -67,4 +67,46 @@ class DataViewModel @Inject constructor(
             }
         }
     }
+    fun deleteProject(id: Int){
+        viewModelScope.launch {
+            repository.deleteProject(id).collectLatest { data->
+                _uiState.update { data }
+            }
+        }
+    }
+    fun insertProjectUser(projectUser: Project_user){
+        viewModelScope.launch {
+            repository.insertProjectUser(projectUser).collectLatest { data ->
+                _uiState.update { data }
+            }
+        }
+    }
+    fun deleteProjectUser(projectUser: Project_user){
+        viewModelScope.launch {
+            repository.deleteProjectUser(projectUser).collectLatest { data ->
+                _uiState.update { data }
+            }
+        }
+    }
+    fun insertReport(report: Report){
+        viewModelScope.launch {
+            repository.insertReport(report).collectLatest { data ->
+                _uiState.update { data }
+            }
+        }
+    }
+    fun deleteReport(id: Int){
+        viewModelScope.launch {
+            repository.deleteReport(id).collectLatest { data ->
+                _uiState.update { data }
+            }
+        }
+    }
+    fun getAllReports(project_id: Int){
+        viewModelScope.launch {
+            repository.getAllReports(project_id).collectLatest { data ->
+                _uiState.update { data }
+            }
+        }
+    }
 }
