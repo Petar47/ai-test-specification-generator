@@ -30,17 +30,27 @@ import hr.foi.aitsg.auth.getAllUsers
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun addUsersToProject(navHostController: NavHostController, dataViewModel: DataViewModel, project_id : String?) {
+    var id_project = project_id!!.substring(1).split("}")[0].toInt()
     var text by remember { mutableStateOf("") }
     var active by remember { mutableStateOf(false) }
     var users : List<User> = getAllUsers(dataViewModel)
+    var matchingUsers = mutableListOf<User>()
     Scaffold {
         Column (){
-            Text(text = "$project_id")
+            Text(text = "$id_project")
             SearchBar(
                 modifier = Modifier.fillMaxWidth(),
                 query = text,
                 onQueryChange = {
                     text = it
+                    matchingUsers.clear()
+                    users.forEach{user->
+                        val pattern = Regex("$it")
+                        if(pattern.containsMatchIn("${user.email}"))
+                        {
+                            matchingUsers.add(user)
+                        }
+                    }
                 } ,
                 onSearch = {
                     active = false
@@ -72,8 +82,14 @@ fun addUsersToProject(navHostController: NavHostController, dataViewModel: DataV
 
                 })
                 {
-                    users.forEach{
-                        Row(modifier = Modifier.padding(all = 14.dp)){
+                    matchingUsers.forEach{
+                        Row(
+                            modifier = Modifier
+                                .padding(all = 14.dp)
+                                .clickable {
+                                    insertUser(it.id_user!!.toInt(), project_id = id_project)
+                                }
+                        ){
                             Text(text = it.email)
                         }
                     }
@@ -81,4 +97,6 @@ fun addUsersToProject(navHostController: NavHostController, dataViewModel: DataV
         }
     }
 }
+fun insertUser(user_id:Int, project_id:Int){
 
+}
