@@ -25,6 +25,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import hr.foi.database.User
 import hr.foi.aitsg.auth.getAllUsers
+import hr.foi.aitsg.auth.insertUser
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
@@ -97,6 +98,4 @@ fun addUsersToProject(navHostController: NavHostController, dataViewModel: DataV
         }
     }
 }
-fun insertUser(user_id:Int, project_id:Int){
 
-}
