@@ -145,7 +145,16 @@ class MainActivity : ComponentActivity() {
 
                         }
                         composable("testPreview"){
-                            Text(text = testContent)
+                            TestPreviewPage(
+                                testData = testContent,
+                                onClickNext = {testData ->
+                                    testContent = testData
+                                    //TODO navigate to the report generation
+                                },
+                                onClickBack = {
+                                    navController.navigate("tests")
+                                }
+                            )
                         }
                     }
 
