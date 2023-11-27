@@ -11,25 +11,30 @@ import androidx.compose.runtime.setValue
 import hr.foi.database.APIResult
 import hr.foi.database.DataViewModel
 import hr.foi.database.User
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 @SuppressLint("CoroutineCreationDuringComposition")
 @Composable
 fun getAllUsers(dataViewModel: DataViewModel): List<User> {
     val coroutine = rememberCoroutineScope()
-    var users by remember { mutableStateOf<List<User>>(emptyList()) }
+    var users = mutableListOf<User>()
     dataViewModel.getAllUsers()
-    coroutine.launch {
+    coroutine.async {
         dataViewModel.uiState.collect { data ->
             when (data) {
                 is APIResult.Error -> {
-                    Log.e("Error Data", "error-users")
+                    Log.e("Error Data", "error-getallusers")
                 }
                 APIResult.Loading -> {
-                    Log.e("Error Data", "loading-users")
+                    Log.e("Loading Data", "loading-getallusers")
                 }
                 is APIResult.Success -> {
-                    users = data.data as List<User>
+                    val usersList = data.data as List<User>
+                    for (user in usersList){
+                        users.add(user)
+                    }
+                    Log.e("Success getallusers", users.toString())
                 }
             }
         }

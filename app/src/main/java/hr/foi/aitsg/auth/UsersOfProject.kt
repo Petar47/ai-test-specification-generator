@@ -12,26 +12,34 @@ import hr.foi.database.APIResult
 import hr.foi.database.DataViewModel
 import hr.foi.database.User
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+@Composable
 @SuppressLint("CoroutineCreationDuringComposition")
-fun getAllProjectUsers(dataViewModel: DataViewModel, id_project: Int, coroutine:CoroutineScope): List<User> {
-    var users : List<User> = emptyList()
+fun getAllProjectUsers(dataViewModel: DataViewModel, id_project: Int): List<User> {
+    var users by remember { mutableStateOf<List<User>>(emptyList()) }
+    var coroutine = rememberCoroutineScope()
     dataViewModel.getUserByProject(id_project)
-    coroutine.launch {
-        dataViewModel.uiState.collect { data ->
+    coroutine.async {
+        dataViewModel.uiState.collectLatest { data ->
             when (data) {
                 is APIResult.Error -> {
-                    Log.e("Error Data", "error-get-all-users")
+                    Log.e("Error Data", "error-get-all-pro-user")
                 }
                 APIResult.Loading -> {
-                    Log.e("Loading Data", "loading-get-all-users")
+                    Log.e("Loading Data", "loading-get-all-pro-users")
                 }
                 is APIResult.Success -> {
-                    users = data.data as List<User>
+                    Log.e("Success Data", "success-get-all-pro-users")
+
+                    val usersList = data.data as List<User>
+                    users = usersList
                 }
             }
         }
     }
+    Log.e("Success Data", users.toString())
     return users
 }

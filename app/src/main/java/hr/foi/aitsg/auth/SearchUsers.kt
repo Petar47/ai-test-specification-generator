@@ -18,15 +18,19 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SearchBar
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import hr.foi.database.DataViewModel
+import hr.foi.database.Project_user
 import hr.foi.database.User
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -34,16 +38,11 @@ import hr.foi.database.User
 @Composable
 fun searchUsers(navHostController: NavHostController, dataViewModel: DataViewModel, id_project: String?) {
     var project_id = id_project!!.toInt()
-    var users: List<User> = getAllUsers(dataViewModel)
-    var user_id: Int by remember { mutableStateOf(0) }
+    var users = getAllUsers(dataViewModel)
     var text by remember { mutableStateOf("") }
     var active by remember { mutableStateOf(false) }
     var matchingUsers = mutableListOf<User>()
-    var addUser by remember {mutableStateOf(false)}
-    if (addUser) {
-        insertUser(user_id, project_id, dataViewModel)
-        addUser = false
-    }
+
     Scaffold(
         modifier = Modifier.padding(5.dp)
     ) {
@@ -64,6 +63,7 @@ fun searchUsers(navHostController: NavHostController, dataViewModel: DataViewMod
                 },
                 onSearch = {
                     active = false
+
                 },
                 active = active,
                 onActiveChange = {
@@ -104,8 +104,7 @@ fun searchUsers(navHostController: NavHostController, dataViewModel: DataViewMod
                             contentAlignment = Alignment.BottomEnd
                         ) {
                             Button(onClick = {
-                                addUser = true
-                                user_id = it.id_user!!
+                                dataViewModel.insertProjectUser(Project_user(project_id, it.id_user!!))
                             })
                             {
                                 Icon(

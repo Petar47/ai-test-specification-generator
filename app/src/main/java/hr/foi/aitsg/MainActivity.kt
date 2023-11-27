@@ -41,7 +41,7 @@ import hr.foi.scanner.ScannerTestRetriever
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     private val viewModel by viewModels<DataViewModel>()
-    private val showProject: ShowProject = ShowProject()
+    private val _showProject: ShowProject = ShowProject()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -91,7 +91,7 @@ class MainActivity : ComponentActivity() {
                         }
                         composable("show-project/{id}" ){ navBackStack ->
                             val counter = navBackStack.arguments?.getString("id")
-                                showProject.showProject(
+                                _showProject.showProject(
                                     navHostController = navController,
                                     dataViewModel = viewModel,
                                     project_id = counter)
