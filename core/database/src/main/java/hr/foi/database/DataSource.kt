@@ -153,8 +153,11 @@ class UserDataSource @Inject constructor(
         return flow{
             emit(APIResult.Loading)
             try{
-                supabaseClient.postgrest["Project"].delete{
-                    projectUser
+                supabaseClient.postgrest["Project_user"].delete{
+                    and {
+                        Project_user::id_project eq projectUser.id_project
+                        Project_user::id_user eq projectUser.id_user
+                    }
                 }
                 emit(APIResult.Success(Unit))
             }
