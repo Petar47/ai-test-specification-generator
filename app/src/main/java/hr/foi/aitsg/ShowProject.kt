@@ -35,7 +35,7 @@ class ShowProject {
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .clickable { navHostController.navigate("add-users/{$project_id}")},
+                        .clickable { navHostController.navigate("add-users/$project_id")},
                     contentAlignment = Alignment.BottomEnd
                 ){
                     Image(

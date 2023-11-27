@@ -19,13 +19,13 @@ fun insertUser(user_id:Int, project_id:Int, dataViewModel: DataViewModel){
         dataViewModel.uiState.collect { data ->
             when (data) {
                 is APIResult.Error -> {
-                    Log.e("Error Data", "error")
+                    Log.e("Error Data", "error-insert-user")
                 }
                 APIResult.Loading -> {
-                    Log.e("Error Data", "loading")
+                    Log.e("Error Data", "loading-insert-user")
                 }
                 is APIResult.Success -> {
-                    Log.e("Successful update", "success")
+                    Log.e("Successful update", "success-insert-user")
                 }
             }
         }

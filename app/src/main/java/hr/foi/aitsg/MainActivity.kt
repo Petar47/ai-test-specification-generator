@@ -29,8 +29,12 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 
 import dagger.hilt.android.AndroidEntryPoint
+import hr.foi.aitsg.auth.getAllProjectUsers
+import hr.foi.aitsg.auth.getAllUsers
+import hr.foi.aitsg.auth.searchUsers
 import hr.foi.aitsg.ui.theme.AITSGTheme
 import hr.foi.database.DataViewModel
+import hr.foi.database.User
 import hr.foi.interfaces.TestRetriever
 import hr.foi.scanner.ScannerTestRetriever
 
@@ -99,7 +103,13 @@ class MainActivity : ComponentActivity() {
                                 dataViewModel = viewModel,
                                 project_id = _project_id)
                         }
-
+                        composable("search-users/{id}" ){ navBackStack ->
+                            val _project_id = navBackStack.arguments?.getString("id")
+                            searchUsers(
+                                navHostController = navController,
+                                dataViewModel = viewModel,
+                                id_project = _project_id)
+                        }
                         composable("profile"){
                             UpdateProfile(navHostController = navController, viewModel = viewModel,
                                 onUpdateUser = {

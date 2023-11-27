@@ -51,7 +51,6 @@ fun LoginPage(navController: NavHostController, dataViewModel: DataViewModel, su
     var email by remember { mutableStateOf("") }
     var password by remember{ mutableStateOf("") }
     var message by remember { mutableStateOf("") }
-    val coroutine = rememberCoroutineScope()
     val viewModel : LoginViewModel = viewModel()
     var isLoading by remember { mutableStateOf(false) }
     Column(
@@ -117,6 +116,7 @@ fun LoginPage(navController: NavHostController, dataViewModel: DataViewModel, su
         val coroutine = rememberCoroutineScope()
         Button(
             onClick = {
+                    Authenticated.loggedInUser = null
                     viewModel.logInUser(
                         dataViewModel= dataViewModel,
                         email = email,
