@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -127,31 +128,35 @@ fun ProjectList(projects: List<Project>, navController: NavHostController) {
         }
     ) {
         if(projects.isNotEmpty()){
-            ProjectListView(projects)
+            ProjectListView(projects, navController)
         }
     }
 }
 
 @Composable
-fun ProjectListView(projects: List<Project>) {
+fun ProjectListView(projects: List<Project>, navController: NavHostController) {
     LazyColumn{
         item {
             Spacer(modifier = Modifier.height(65.dp))
         }
         items(projects) { project ->
             Divider(modifier = Modifier.fillMaxWidth())
-            ProjectItem(project)
+            ProjectItem(project, navController)
         }
     }
 }
 
 @Composable
-fun ProjectItem(project: Project) {
+fun ProjectItem(project: Project, navController: NavHostController) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(16.dp),
+            .padding(16.dp)
+            .clickable {
+                       navController.navigate("show-project/" + "${project.id_project}")
+            },
         verticalAlignment = Alignment.CenterVertically
+
     ) {
         Image(
             painter = painterResource(id = R.drawable.file),
@@ -178,5 +183,5 @@ fun ProjectItem(project: Project) {
 @Preview(showBackground = true)
 @Composable
 fun ProjectItemPreview() {
-    ProjectItem(Project(1, "ime","marko", 1))
+    //ProjectItem(Project(1, "ime","marko", 1))
 }

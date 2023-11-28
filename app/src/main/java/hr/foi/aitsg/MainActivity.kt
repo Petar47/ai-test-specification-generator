@@ -1,5 +1,6 @@
 package hr.foi.aitsg
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.net.Uri
@@ -13,7 +14,6 @@ import androidx.activity.result.contract.ActivityResultContracts
 
 import androidx.activity.viewModels
 import androidx.compose.foundation.layout.Column
-
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
@@ -30,16 +30,20 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 
 import dagger.hilt.android.AndroidEntryPoint
-//import hr.foi.aitsg.Manifest.*
+import hr.foi.aitsg.auth.getAllProjectUsers
+import hr.foi.aitsg.auth.getAllUsers
+import hr.foi.aitsg.auth.searchUsers
 import hr.foi.aitsg.ui.theme.AITSGTheme
 import hr.foi.database.DataViewModel
+import hr.foi.database.User
 import hr.foi.interfaces.TestRetriever
 import hr.foi.scanner.ScannerTestRetriever
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     private val viewModel by viewModels<DataViewModel>()
-
+    private val _showProject: ShowProject = ShowProject()
+    @SuppressLint("SuspiciousIndentation")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -70,11 +74,10 @@ class MainActivity : ComponentActivity() {
                 ) {
                     val navController = rememberNavController()
 
-
-
                     NavHost(navController, startDestination = "login"){
                         composable("login"){
-                            LoginPage(navController = navController, dataViewModel = viewModel, successfulLogin = {
+                            LoginPage(navController = navController, dataViewModel = viewModel,
+                                successfulLogin = {
                                 navController.navigate("workspaces")
                             })
 
@@ -86,9 +89,35 @@ class MainActivity : ComponentActivity() {
                             AddProject(navController = navController,viewModel =viewModel)
                         }
                         composable("workspaces"){
-
-
                             ListofProjects(navController = navController,viewModel =viewModel)
+                        }
+                        composable("show-project/{id}" ){ navBackStack ->
+                            val counter = navBackStack.arguments?.getString("id")
+                                _showProject.showProject(
+                                    navHostController = navController,
+                                    dataViewModel = viewModel,
+                                    project_id = counter)
+                            }
+                        composable("add-users/{id}" ){ navBackStack ->
+                            val _project_id = navBackStack.arguments?.getString("id")
+                            addUsersToProject(
+                                navHostController = navController,
+                                dataViewModel = viewModel,
+                                project_id = _project_id)
+                        }
+                        composable("search-users/{id}" ){ navBackStack ->
+                            val _project_id = navBackStack.arguments?.getString("id")
+                            searchUsers(
+                                navHostController = navController,
+                                dataViewModel = viewModel,
+                                id_project = _project_id,
+                                addedUserToProject = {
+                                    Toast.makeText(
+                                        applicationContext,
+                                        "Korisnik uspješno dodan u projekt!",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                })
                         }
                         composable("profile"){
                             UpdateProfile(navHostController = navController, viewModel = viewModel,
@@ -109,11 +138,15 @@ class MainActivity : ComponentActivity() {
                                         "Not implemented yet",
                                         Toast.LENGTH_SHORT
                                     ).show()
-                                    //TODO add navigation for history and statistics
+                                    //TODO add navigation for profile, history and statistics
                                 }
                             }, onLogOutButtonClick = {
+                                Toast.makeText(
+                                    applicationContext,
+                                    "Log Out",
+                                    Toast.LENGTH_SHORT
+                                ).show()
                                 navController.navigate("login")
-                                Authenticated.loggedInUser = null
                             }, onReturnButtonClick = {
                                 navController.popBackStack()
                             }, onEditProfileButtonClick = {
@@ -142,7 +175,6 @@ class MainActivity : ComponentActivity() {
                                 )
                             )
                             */
-
                         }
                         composable("testPreview"){
                             TestPreviewPage(
@@ -157,8 +189,6 @@ class MainActivity : ComponentActivity() {
                             )
                         }
                     }
-
-
                 }
 
                 //Permission handler
