@@ -35,6 +35,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import hr.foi.aitsg.auth.LoginViewModel
+import hr.foi.aitsg.auth.getAllUsers
 import hr.foi.aitsg.composables.CircularLoadingBar
 import hr.foi.authentication.LoginHandler
 import hr.foi.database.APIResult

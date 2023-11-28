@@ -7,27 +7,29 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SearchBar
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import hr.foi.database.DataViewModel
 import hr.foi.database.Project_user
@@ -36,7 +38,7 @@ import hr.foi.database.User
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun searchUsers(navHostController: NavHostController, dataViewModel: DataViewModel, id_project: String?) {
+fun searchUsers(navHostController: NavHostController, dataViewModel: DataViewModel, id_project: String?, addedUserToProject: ()-> Unit) {
     var project_id = id_project!!.toInt()
     var users = getAllUsers(dataViewModel)
     var text by remember { mutableStateOf("") }
@@ -47,7 +49,28 @@ fun searchUsers(navHostController: NavHostController, dataViewModel: DataViewMod
         modifier = Modifier.padding(5.dp)
     ) {
         Column() {
-            Text(text = "$id_project")
+            Row {
+                Icon(imageVector = Icons.Default.ArrowBack,
+                    contentDescription = "back" ,
+                    Modifier
+                        .clickable {
+                            navHostController.navigate("show-project/$id_project")
+                            active = false
+                        }
+                        .size(50.dp)
+                )
+                Box(
+                    Modifier.fillMaxWidth(),
+                    contentAlignment = Alignment.Center
+                )
+                {
+                    Text(text="Dodaj korisnika",
+                        Modifier.padding(16.dp),
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.tertiary)
+                }
+            }
             SearchBar(
                 modifier = Modifier.fillMaxWidth(),
                 query = text,
@@ -63,7 +86,6 @@ fun searchUsers(navHostController: NavHostController, dataViewModel: DataViewMod
                 },
                 onSearch = {
                     active = false
-
                 },
                 active = active,
                 onActiveChange = {
@@ -81,7 +103,7 @@ fun searchUsers(navHostController: NavHostController, dataViewModel: DataViewMod
                             modifier = Modifier.clickable {
                                 if (text.isNotEmpty()) {
                                     text = ""
-                                    navHostController.navigate("add-users/$id_project")
+
                                 } else {
                                     active = false
                                 }
@@ -101,10 +123,12 @@ fun searchUsers(navHostController: NavHostController, dataViewModel: DataViewMod
                         Box(
                             modifier = Modifier
                                 .fillMaxWidth(),
-                            contentAlignment = Alignment.BottomEnd
+                            contentAlignment = Alignment.CenterEnd
                         ) {
                             Button(onClick = {
                                 dataViewModel.insertProjectUser(Project_user(project_id, it.id_user!!))
+                                addedUserToProject()
+                                navHostController.navigate("show-project/$id_project")
                             })
                             {
                                 Icon(
@@ -119,3 +143,6 @@ fun searchUsers(navHostController: NavHostController, dataViewModel: DataViewMod
         }
     }
 }
+
+
+

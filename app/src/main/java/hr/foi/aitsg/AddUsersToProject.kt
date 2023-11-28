@@ -1,6 +1,7 @@
 package hr.foi.aitsg
 
 import android.annotation.SuppressLint
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -21,7 +22,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.navigation.NavHostController
 import hr.foi.database.DataViewModel
 import androidx.compose.ui.Alignment
@@ -29,14 +34,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import hr.foi.aitsg.auth.getAllProjectUsers
 import hr.foi.database.Project_user
+import hr.foi.database.User
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun addUsersToProject(navHostController: NavHostController, dataViewModel: DataViewModel, project_id : String?) {
     var id_project = project_id!!.toInt()
-    var usersOfProject = getAllProjectUsers(dataViewModel, id_project)
-
+    var usersOfProject by remember { mutableStateOf<List<User>>(emptyList()) }
+    usersOfProject = getAllProjectUsers(dataViewModel, id_project)
+    var deleteUser by remember { mutableStateOf(false) }
     Scaffold {
         Spacer(modifier = Modifier.height(50.dp))
         Column(
@@ -51,7 +57,7 @@ fun addUsersToProject(navHostController: NavHostController, dataViewModel: DataV
                 Modifier
                     .size(50.dp)
                     .clickable {
-                        navHostController.navigate("search-users/$id_project")
+                        navHostController.navigate("search-users/$project_id")
                     })
             Text(text = "Dodani korisnici",
                 Modifier.height(30.dp),
@@ -68,11 +74,13 @@ fun addUsersToProject(navHostController: NavHostController, dataViewModel: DataV
                     )
                     {
                         Text(text = it.email)
-                        Text(text = "1test")
                         Box (modifier = Modifier
                             .fillMaxWidth()
                             .clickable {
                                 dataViewModel.deleteProjectUser(Project_user(id_project, it.id_user!!))
+                                val indexofdeletedUser = usersOfProject.indexOf(it)
+                                usersOfProject.drop(indexofdeletedUser)
+                                Log.e("ui", usersOfProject.toString())
                             },
                             contentAlignment = Alignment.BottomEnd)
                         {
