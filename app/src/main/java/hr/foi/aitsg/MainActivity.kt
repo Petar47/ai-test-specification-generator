@@ -41,7 +41,6 @@ import hr.foi.interfaces.TestRetriever
 import hr.foi.scanner.ScannerTestRetriever
 import androidx.activity.result.contract.ActivityResultContracts.GetContent
 import androidx.compose.ui.platform.LocalContext
-import hr.foi.scanner.readAndProcessFile
 
 
 @AndroidEntryPoint
@@ -160,9 +159,16 @@ class MainActivity : ComponentActivity() {
                         }
 
                         composable("tests"){
+                            multiplePermissionResultLauncher.launch(
+                                arrayOf(
+                                    android.Manifest.permission.CAMERA,
+                                    android.Manifest.permission.READ_EXTERNAL_STORAGE
+                                )
+                            )
+                            testRetrieverType="upload"
                             //on report page when the user tries to create new report then he chooses the type and navigates here
                             val testRetriever: TestRetriever = TestRetrieverFactory.getRetriever(testRetrieverType)
-
+                            Log.d("Test","testicc")
                             Column(){
                                 testRetriever.showUI(getTestData = {testData ->
                                     testContent = testData
@@ -171,15 +177,8 @@ class MainActivity : ComponentActivity() {
                             }
 
                             //TODO add to report page when the user chooses to scan the file with camera
-                            /*
                             //asks for permissions
-                            multiplePermissionResultLauncher.launch(
-                                arrayOf(
-                                    android.Manifest.permission.CAMERA,
-                                    //TODO add permissions if needed
-                                )
-                            )
-                            */
+
                         }
                         composable("testPreview"){
                             TestPreviewPage(
@@ -192,18 +191,6 @@ class MainActivity : ComponentActivity() {
                                     navController.navigate("tests")
                                 }
                             )
-                        }
-                        composable("FileScanner"){
-                            Log.d("Test","testicc")
-                            multiplePermissionResultLauncher.launch(
-                                arrayOf(
-                                    android.Manifest.permission.READ_EXTERNAL_STORAGE
-                                )
-                            )
-                            val context = LocalContext.current
-                            val getContent = rememberLauncherForActivityResult(contract = GetContent()) { uri: android.net.Uri? ->
-                                uri?.let { readAndProcessFile(context.contentResolver, it) }
-                            }
                         }
                     }
                 }
