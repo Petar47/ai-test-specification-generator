@@ -5,6 +5,8 @@ import android.net.Uri
 import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.material3.Button
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 import hr.foi.interfaces.TestRetriever
@@ -26,10 +28,13 @@ class FileScanner : TestRetriever {
                     stringBuilder.append(line).append("\n")
                 }
                 val fileContent = stringBuilder.toString()
+                getTestData(fileContent)
                 Log.d("Datoteka",fileContent)
                 reader.close() }
         }
-
+        Button(onClick = { getContent.launch("*/*") }) {
+            Text("Odaberi datoteku")
+        }
     }
 }
 

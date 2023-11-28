@@ -165,10 +165,8 @@ class MainActivity : ComponentActivity() {
                                     android.Manifest.permission.READ_EXTERNAL_STORAGE
                                 )
                             )
-                            testRetrieverType="upload"
                             //on report page when the user tries to create new report then he chooses the type and navigates here
                             val testRetriever: TestRetriever = TestRetrieverFactory.getRetriever(testRetrieverType)
-                            Log.d("Test","testicc")
                             Column(){
                                 testRetriever.showUI(getTestData = {testData ->
                                     testContent = testData
@@ -202,7 +200,6 @@ class MainActivity : ComponentActivity() {
                         PermissionDialog(
                             permissionTextProvider = when (permission) {
                                 android.Manifest.permission.CAMERA -> CameraPermissionTextProvider()
-                                android.Manifest.permission.READ_EXTERNAL_STORAGE -> CameraPermissionTextProvider()
                                 else -> return@forEach
                                 //TODO add more permissions if needed
                             },

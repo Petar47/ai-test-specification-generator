@@ -121,7 +121,7 @@ fun ProjectList(projects: List<Project>, navController: NavHostController) {
         floatingActionButton = {
             FloatingActionButton(
                 onClick = {
-                    navController.navigate("tests") },
+                    navController.navigate("addProject") },
                 content = { Icon(imageVector = Icons.Default.Add, contentDescription = null) },
                 containerColor = MaterialTheme.colorScheme.primary
             )
