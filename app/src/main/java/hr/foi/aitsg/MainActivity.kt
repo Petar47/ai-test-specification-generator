@@ -38,6 +38,10 @@ import hr.foi.database.DataViewModel
 import hr.foi.database.User
 import hr.foi.interfaces.TestRetriever
 import hr.foi.scanner.ScannerTestRetriever
+import androidx.activity.result.contract.ActivityResultContracts.GetContent
+import androidx.compose.ui.platform.LocalContext
+import hr.foi.scanner.readAndProcessFile
+
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -187,6 +191,12 @@ class MainActivity : ComponentActivity() {
                                     navController.navigate("tests")
                                 }
                             )
+                        }
+                        composable("FileScanner"){
+                            val context = LocalContext.current
+                            val getContent = rememberLauncherForActivityResult(contract = GetContent()) { uri: android.net.Uri? ->
+                                uri?.let { readAndProcessFile(context.contentResolver, it) }
+                            }
                         }
                     }
                 }
