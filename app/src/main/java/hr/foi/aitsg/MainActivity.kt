@@ -6,6 +6,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -193,6 +194,7 @@ class MainActivity : ComponentActivity() {
                             )
                         }
                         composable("FileScanner"){
+                            Log.d("Test","testicc")
                             multiplePermissionResultLauncher.launch(
                                 arrayOf(
                                     android.Manifest.permission.READ_EXTERNAL_STORAGE
