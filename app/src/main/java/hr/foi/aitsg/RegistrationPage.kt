@@ -29,6 +29,7 @@ fun RegistrationPage(navController: NavHostController, viewModel: DataViewModel)
     var firstName by remember { mutableStateOf("") }
     var lastName by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
+    var passwordConfirm by remember { mutableStateOf("") }
 
     Column(
         modifier = Modifier
@@ -82,7 +83,24 @@ fun RegistrationPage(navController: NavHostController, viewModel: DataViewModel)
             label = { Text(stringResource(R.string.password)) },
             keyboardOptions = KeyboardOptions.Default.copy(
                 keyboardType = KeyboardType.Password,
-                imeAction = ImeAction.Done
+                imeAction = ImeAction.Done,
+                autoCorrect = false
+
+            ),
+            visualTransformation = PasswordVisualTransformation(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 16.dp)
+        )
+        OutlinedTextField(
+            value = passwordConfirm,
+            onValueChange = { passwordConfirm = it },
+            label = { Text(stringResource(R.string.passwordConfirm)) },
+            keyboardOptions = KeyboardOptions.Default.copy(
+                keyboardType = KeyboardType.Password,
+                imeAction = ImeAction.Done,
+                autoCorrect = false
+
             ),
             visualTransformation = PasswordVisualTransformation(),
             modifier = Modifier
@@ -93,7 +111,7 @@ fun RegistrationPage(navController: NavHostController, viewModel: DataViewModel)
         // Register Button
         Button(
             onClick = {
-                if(validateData(email, password)) {
+                if(validateData(email, password, passwordConfirm)) {
                     password = MessageDigest.getInstance("SHA-256").digest(password.toByteArray()).fold("", { str, it -> str + "%02x".format(it) })
                     password += MessageDigest.getInstance("SHA-256").digest(email.toByteArray()).fold("", { str, it -> str + "%02x".format(it) })
                     password = MessageDigest.getInstance("SHA-256").digest(password.toByteArray()).fold("", { str, it -> str + "%02x".format(it) })
@@ -123,6 +141,6 @@ fun RegistrationPage(navController: NavHostController, viewModel: DataViewModel)
     }
 }
 
-fun validateData(email: String, password: String):Boolean {
-    return password.length >= 6 && password.contains(Regex("[a-z]")) && password.contains(Regex("[A-Z]")) && password.contains(Regex("[0-9]"))
+fun validateData(email: String, password: String, passwordConfirm: String):Boolean {
+    return password.length >= 6 && password.contains(Regex("[a-z]")) && password.contains(Regex("[A-Z]")) && password.contains(Regex("[0-9]")) && password == passwordConfirm
 }
