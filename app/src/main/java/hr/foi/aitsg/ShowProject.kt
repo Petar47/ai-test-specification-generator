@@ -30,7 +30,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import hr.foi.aitsg.auth.getAllProjectReports
 import hr.foi.database.DataViewModel
 import hr.foi.database.DefaultDataRepository
 import hr.foi.database.Report
@@ -51,7 +50,7 @@ class ShowProject {
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .clickable { navHostController.navigate("add-users/$project_id") },
+                        .clickable { navHostController.navigate("search-users/$project_id")},
                     contentAlignment = Alignment.BottomEnd
                 ){
                     Image(

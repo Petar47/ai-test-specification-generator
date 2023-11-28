@@ -62,7 +62,7 @@ dependencies {
     implementation(project(mapOf("path" to ":core:interfaces")))
 
     val nav_version = "2.7.4"
-
+    implementation ("androidx.compose.material3:material3:1.2.0-alpha11")
     implementation("androidx.core:core-ktx:1.9.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.1")
 
