@@ -6,6 +6,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -38,6 +39,9 @@ import hr.foi.database.DataViewModel
 import hr.foi.database.User
 import hr.foi.interfaces.TestRetriever
 import hr.foi.scanner.ScannerTestRetriever
+import androidx.activity.result.contract.ActivityResultContracts.GetContent
+import androidx.compose.ui.platform.LocalContext
+
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -155,9 +159,14 @@ class MainActivity : ComponentActivity() {
                         }
 
                         composable("tests"){
+                            multiplePermissionResultLauncher.launch(
+                                arrayOf(
+                                    android.Manifest.permission.CAMERA,
+                                    android.Manifest.permission.READ_EXTERNAL_STORAGE
+                                )
+                            )
                             //on report page when the user tries to create new report then he chooses the type and navigates here
                             val testRetriever: TestRetriever = TestRetrieverFactory.getRetriever(testRetrieverType)
-
                             Column(){
                                 testRetriever.showUI(getTestData = {testData ->
                                     testContent = testData
@@ -166,15 +175,8 @@ class MainActivity : ComponentActivity() {
                             }
 
                             //TODO add to report page when the user chooses to scan the file with camera
-                            /*
                             //asks for permissions
-                            multiplePermissionResultLauncher.launch(
-                                arrayOf(
-                                    android.Manifest.permission.CAMERA,
-                                    //TODO add permissions if needed
-                                )
-                            )
-                            */
+
                         }
                         composable("testPreview"){
                             TestPreviewPage(
