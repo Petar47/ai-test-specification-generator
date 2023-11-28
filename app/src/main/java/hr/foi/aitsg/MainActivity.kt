@@ -193,6 +193,11 @@ class MainActivity : ComponentActivity() {
                             )
                         }
                         composable("FileScanner"){
+                            multiplePermissionResultLauncher.launch(
+                                arrayOf(
+                                    android.Manifest.permission.READ_EXTERNAL_STORAGE,
+                                )
+                            )
                             val context = LocalContext.current
                             val getContent = rememberLauncherForActivityResult(contract = GetContent()) { uri: android.net.Uri? ->
                                 uri?.let { readAndProcessFile(context.contentResolver, it) }
