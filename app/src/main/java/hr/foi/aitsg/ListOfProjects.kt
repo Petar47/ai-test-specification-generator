@@ -115,6 +115,7 @@ fun ProjectList(projects: List<Project>, navController: NavHostController) {
     ) {
         if (projects.isNotEmpty()) {
             ProjectListView(projects, navController)
+        }
     }
 }
 
