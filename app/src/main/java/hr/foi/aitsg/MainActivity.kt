@@ -41,6 +41,7 @@ import hr.foi.interfaces.TestRetriever
 import hr.foi.scanner.ScannerTestRetriever
 import androidx.activity.result.contract.ActivityResultContracts.GetContent
 import androidx.compose.ui.platform.LocalContext
+import hr.foi.scanner.ScannerPage
 
 
 @AndroidEntryPoint
@@ -158,13 +159,14 @@ class MainActivity : ComponentActivity() {
                             })
                         }
 
-                        composable("tests"){
+                        composable("tests/{type}"){navBackStack ->
                             multiplePermissionResultLauncher.launch(
                                 arrayOf(
                                     android.Manifest.permission.CAMERA,
                                     android.Manifest.permission.READ_EXTERNAL_STORAGE
                                 )
                             )
+                            testRetrieverType = navBackStack.arguments?.getString("type").toString()
                             //on report page when the user tries to create new report then he chooses the type and navigates here
                             val testRetriever: TestRetriever = TestRetrieverFactory.getRetriever(testRetrieverType)
                             Column(){
