@@ -185,6 +185,8 @@ class MainActivity : ComponentActivity() {
                                 testData = testContent,
                                 onClickNext = {testData ->
                                     testContent = testData
+                                    val openAIHandler = OpenAIHandler ()
+                                    openAIHandler.makeQuery(testContent)
                                     //TODO navigate to the report generation
                                 },
                                 onClickBack = {
