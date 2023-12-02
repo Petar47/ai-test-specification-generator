@@ -1,4 +1,7 @@
+import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
 import org.jetbrains.kotlin.kapt3.base.Kapt.kapt
+import java.util.Properties
+import java.io.FileInputStream
 
 plugins {
     id("com.android.application")
@@ -23,6 +26,9 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
+
+        val openaiKey: String = gradleLocalProperties(rootDir).getProperty("openai.key") ?: ""
+        buildConfigField("String", "OPENAI_KEY", "\"$openaiKey\"")
     }
 
     buildTypes {
@@ -43,6 +49,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.4.3"

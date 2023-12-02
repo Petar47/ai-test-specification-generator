@@ -2,6 +2,7 @@ package hr.foi.aitsg
 
 class OpenAIHandler() {
     val response = OpenAIResponse()
+    val openaiKey = BuildConfig.OPENAI_KEY
     private var query = ""
     fun makeQuery(input: String) {
         if(input.startsWith("#include")) {
