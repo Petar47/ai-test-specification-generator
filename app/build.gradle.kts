@@ -1,7 +1,5 @@
 import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
 import org.jetbrains.kotlin.kapt3.base.Kapt.kapt
-import java.util.Properties
-import java.io.FileInputStream
 
 plugins {
     id("com.android.application")
@@ -95,6 +93,8 @@ dependencies {
 
     implementation("com.google.dagger:hilt-android:2.44")
     kapt("com.google.dagger:hilt-android-compiler:2.44")
+
+    implementation("com.aallam.openai:openai-client:3.6.1")
 }
 kapt {
     correctErrorTypes = true
