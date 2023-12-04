@@ -1,5 +1,6 @@
 package hr.foi.database
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -77,7 +78,8 @@ class DataViewModel @Inject constructor(
     fun insertProjectUser(projectUser: Project_user){
         viewModelScope.launch {
             repository.insertProjectUser(projectUser).collectLatest { data ->
-                _uiState.update { data }
+                // ui state update freezes the app. The update is unnecesary because the app navigates to another page
+                //_uiState.update { data }
             }
         }
     }

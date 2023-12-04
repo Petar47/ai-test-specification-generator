@@ -100,6 +100,7 @@ fun AddProject(navController: NavHostController, viewModel: DataViewModel) {
                         ))
                         //showMessage = true
                         scope.launch { snackbarHostState.showSnackbar("Projekt uspješno spremljen") }
+                        navController.navigate("workspaces")
                     },
                         modifier = Modifier.fillMaxWidth().height(56.dp).padding(5.dp)
                         ) {

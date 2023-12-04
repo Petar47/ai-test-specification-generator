@@ -27,11 +27,11 @@ fun getAllProjectReports(dataViewModel: DataViewModel, id_project: Int): List<Re
             dataViewModel.uiState.collectLatest { data ->
                 when (data) {
                     is APIResult.Error -> {
-                        Log.e("Error Data - getReports", "error getAllProjectReports")
+                        Log.e("Error Data - getReports", "error getAllProjectReports: ${data.message}")
                     }
 
                     APIResult.Loading -> {
-                        Log.e("Loading Data - getReports", "loading getAllProjectReports")
+                        Log.d("Loading Data - getReports", "loading getAllProjectReports")
                     }
 
                     is APIResult.Success -> {
@@ -46,6 +46,6 @@ fun getAllProjectReports(dataViewModel: DataViewModel, id_project: Int): List<Re
             }
         }
     }
-    Log.e("Success - getReports", reports.toString())
+    Log.d("Success - getReports", reports.toString())
     return reports
 }
