@@ -48,7 +48,7 @@ import hr.foi.database.User
 @Composable
 fun searchUsers(navHostController: NavHostController, dataViewModel: DataViewModel, id_project: String?, addedUserToProject: ()-> Unit) {
     var project_id = id_project!!.toInt()
-    var users = getAllUsers(dataViewModel)
+    val users = getAllUsers(dataViewModel)
     var text by remember { mutableStateOf("") }
     var active by remember { mutableStateOf(false) }
     var matchingUsers = mutableListOf<User>()

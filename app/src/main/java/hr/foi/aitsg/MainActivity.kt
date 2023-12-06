@@ -41,6 +41,7 @@ import hr.foi.interfaces.TestRetriever
 import hr.foi.scanner.ScannerTestRetriever
 import androidx.activity.result.contract.ActivityResultContracts.GetContent
 import androidx.compose.ui.platform.LocalContext
+import androidx.core.content.ContextCompat
 import hr.foi.scanner.ScannerPage
 
 
@@ -48,9 +49,11 @@ import hr.foi.scanner.ScannerPage
 class MainActivity : ComponentActivity() {
     private val viewModel by viewModels<DataViewModel>()
     private val _showProject: ShowProject = ShowProject()
+
     @SuppressLint("SuspiciousIndentation")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setContent {
             AITSGTheme {
                 val permissionViewModel = viewModel<PermissionViewModel>()
@@ -67,6 +70,7 @@ class MainActivity : ComponentActivity() {
                             }
                     }
                 )
+
                 //contains the type of the retriever: scanner, import -> users selects the type and then the factory creates the type class
                 var testRetrieverType: String = "scanner"
                 //contains the content of the test -> its use is to save the test when the app is navigating from scanner to preview
@@ -98,11 +102,13 @@ class MainActivity : ComponentActivity() {
                         }
                         composable("show-project/{id}" ){ navBackStack ->
                             Log.d("MyTag", "Before composable")
+                            val context = LocalContext.current
                             val counter = navBackStack.arguments?.getString("id")
                                 _showProject.showProject(
                                     navHostController = navController,
                                     dataViewModel = viewModel,
-                                    project_id = counter)
+                                    project_id = counter,
+                                    context)
                             }
                         composable("add-users/{id}" ){ navBackStack ->
                             val _project_id = navBackStack.arguments?.getString("id")
