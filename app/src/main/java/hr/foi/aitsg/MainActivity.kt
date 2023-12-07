@@ -41,6 +41,7 @@ import hr.foi.interfaces.TestRetriever
 import hr.foi.scanner.ScannerTestRetriever
 import androidx.activity.result.contract.ActivityResultContracts.GetContent
 import androidx.compose.ui.platform.LocalContext
+import dagger.hilt.android.qualifiers.ApplicationContext
 import hr.foi.scanner.ScannerPage
 
 
@@ -79,7 +80,7 @@ class MainActivity : ComponentActivity() {
                 ) {
                     val navController = rememberNavController()
 
-                    NavHost(navController, startDestination = "login"){
+                    NavHost(navController, startDestination = "testGeneration"){
                         composable("login"){
                             LoginPage(navController = navController, dataViewModel = viewModel,
                                 successfulLogin = {
@@ -194,6 +195,17 @@ class MainActivity : ComponentActivity() {
                                     navController.navigate("tests")
                                 }
                             )
+                        }
+
+                        composable("testGeneration"){
+                            Button(onClick = {
+                                val generator = ReportGenerator()
+                                val workbook = generator.createWorkbook()
+                                generator.saveExcel(workbook, "noviIzvjestaj", applicationContext)
+                            })
+                            {
+                                Text("Generiraj")
+                            }
                         }
                     }
                 }
