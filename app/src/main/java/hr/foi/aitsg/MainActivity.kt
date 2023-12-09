@@ -41,6 +41,7 @@ import hr.foi.interfaces.TestRetriever
 import hr.foi.scanner.ScannerTestRetriever
 import androidx.activity.result.contract.ActivityResultContracts.GetContent
 import androidx.compose.ui.platform.LocalContext
+import dagger.hilt.android.qualifiers.ApplicationContext
 import androidx.core.content.ContextCompat
 import hr.foi.scanner.ScannerPage
 
@@ -49,11 +50,11 @@ import hr.foi.scanner.ScannerPage
 class MainActivity : ComponentActivity() {
     private val viewModel by viewModels<DataViewModel>()
     private val _showProject: ShowProject = ShowProject()
-
     @SuppressLint("SuspiciousIndentation")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        // setPropertires - for report generator
+        setProperties()
         setContent {
             AITSGTheme {
                 val permissionViewModel = viewModel<PermissionViewModel>()
@@ -70,7 +71,6 @@ class MainActivity : ComponentActivity() {
                             }
                     }
                 )
-
                 //contains the type of the retriever: scanner, import -> users selects the type and then the factory creates the type class
                 var testRetrieverType: String = "scanner"
                 //contains the content of the test -> its use is to save the test when the app is navigating from scanner to preview
@@ -233,4 +233,13 @@ fun Activity.openAppSettings(){
         Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
         Uri.fromParts("package", packageName, null)
     ).also(::startActivity)
+}
+
+private fun setProperties(){
+    System.setProperty("javax.xml.stream.XMLInputFactory", "com.fasterxml.aalto.stax.InputFactoryImpl")
+    System.setProperty("javax.xml.stream.XMLOutputFactory", "com.fasterxml.aalto.stax.OutputFactoryImpl")
+    System.setProperty("javax.xml.stream.XMLEventFactory", "com.fasterxml.aalto.stax.EventFactoryImpl")
+    System.setProperty("org.apache.poi.javax.xml.stream.XMLInputFactory", "com.fasterxml.aalto.stax.InputFactoryImpl")
+    System.setProperty("org.apache.poi.javax.xml.stream.XMLOutputFactory", "com.fasterxml.aalto.stax.OutputFactoryImpl")
+    System.setProperty("org.apache.poi.javax.xml.stream.XMLEventFactory", "com.fasterxml.aalto.stax.EventFactoryImpl")
 }
