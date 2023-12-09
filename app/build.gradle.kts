@@ -88,6 +88,11 @@ dependencies {
 
     implementation("com.google.dagger:hilt-android:2.44")
     kapt("com.google.dagger:hilt-android-compiler:2.44")
+
+    //For generating excel files
+    //implementation("com.fasterxml:aalto-xml:1.0.0")
+    implementation("com.github.SUPERCILEX.poi-android:poi:3.17")
+    compileOnly("org.apache.poi:poi-ooxml:3.17")
 }
 kapt {
     correctErrorTypes = true
