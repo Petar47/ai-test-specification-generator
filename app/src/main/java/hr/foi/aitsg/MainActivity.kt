@@ -52,6 +52,8 @@ class MainActivity : ComponentActivity() {
     @SuppressLint("SuspiciousIndentation")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        // setPropertires - for report generator
+        setProperties()
         setContent {
             AITSGTheme {
                 val permissionViewModel = viewModel<PermissionViewModel>()
@@ -80,7 +82,7 @@ class MainActivity : ComponentActivity() {
                 ) {
                     val navController = rememberNavController()
 
-                    NavHost(navController, startDestination = "testGeneration"){
+                    NavHost(navController, startDestination = "login"){
                         composable("login"){
                             LoginPage(navController = navController, dataViewModel = viewModel,
                                 successfulLogin = {
@@ -196,17 +198,6 @@ class MainActivity : ComponentActivity() {
                                 }
                             )
                         }
-
-                        composable("testGeneration"){
-                            Button(onClick = {
-                                val generator = ReportGenerator()
-                                val workbook = generator.createWorkbook()
-                                generator.saveExcel(workbook, "noviIzvjestaj", applicationContext)
-                            })
-                            {
-                                Text("Generiraj")
-                            }
-                        }
                     }
                 }
 
@@ -239,4 +230,13 @@ fun Activity.openAppSettings(){
         Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
         Uri.fromParts("package", packageName, null)
     ).also(::startActivity)
+}
+
+private fun setProperties(){
+    System.setProperty("javax.xml.stream.XMLInputFactory", "com.fasterxml.aalto.stax.InputFactoryImpl")
+    System.setProperty("javax.xml.stream.XMLOutputFactory", "com.fasterxml.aalto.stax.OutputFactoryImpl")
+    System.setProperty("javax.xml.stream.XMLEventFactory", "com.fasterxml.aalto.stax.EventFactoryImpl")
+    System.setProperty("org.apache.poi.javax.xml.stream.XMLInputFactory", "com.fasterxml.aalto.stax.InputFactoryImpl")
+    System.setProperty("org.apache.poi.javax.xml.stream.XMLOutputFactory", "com.fasterxml.aalto.stax.OutputFactoryImpl")
+    System.setProperty("org.apache.poi.javax.xml.stream.XMLEventFactory", "com.fasterxml.aalto.stax.EventFactoryImpl")
 }

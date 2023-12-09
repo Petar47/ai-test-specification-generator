@@ -24,18 +24,10 @@ import java.io.FileOutputStream
 import java.io.IOException
 
 class ReportGenerator {
-    private fun setProperties(){
-        System.setProperty("javax.xml.stream.XMLInputFactory", "com.fasterxml.aalto.stax.InputFactoryImpl")
-        System.setProperty("javax.xml.stream.XMLOutputFactory", "com.fasterxml.aalto.stax.OutputFactoryImpl")
-        System.setProperty("javax.xml.stream.XMLEventFactory", "com.fasterxml.aalto.stax.EventFactoryImpl")
-        System.setProperty("org.apache.poi.javax.xml.stream.XMLInputFactory", "com.fasterxml.aalto.stax.InputFactoryImpl")
-        System.setProperty("org.apache.poi.javax.xml.stream.XMLOutputFactory", "com.fasterxml.aalto.stax.OutputFactoryImpl")
-        System.setProperty("org.apache.poi.javax.xml.stream.XMLEventFactory", "com.fasterxml.aalto.stax.EventFactoryImpl")
-    }
-    fun saveExcel(workbook: Workbook, fileName: String, context: Context){
+    fun saveExcelToTempDirectory(workbook: Workbook, context: Context) : String{
 
-        val subdirectoryName = "reports"
-        val cachedFileName = "$fileName.xlsx"
+        val subdirectoryName = ".reports"
+        val cachedFileName = "tempReport.xlsx"
 
         // Get the internal storage directory for your app's files
         val filesDir = context.filesDir
@@ -63,16 +55,38 @@ class ReportGenerator {
             Log.e("Generator", "Error: ", e)
         }
 
-
+        return cached_path
     }
-    fun createWorkbook(): Workbook {
-        setProperties()
+    fun deleteTempReport(path: String){
+        val cachedFile = File(path)
+        if (cachedFile.exists()) {
+            cachedFile.delete()
+        }
+    }
+
+    fun saveExcel(workbook: Workbook, fileName: String, path: String, context: Context) : String {
+        val cached_path = File(path, fileName).absolutePath
+
+        try{
+            val fileOut = FileOutputStream(cached_path)
+            workbook.write(fileOut)
+            Log.d("Generator", "Workbook written to the file")
+            fileOut.close()
+        } catch(e: FileNotFoundException){
+            Log.e("Generator", "Error: ", e)
+        } catch(e: IOException){
+            Log.e("Generator", "Error: ", e)
+        }
+
+        return cached_path
+    }
+    fun createWorkbook(json: String): Workbook {
         val workbook = XSSFWorkbook()
         val sheet: Sheet = workbook.createSheet()
         val headerStyle = getHeaderStyle(workbook)
         createSheetHeader(sheet, headerStyle)
 
-
+        /*
         val mockJson = "{\n" +
                 "  \"isTest\": true," +
                 "  \"name\": \"GoogleTest_Cplusplus\"," +
@@ -101,8 +115,10 @@ class ReportGenerator {
                 "  ]" +
                 "}"
 
+         */
+
         val bodyCellStyle = getBodyStyle(workbook)
-        generateTable(mockJson, sheet, bodyCellStyle)
+        generateTable(json, sheet, bodyCellStyle)
 
         return workbook
     }
