@@ -19,7 +19,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
@@ -34,6 +38,8 @@ import hr.foi.interfaces.TestRetriever
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 
 
 @AndroidEntryPoint
@@ -178,16 +184,27 @@ class MainActivity : ComponentActivity() {
                                 testData = testContent,
                                 onClickNext = {testData ->
                                     testContent = testData
-                                    val openAIHandler = OpenAIHandler()
-                                    CoroutineScope(Dispatchers.Default).launch {
-                                        openAIHandler.makeQuery(testContent)
-                                    }
+                                    navController.navigate("report-preview")
                                     //TODO navigate to the report generation
                                 },
                                 onClickBack = {
                                     navController.navigate("tests")
                                 }
                             )
+                        }
+                        composable("report-preview") {
+                            val openAIHandler = OpenAIHandler()
+                            var response by remember { mutableStateOf<OpenAIResponse?>(null) }
+                            var isLoading by remember { mutableStateOf(true) }
+
+                            if (isLoading) {
+                                LaunchedEffect(Unit) {
+                                    response = openAIHandler.makeQuery(testContent)
+                                    isLoading = false
+                                }
+                            }
+
+                            response?.let { it1 -> ReportPreviewPage(it1) }
                         }
                     }
                 }

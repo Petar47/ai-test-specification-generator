@@ -6,4 +6,6 @@ plugins {
 
     id("com.google.dagger.hilt.android") version "2.44" apply false
 
+    kotlin("plugin.serialization") version "1.6.0"
+
 }

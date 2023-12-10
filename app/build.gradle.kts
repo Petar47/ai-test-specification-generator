@@ -95,6 +95,8 @@ dependencies {
     kapt("com.google.dagger:hilt-android-compiler:2.44")
 
     implementation("com.aallam.openai:openai-client:3.6.1")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
+
 }
 kapt {
     correctErrorTypes = true
