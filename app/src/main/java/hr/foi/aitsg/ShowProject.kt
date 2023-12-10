@@ -219,7 +219,7 @@ class ShowProject {
                                         .background(MaterialTheme.colorScheme.tertiary)
                                         .padding(5.dp)
                                         .clickable {
-                                            sendEmail(context)
+                                            sendEmail(context,it.name)
                                         },
                                     colorFilter = ColorFilter.tint(Color.White)
                                 )

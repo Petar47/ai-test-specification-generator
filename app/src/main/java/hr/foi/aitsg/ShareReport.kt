@@ -5,11 +5,11 @@ import android.content.Intent
 import android.net.Uri
 import android.util.Log
 import android.widget.Toast
-import androidx.activity.ComponentActivity
-import androidx.compose.ui.platform.LocalContext
+import androidx.core.content.FileProvider
 import java.io.File
 
-fun sendEmail(context : Context){
+
+fun sendEmail(context : Context, name : String){
     val generator = ReportGenerator()
     val mockJson = "{\n" +
             "  \"isTest\": true," +
@@ -40,21 +40,19 @@ fun sendEmail(context : Context){
             "}"
         val workbook = generator.createWorkbook(mockJson)
         val cachedPath = generator.saveExcelToTempDirectory(workbook, context)
-        val fileUri = cachedPath
-        val emailIntent = Intent(Intent.ACTION_SEND).apply {
-            //type = "text/plain"
-            type = "application/vnd.ms-excel"
-            putExtra(Intent.EXTRA_EMAIL, arrayOf("iva.kustura@gmail.com"))
-            putExtra(Intent.EXTRA_SUBJECT, "Subject")
-            putExtra(Intent.EXTRA_STREAM, fileUri)
-            /*val filePath = File(context.filesDir, "Download/File.xlsx") */
-            Toast.makeText(context, "$cachedPath", Toast.LENGTH_SHORT).show()
+        val file = File(context.filesDir, ".reports/tempReport.xlsx")
+        val fileUri: Uri = FileProvider.getUriForFile(context, "hr.foi.aitsg.fileprovider", file)
 
+
+        val emailIntent = Intent(Intent.ACTION_SEND).apply {
+            type = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+            putExtra(Intent.EXTRA_SUBJECT, name)
+            putExtra(Intent.EXTRA_STREAM, fileUri)
+            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
         }
         if (emailIntent.resolveActivity(context.packageManager) != null) {
                 context.startActivity(emailIntent)
         } else {
                 Toast.makeText(context, "No email app installed", Toast.LENGTH_SHORT).show()
         }
-
     }
