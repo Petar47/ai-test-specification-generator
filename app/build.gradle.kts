@@ -67,7 +67,7 @@ dependencies {
     implementation(project(mapOf("path" to ":core:interfaces")))
 
     val nav_version = "2.7.4"
-    implementation ("androidx.compose.material3:material3:1.2.0-alpha11")
+    implementation ("androidx.compose.material3:material3:1.2.0-alpha12")
     implementation("androidx.core:core-ktx:1.9.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.1")
 
@@ -96,7 +96,10 @@ dependencies {
 
     implementation("com.aallam.openai:openai-client:3.6.1")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
-
+    //For generating excel files
+    //implementation("com.fasterxml:aalto-xml:1.0.0")
+    implementation("com.github.SUPERCILEX.poi-android:poi:3.17")
+    compileOnly("org.apache.poi:poi-ooxml:3.17")
 }
 kapt {
     correctErrorTypes = true

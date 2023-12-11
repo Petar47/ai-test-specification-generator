@@ -40,7 +40,12 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-
+import hr.foi.scanner.ScannerTestRetriever
+import androidx.activity.result.contract.ActivityResultContracts.GetContent
+import androidx.compose.ui.platform.LocalContext
+import dagger.hilt.android.qualifiers.ApplicationContext
+import androidx.core.content.ContextCompat
+import hr.foi.scanner.ScannerPage
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -49,6 +54,8 @@ class MainActivity : ComponentActivity() {
     @SuppressLint("SuspiciousIndentation")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        // setPropertires - for report generator
+        setProperties()
         setContent {
             AITSGTheme {
                 val permissionViewModel = viewModel<PermissionViewModel>()
@@ -95,11 +102,14 @@ class MainActivity : ComponentActivity() {
                             ListofProjects(navController = navController,viewModel =viewModel)
                         }
                         composable("show-project/{id}" ){ navBackStack ->
+                            Log.d("MyTag", "Before composable")
+                            val context = LocalContext.current
                             val counter = navBackStack.arguments?.getString("id")
                                 _showProject.showProject(
                                     navHostController = navController,
                                     dataViewModel = viewModel,
-                                    project_id = counter)
+                                    project_id = counter,
+                                    context)
                             }
                         composable("add-users/{id}" ){ navBackStack ->
                             val _project_id = navBackStack.arguments?.getString("id")
@@ -238,4 +248,13 @@ fun Activity.openAppSettings(){
         Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
         Uri.fromParts("package", packageName, null)
     ).also(::startActivity)
+}
+
+private fun setProperties(){
+    System.setProperty("javax.xml.stream.XMLInputFactory", "com.fasterxml.aalto.stax.InputFactoryImpl")
+    System.setProperty("javax.xml.stream.XMLOutputFactory", "com.fasterxml.aalto.stax.OutputFactoryImpl")
+    System.setProperty("javax.xml.stream.XMLEventFactory", "com.fasterxml.aalto.stax.EventFactoryImpl")
+    System.setProperty("org.apache.poi.javax.xml.stream.XMLInputFactory", "com.fasterxml.aalto.stax.InputFactoryImpl")
+    System.setProperty("org.apache.poi.javax.xml.stream.XMLOutputFactory", "com.fasterxml.aalto.stax.OutputFactoryImpl")
+    System.setProperty("org.apache.poi.javax.xml.stream.XMLEventFactory", "com.fasterxml.aalto.stax.EventFactoryImpl")
 }
