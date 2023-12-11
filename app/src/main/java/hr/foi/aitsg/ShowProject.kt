@@ -1,6 +1,7 @@
 package hr.foi.aitsg
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -47,14 +48,14 @@ import hr.foi.database.Report
 
 class ShowProject {
     var id_project: Int? = null
-
     @Composable
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
     @OptIn(ExperimentalMaterial3Api::class)
     fun showProject(
         navHostController: NavHostController,
         dataViewModel: DataViewModel,
-        project_id: String?
+        project_id: String?,
+        context : Context
     ) {
         var id_project = project_id!!.toInt()
         var reports = getAllProjectReports(dataViewModel = dataViewModel, id_project = id_project)
@@ -131,7 +132,7 @@ class ShowProject {
                 }
 
             ) {
-                BodyView(reports, navHostController, project_id)
+                BodyView(reports, navHostController, project_id, context)
             }
 
 
@@ -140,7 +141,7 @@ class ShowProject {
 
 
     private @Composable
-    fun BodyView(reports: List<Report>, navHostController: NavHostController, project_id: String) {
+    fun BodyView(reports: List<Report>, navHostController: NavHostController, project_id: String, context: Context) {
         Column {
             Spacer(modifier = Modifier.height(65.dp))
             Row(
@@ -216,7 +217,10 @@ class ShowProject {
                                         .size(30.dp)
                                         .clip(shape = CircleShape)
                                         .background(MaterialTheme.colorScheme.tertiary)
-                                        .padding(5.dp),
+                                        .padding(5.dp)
+                                        .clickable {
+                                            sendEmail(context,it.name)
+                                        },
                                     colorFilter = ColorFilter.tint(Color.White)
                                 )
                                 Spacer(modifier = Modifier.width(15.dp))

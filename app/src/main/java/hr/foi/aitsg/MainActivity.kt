@@ -42,6 +42,7 @@ import hr.foi.scanner.ScannerTestRetriever
 import androidx.activity.result.contract.ActivityResultContracts.GetContent
 import androidx.compose.ui.platform.LocalContext
 import dagger.hilt.android.qualifiers.ApplicationContext
+import androidx.core.content.ContextCompat
 import hr.foi.scanner.ScannerPage
 
 
@@ -101,11 +102,13 @@ class MainActivity : ComponentActivity() {
                         }
                         composable("show-project/{id}" ){ navBackStack ->
                             Log.d("MyTag", "Before composable")
+                            val context = LocalContext.current
                             val counter = navBackStack.arguments?.getString("id")
                                 _showProject.showProject(
                                     navHostController = navController,
                                     dataViewModel = viewModel,
-                                    project_id = counter)
+                                    project_id = counter,
+                                    context)
                             }
                         composable("add-users/{id}" ){ navBackStack ->
                             val _project_id = navBackStack.arguments?.getString("id")
