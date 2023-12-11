@@ -16,13 +16,13 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -31,20 +31,21 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 
 import dagger.hilt.android.AndroidEntryPoint
-import hr.foi.aitsg.auth.getAllProjectUsers
-import hr.foi.aitsg.auth.getAllUsers
 import hr.foi.aitsg.auth.searchUsers
 import hr.foi.aitsg.ui.theme.AITSGTheme
 import hr.foi.database.DataViewModel
-import hr.foi.database.User
 import hr.foi.interfaces.TestRetriever
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import hr.foi.scanner.ScannerTestRetriever
 import androidx.activity.result.contract.ActivityResultContracts.GetContent
 import androidx.compose.ui.platform.LocalContext
 import dagger.hilt.android.qualifiers.ApplicationContext
 import androidx.core.content.ContextCompat
 import hr.foi.scanner.ScannerPage
-
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -188,18 +189,32 @@ class MainActivity : ComponentActivity() {
 
                         }
                         composable("testPreview"){
+                            val coroutineScope = rememberCoroutineScope()
                             TestPreviewPage(
                                 testData = testContent,
                                 onClickNext = {testData ->
                                     testContent = testData
-                                    //val openAIHandler = OpenAIHandler ()
-                                    //openAIHandler.makeQuery(testContent)
+                                    navController.navigate("report-preview")
                                     //TODO navigate to the report generation
                                 },
                                 onClickBack = {
                                     navController.navigate("tests")
                                 }
                             )
+                        }
+                        composable("report-preview") {
+                            val openAIHandler = OpenAIHandler()
+                            var response by remember { mutableStateOf<OpenAIResponse?>(null) }
+                            var isLoading by remember { mutableStateOf(true) }
+
+                            if (isLoading) {
+                                LaunchedEffect(Unit) {
+                                    response = openAIHandler.makeQuery(testContent)
+                                    isLoading = false
+                                }
+                            }
+
+                            response?.let { it1 -> ReportPreviewPage(it1) }
                         }
                     }
                 }

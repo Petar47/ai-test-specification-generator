@@ -1,3 +1,4 @@
+import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
 import org.jetbrains.kotlin.kapt3.base.Kapt.kapt
 
 plugins {
@@ -23,6 +24,9 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
+
+        val openaiKey: String = gradleLocalProperties(rootDir).getProperty("openai.key") ?: ""
+        buildConfigField("String", "OPENAI_KEY", "\"$openaiKey\"")
     }
 
     buildTypes {
@@ -43,6 +47,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.4.3"
@@ -89,6 +94,8 @@ dependencies {
     implementation("com.google.dagger:hilt-android:2.44")
     kapt("com.google.dagger:hilt-android-compiler:2.44")
 
+    implementation("com.aallam.openai:openai-client:3.6.1")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
     //For generating excel files
     //implementation("com.fasterxml:aalto-xml:1.0.0")
     implementation("com.github.SUPERCILEX.poi-android:poi:3.17")
