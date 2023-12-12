@@ -190,12 +190,15 @@ class ReportGenerator {
         val description = json.getString("description")
         val testStepsArray = json.getJSONArray("testSteps")
         val testSteps = mutableListOf<String>()
-        for (i in 0 until testStepsArray.length()) {
+        /*for (i in 0 until testStepsArray.length()) {
             val stepObject = testStepsArray.getJSONObject(i)
             val step = stepObject.getInt("step")
             val stepDescription = stepObject.getString("instruction")
             val code = stepObject.getString("expectedOutcome")
             testSteps.add("$step!!!$stepDescription!!!$code")
+        }*/
+        for (i in 0 until testStepsArray.length()) {
+            testSteps.add(testStepsArray.getString(i))
         }
         Log.d("Generator", "Json parsed: $name, $description, $testSteps")
         val firstStep = testSteps.first().split("!!!")

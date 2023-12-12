@@ -20,12 +20,17 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
+import hr.foi.database.DataViewModel
+import hr.foi.database.Report
 
 @Composable
-fun ReportPreviewPage(response: OpenAIResponse) {
+fun ReportPreviewPage(navController: NavHostController, viewModel: DataViewModel, response: OpenAIResponse, projectId: String?) {
+    var id_project = projectId!!.toInt()
     var editingName by remember { mutableStateOf(response.name) }
     var editingDescription by remember { mutableStateOf(response.description) }
-
+    var time = response.JSONresponse.length * 0.3;
+    var newReport = Report(null, response.name, response.description, response.JSONresponse,null,time.toString(),id_project)
     // Use mutableStateOf for concatenatedValues
     var concatenatedValues by remember {
         mutableStateOf(response.testSteps.map { it }.toMutableList())
@@ -122,6 +127,8 @@ fun ReportPreviewPage(response: OpenAIResponse) {
                 response.name = editingName
                 response.description = editingDescription
                 response.testSteps = concatenatedValues
+                viewModel.insertReport(newReport)
+                navController.navigate("show-project/" + "${newReport.id_project}")
             },
             modifier = Modifier
                 .fillMaxWidth()

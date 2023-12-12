@@ -167,7 +167,7 @@ class MainActivity : ComponentActivity() {
                             })
                         }
 
-                        composable("tests/{type}"){navBackStack ->
+                        composable("tests/{type}/{projectId}"){navBackStack ->
                             multiplePermissionResultLauncher.launch(
                                 arrayOf(
                                     android.Manifest.permission.CAMERA,
@@ -177,10 +177,11 @@ class MainActivity : ComponentActivity() {
                             testRetrieverType = navBackStack.arguments?.getString("type").toString()
                             //on report page when the user tries to create new report then he chooses the type and navigates here
                             val testRetriever: TestRetriever = TestRetrieverFactory.getRetriever(testRetrieverType)
+                            val projectId = navBackStack.arguments?.getString("projectId")
                             Column(){
                                 testRetriever.showUI(getTestData = {testData ->
                                     testContent = testData
-                                    navController.navigate("testPreview")
+                                    navController.navigate("testPreview/$projectId")
                                 })
                             }
 
@@ -188,13 +189,14 @@ class MainActivity : ComponentActivity() {
                             //asks for permissions
 
                         }
-                        composable("testPreview"){
+                        composable("testPreview/{id}"){
                             val coroutineScope = rememberCoroutineScope()
+                            val projectId = it.arguments?.getString("id")
                             TestPreviewPage(
                                 testData = testContent,
                                 onClickNext = {testData ->
                                     testContent = testData
-                                    navController.navigate("report-preview")
+                                    navController.navigate("report-preview/$projectId")
                                     //TODO navigate to the report generation
                                 },
                                 onClickBack = {
@@ -202,7 +204,8 @@ class MainActivity : ComponentActivity() {
                                 }
                             )
                         }
-                        composable("report-preview") {
+                        composable("report-preview/{id}") {
+                            val projectId = it.arguments?.getString("id")
                             val openAIHandler = OpenAIHandler()
                             var response by remember { mutableStateOf<OpenAIResponse?>(null) }
                             var isLoading by remember { mutableStateOf(true) }
@@ -213,8 +216,7 @@ class MainActivity : ComponentActivity() {
                                     isLoading = false
                                 }
                             }
-
-                            response?.let { it1 -> ReportPreviewPage(it1) }
+                            response?.let { it1 -> ReportPreviewPage(navController ,viewModel, it1, projectId) }
                         }
                     }
                 }
