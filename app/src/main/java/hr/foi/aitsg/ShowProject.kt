@@ -233,7 +233,10 @@ class ShowProject {
                                         .size(30.dp)
                                         .clip(shape = CircleShape)
                                         .background(MaterialTheme.colorScheme.tertiary)
-                                        .padding(5.dp),
+                                        .padding(5.dp)
+                                        .clickable{
+                                            DownloadReport(context,it.JSON_response,it.name)
+                                        },
                                     colorFilter = ColorFilter.tint(Color.White)
                                 )
                             }
