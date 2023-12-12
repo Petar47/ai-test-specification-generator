@@ -9,7 +9,7 @@ import androidx.core.content.FileProvider
 import java.io.File
 
 
-fun sendEmail(context : Context, name : String){
+fun sendEmail(context : Context, name : String, response:String){
     val generator = ReportGenerator()
     val mockJson = "{\n" +
             "  \"isTest\": true," +
@@ -38,7 +38,7 @@ fun sendEmail(context : Context, name : String){
             "    }" +
             "  ]" +
             "}"
-        val workbook = generator.createWorkbook(mockJson)
+        val workbook = generator.createWorkbook(response)
         val cachedPath = generator.saveExcelToTempDirectory(workbook, context)
         val file = File(context.filesDir, ".reports/tempReport.xlsx")
         val fileUri: Uri = FileProvider.getUriForFile(context, "hr.foi.aitsg.fileprovider", file)

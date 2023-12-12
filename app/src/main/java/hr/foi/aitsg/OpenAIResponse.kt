@@ -6,4 +6,5 @@ class OpenAIResponse {
     var name: String = ""
     var description: String = ""
     var testSteps: List<String> = listOf()
+    var JSONresponse: String = ""
 }

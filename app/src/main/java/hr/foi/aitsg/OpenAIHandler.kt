@@ -52,14 +52,18 @@ class OpenAIHandler() {
     public fun createResponseObject(response: String): OpenAIResponse {
         val responseObject = OpenAIResponse()
         val jsonObject = JSONObject(response)
+        Log.e("JSONObject", jsonObject.toString())
         responseObject.name = jsonObject.getString("name")
         responseObject.description = jsonObject.getString("description")
         val testStepsArray = jsonObject.getJSONArray("testSteps")
+        Log.e("Steps: ", testStepsArray.toString())
         val testSteps = mutableListOf<String>()
         for (i in 0 until testStepsArray.length()) {
             testSteps.add(testStepsArray.getString(i))
         }
         responseObject.testSteps = testSteps
+        Log.e("Steps: ", responseObject.testSteps.toString())
+        responseObject.JSONresponse = response
         return responseObject
     }
 }

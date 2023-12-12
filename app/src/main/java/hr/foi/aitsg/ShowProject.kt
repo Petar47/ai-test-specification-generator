@@ -104,7 +104,7 @@ class ShowProject {
                     Column {
                         FloatingActionButton(
                             onClick = {
-                                navHostController.navigate("tests/scanner")
+                                navHostController.navigate("tests/scanner/$project_id")
                             },
                             content = {
                                 Icon(
@@ -117,7 +117,7 @@ class ShowProject {
                         )
                         FloatingActionButton(
                             onClick = {
-                                navHostController.navigate("tests/upload")
+                                navHostController.navigate("tests/upload/$project_id")
                             },
                             content = {
                                 Icon(
@@ -189,12 +189,14 @@ class ShowProject {
                         )
 
                         Spacer(modifier = Modifier.width(16.dp))
-                        Column {
+                        Column{
                             Spacer(modifier = Modifier.height(10.dp))
                             Text(
                                 text = it.name,
                                 fontSize = 18.sp,
                                 color = MaterialTheme.colorScheme.primary,
+                                //modifier = Modifier.width(230.dp)
+                                modifier = Modifier.fillMaxWidth(0.7f)
                             )
                             Spacer(modifier = Modifier.height(5.dp))
                             Text(
@@ -203,7 +205,7 @@ class ShowProject {
                                 color = MaterialTheme.colorScheme.tertiary,
                             )
                         }
-                        Spacer(modifier = Modifier.width(50.dp))
+                        Spacer(modifier = Modifier.width(5.dp))
                         Box(
                             modifier = Modifier
                                 .fillMaxWidth(),
@@ -219,7 +221,7 @@ class ShowProject {
                                         .background(MaterialTheme.colorScheme.tertiary)
                                         .padding(5.dp)
                                         .clickable {
-                                            sendEmail(context,it.name)
+                                            sendEmail(context,it.name, it.JSON_response)
                                         },
                                     colorFilter = ColorFilter.tint(Color.White)
                                 )
