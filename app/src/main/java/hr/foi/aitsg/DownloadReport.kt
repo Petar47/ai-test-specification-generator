@@ -3,6 +3,7 @@ package hr.foi.aitsg
 import android.content.Context
 import android.os.Environment
 import android.util.Log
+import android.widget.Toast
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
@@ -43,7 +44,7 @@ fun DownloadReport(context: Context, json : String, naziv : String){
         val fileOut = FileOutputStream(filePath)
         workbook.write(fileOut)
         fileOut.close()
-        println("Datoteka spremljena u: ${filePath.absolutePath}")
+        Toast.makeText(context, "Datoteka spremljena u: ${filePath.absolutePath}",Toast.LENGTH_SHORT ).show()
     } catch (e: IOException) {
         e.printStackTrace()
     }
