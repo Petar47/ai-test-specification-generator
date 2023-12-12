@@ -103,6 +103,12 @@ class MainActivity : ComponentActivity() {
                         }
                         composable("show-project/{id}" ){ navBackStack ->
                             Log.d("MyTag", "Before composable")
+                            multiplePermissionResultLauncher.launch(
+                                arrayOf(
+                                    android.Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                                    android.Manifest.permission.READ_EXTERNAL_STORAGE
+                                )
+                            )
                             val context = LocalContext.current
                             val counter = navBackStack.arguments?.getString("id")
                                 _showProject.showProject(

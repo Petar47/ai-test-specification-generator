@@ -233,7 +233,7 @@ class ShowProject {
                                         .background(MaterialTheme.colorScheme.tertiary)
                                         .padding(5.dp)
                                         .clickable{
-                                            DownloadReport(context,it.id_report,it.name)
+                                            DownloadReport(context,it.JSON_response,it.name)
                                         },
                                     colorFilter = ColorFilter.tint(Color.White)
                                 )

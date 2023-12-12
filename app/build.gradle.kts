@@ -101,8 +101,6 @@ dependencies {
     implementation("com.github.SUPERCILEX.poi-android:poi:3.17")
     compileOnly("org.apache.poi:poi-ooxml:3.17")
 
-    implementation("org.apache.poi:poi:5.2.4")
-    implementation("org.apache.poi:poi-ooxml:5.2.4")
 }
 kapt {
     correctErrorTypes = true

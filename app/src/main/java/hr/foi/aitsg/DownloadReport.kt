@@ -1,11 +1,13 @@
 package hr.foi.aitsg
 
 import android.content.Context
+import android.os.Environment
 import android.util.Log
+import java.io.File
 import java.io.FileOutputStream
+import java.io.IOException
 
-fun DownloadReport(context : Context, id : Int?, naziv : String){
-    Log.e("pero","test")
+fun DownloadReport(context: Context, json : String, naziv : String){
     val generator = ReportGenerator()
     val mockJson = "{\n" +
             "  \"isTest\": true," +
@@ -34,11 +36,15 @@ fun DownloadReport(context : Context, id : Int?, naziv : String){
             "    }" +
             "  ]" +
             "}"
-    val workbook = generator.createWorkbook(mockJson)
-    val fileOut = FileOutputStream("$naziv.xlsx")
-    workbook.write(fileOut)
-    fileOut.close()
-
-    workbook.close()
-    println("Datoteka je uspješno spremljena kao $naziv.xlsx")
+    val workbook = generator.createWorkbook(json)
+    val directoryPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
+    val filePath = File(directoryPath, "$naziv.xlsx")
+    try {
+        val fileOut = FileOutputStream(filePath)
+        workbook.write(fileOut)
+        fileOut.close()
+        println("Datoteka spremljena u: ${filePath.absolutePath}")
+    } catch (e: IOException) {
+        e.printStackTrace()
+    }
 }
