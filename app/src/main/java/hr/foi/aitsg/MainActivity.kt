@@ -6,7 +6,6 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -35,22 +34,18 @@ import hr.foi.aitsg.auth.searchUsers
 import hr.foi.aitsg.ui.theme.AITSGTheme
 import hr.foi.database.DataViewModel
 import hr.foi.interfaces.TestRetriever
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
-import hr.foi.scanner.ScannerTestRetriever
-import androidx.activity.result.contract.ActivityResultContracts.GetContent
 import androidx.compose.ui.platform.LocalContext
-import dagger.hilt.android.qualifiers.ApplicationContext
-import androidx.core.content.ContextCompat
-import hr.foi.scanner.ScannerPage
+import hr.foi.interfaces.Scanner
+import hr.foi.scanner.FileScanner
+import hr.foi.scanner.ScannerTestRetriever
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     private val viewModel by viewModels<DataViewModel>()
-    private val _showProject: ShowProject = ShowProject()
+    private val _showProject: ShowProject = ShowProject() // maknuti ove crte kaj su ispot
+    companion object {
+        val scannersList: List<Scanner> = listOf(FileScanner(), ScannerTestRetriever())
+    }
     @SuppressLint("SuspiciousIndentation")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -165,7 +160,7 @@ class MainActivity : ComponentActivity() {
                                 navController.navigate("profile")
                             })
                         }
-
+/*
                         composable("tests/{type}/{projectId}"){navBackStack ->
                             multiplePermissionResultLauncher.launch(
                                 arrayOf(
@@ -178,7 +173,7 @@ class MainActivity : ComponentActivity() {
                             val testRetriever: TestRetriever = TestRetrieverFactory.getRetriever(testRetrieverType)
                             val projectId = navBackStack.arguments?.getString("projectId")
                             Column(){
-                                testRetriever.showUI(getTestData = {testData ->
+                                testRetriever.TestRetrieverUI(getTestData = { testData ->
                                     testContent = testData
                                     navController.navigate("testPreview/$projectId")
                                 })
@@ -188,6 +183,8 @@ class MainActivity : ComponentActivity() {
                             //asks for permissions
 
                         }
+
+ */
                         composable("testPreview/{id}"){
                             val coroutineScope = rememberCoroutineScope()
                             val projectId = it.arguments?.getString("id")
@@ -216,6 +213,24 @@ class MainActivity : ComponentActivity() {
                                 }
                             }
                             response?.let { it1 -> ReportPreviewPage(navController ,viewModel, it1, projectId) }
+                        }
+
+                        scannersList.map {scanner ->
+                            composable(scanner.getRoute()+ "{id}"){navBackStack ->
+                                multiplePermissionResultLauncher.launch(
+                                    arrayOf(
+                                        android.Manifest.permission.CAMERA,
+                                        android.Manifest.permission.READ_EXTERNAL_STORAGE
+                                    )
+                                )
+                                val projectId = navBackStack.arguments?.getString("projectId")
+                                Column(){
+                                    scanner.TestRetrieverUI(getTestData = { testData ->
+                                        testContent = testData
+                                        navController.navigate("testPreview/$projectId")
+                                    })
+                                }
+                            }
                         }
                     }
                 }

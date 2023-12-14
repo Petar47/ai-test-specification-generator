@@ -102,32 +102,22 @@ class ShowProject {
                 },
                 floatingActionButton = {
                     Column {
-                        FloatingActionButton(
-                            onClick = {
-                                navHostController.navigate("tests/scanner/$project_id")
-                            },
-                            content = {
-                                Icon(
-                                    painter = painterResource(id = R.drawable.camera),
-                                    contentDescription = null,
-                                    modifier = Modifier.size(45.dp)
-                                )
-                            },
-                            containerColor = MaterialTheme.colorScheme.primary
-                        )
-                        FloatingActionButton(
-                            onClick = {
-                                navHostController.navigate("tests/upload/$project_id")
-                            },
-                            content = {
-                                Icon(
-                                    painter = painterResource(id = R.drawable.upload),
-                                    contentDescription = null,
-                                    modifier = Modifier.size(45.dp)
-                                )
-                            },
-                            containerColor = MaterialTheme.colorScheme.primary
-                        )
+                        MainActivity.scannersList.map{scanner ->
+                            FloatingActionButton(
+                                onClick = {
+                                    navHostController.navigate(scanner.getRoute() + project_id)
+                                },
+                                content = {
+                                    Icon(
+                                        painter = scanner.getIcon(),
+                                        contentDescription = null,
+                                        modifier = Modifier.size(45.dp)
+                                    )
+                                },
+                                containerColor = MaterialTheme.colorScheme.primary
+                            )
+
+                        }
                     }
                 }
 
