@@ -2,7 +2,6 @@ package hr.foi.aitsg
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -19,7 +18,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -147,7 +145,7 @@ class ShowProject {
             Row(
                 modifier = Modifier.padding(10.dp)
             ) {
-                Text(text = "Izvješaji")
+                Text(text = "Izvještaji")
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -174,7 +172,10 @@ class ShowProject {
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(16.dp),
+                            .padding(16.dp)
+                            .clickable {
+                                navHostController.navigate("report-view/${it.id_report}/${it.JSON_response}")
+                            },
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Image(

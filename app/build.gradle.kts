@@ -99,6 +99,7 @@ dependencies {
     //For generating excel files
     //implementation("com.fasterxml:aalto-xml:1.0.0")
     implementation("com.github.SUPERCILEX.poi-android:poi:3.17")
+    implementation("com.google.code.gson:gson:2.8.9")
     compileOnly("org.apache.poi:poi-ooxml:3.17")
 
 }

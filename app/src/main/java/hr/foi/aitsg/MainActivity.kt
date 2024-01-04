@@ -46,6 +46,7 @@ import androidx.compose.ui.platform.LocalContext
 import dagger.hilt.android.qualifiers.ApplicationContext
 import androidx.core.content.ContextCompat
 import hr.foi.scanner.ScannerPage
+import com.google.gson.Gson
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -216,6 +217,18 @@ class MainActivity : ComponentActivity() {
                                 }
                             }
                             response?.let { it1 -> ReportPreviewPage(navController ,viewModel, it1, projectId) }
+                        }
+                        composable("report-view/{id}/{data}") {
+                            val reportId = it.arguments?.getString("id")
+                            val jsonData = it.arguments?.getString("data")
+                            val gson = Gson()
+                            val oar = gson.fromJson(jsonData, OpenAIResponse::class.java)
+                            ReportPreviewPage(
+                                navController = navController,
+                                viewModel = viewModel,
+                                response = oar,
+                                projectId = reportId
+                            )
                         }
                     }
                 }
