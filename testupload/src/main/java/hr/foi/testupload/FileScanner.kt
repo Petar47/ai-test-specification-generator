@@ -1,4 +1,4 @@
-package hr.foi.scanner
+package hr.foi.testupload
 
 import android.content.ContentResolver
 import android.net.Uri
@@ -8,11 +8,12 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import hr.foi.interfaces.Scanner
-import hr.foi.interfaces.TestRetriever
+import hr.foi.testupload.R
 import java.io.BufferedReader
 import java.io.InputStreamReader
 
@@ -31,13 +32,15 @@ class FileScanner : Scanner{
                     stringBuilder.append(line).append("\n")
                 }
                 val fileContent = stringBuilder.toString()
-                getTestData(fileContent)
+                reader.close()
                 Log.d("Datoteka",fileContent)
-                reader.close() }
+                getTestData(fileContent)
+            }
         }
         Button(onClick = { getContent.launch("*/*") }) {
             Text("Odaberi datoteku")
         }
+
     }
 
     override fun getRoute(): String {

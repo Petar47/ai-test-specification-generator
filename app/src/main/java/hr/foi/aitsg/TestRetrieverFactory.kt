@@ -1,9 +1,10 @@
 package hr.foi.aitsg
 
 import hr.foi.interfaces.Scanner
-import hr.foi.interfaces.TestRetriever
-import hr.foi.scanner.FileScanner
+//import hr.foi.scanner.FileScanner
 import hr.foi.scanner.ScannerTestRetriever
+import hr.foi.testupload.FileScanner
+
 
 enum class TestRetrieverType(id: String){
     SCANNER("scanner"),

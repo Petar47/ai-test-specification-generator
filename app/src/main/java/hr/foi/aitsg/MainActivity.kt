@@ -6,6 +6,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -36,7 +37,7 @@ import hr.foi.database.DataViewModel
 import hr.foi.interfaces.TestRetriever
 import androidx.compose.ui.platform.LocalContext
 import hr.foi.interfaces.Scanner
-import hr.foi.scanner.FileScanner
+import hr.foi.testupload.FileScanner
 import hr.foi.scanner.ScannerTestRetriever
 
 @AndroidEntryPoint
@@ -46,6 +47,9 @@ class MainActivity : ComponentActivity() {
     companion object {
         val scannersList: List<Scanner> = listOf(FileScanner(), ScannerTestRetriever())
     }
+
+    //contains the content of the test -> its use is to save the test when the app is navigating from scanner to preview
+    var testContent: String = ""
     @SuppressLint("SuspiciousIndentation")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -67,10 +71,7 @@ class MainActivity : ComponentActivity() {
                             }
                     }
                 )
-                //contains the type of the retriever: scanner, import -> users selects the type and then the factory creates the type class
-                var testRetrieverType: String = "scanner"
-                //contains the content of the test -> its use is to save the test when the app is navigating from scanner to preview
-                var testContent: String = ""
+
 
 
                 Surface(
@@ -160,34 +161,10 @@ class MainActivity : ComponentActivity() {
                                 navController.navigate("profile")
                             })
                         }
-/*
-                        composable("tests/{type}/{projectId}"){navBackStack ->
-                            multiplePermissionResultLauncher.launch(
-                                arrayOf(
-                                    android.Manifest.permission.CAMERA,
-                                    android.Manifest.permission.READ_EXTERNAL_STORAGE
-                                )
-                            )
-                            testRetrieverType = navBackStack.arguments?.getString("type").toString()
-                            //on report page when the user tries to create new report then he chooses the type and navigates here
-                            val testRetriever: TestRetriever = TestRetrieverFactory.getRetriever(testRetrieverType)
-                            val projectId = navBackStack.arguments?.getString("projectId")
-                            Column(){
-                                testRetriever.TestRetrieverUI(getTestData = { testData ->
-                                    testContent = testData
-                                    navController.navigate("testPreview/$projectId")
-                                })
-                            }
-
-                            //TODO add to report page when the user chooses to scan the file with camera
-                            //asks for permissions
-
-                        }
-
- */
                         composable("testPreview/{id}"){
                             val coroutineScope = rememberCoroutineScope()
                             val projectId = it.arguments?.getString("id")
+                            Log.d("Preview", testContent)
                             TestPreviewPage(
                                 testData = testContent,
                                 onClickNext = {testData ->
@@ -227,6 +204,7 @@ class MainActivity : ComponentActivity() {
                                 Column(){
                                     scanner.TestRetrieverUI(getTestData = { testData ->
                                         testContent = testData
+                                        Log.d("Datoteka - MainAct", testContent)
                                         navController.navigate("testPreview/$projectId")
                                     })
                                 }
