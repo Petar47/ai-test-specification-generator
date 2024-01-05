@@ -196,7 +196,7 @@ class MainActivity : ComponentActivity() {
                                     //TODO navigate to the report generation
                                 },
                                 onClickBack = {
-                                    navController.navigate("tests")
+                                    navController.popBackStack()
                                 }
                             )
                         }
