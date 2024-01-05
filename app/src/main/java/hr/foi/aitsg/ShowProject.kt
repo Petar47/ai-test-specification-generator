@@ -105,7 +105,7 @@ class ShowProject {
                         MainActivity.scannersList.map{scanner ->
                             FloatingActionButton(
                                 onClick = {
-                                    navHostController.navigate(scanner.getRoute() + project_id)
+                                    navHostController.navigate(scanner.getRoute() + id_project)
                                 },
                                 content = {
                                     Icon(

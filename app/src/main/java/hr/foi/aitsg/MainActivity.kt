@@ -223,7 +223,7 @@ class MainActivity : ComponentActivity() {
                                         android.Manifest.permission.READ_EXTERNAL_STORAGE
                                     )
                                 )
-                                val projectId = navBackStack.arguments?.getString("projectId")
+                                val projectId = navBackStack.arguments?.getString("id")
                                 Column(){
                                     scanner.TestRetrieverUI(getTestData = { testData ->
                                         testContent = testData
