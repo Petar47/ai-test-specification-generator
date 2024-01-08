@@ -162,7 +162,7 @@ class ShowProject {
             if (reports.isNotEmpty()) {
                 LazyColumn {
                     item {
-                        Spacer(modifier = Modifier.height(65.dp))
+                        //Spacer(modifier = Modifier.height(65.dp))
                     }
                     items(reports) { report ->
                         Divider(modifier = Modifier.fillMaxWidth())
