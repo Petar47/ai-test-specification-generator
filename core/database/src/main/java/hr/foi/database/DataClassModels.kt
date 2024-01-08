@@ -27,7 +27,8 @@ data class Report(
     val JSON_response: String,
     val generated: String?=null,
     val saved_time: String,
-    val id_project: Int
+    val id_project: Int,
+    val user: Int?
 
 )
 
