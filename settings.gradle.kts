@@ -25,3 +25,4 @@ include(":core:database")
 
 include(":scanner")
 include(":core:interfaces")
+include(":testupload")
