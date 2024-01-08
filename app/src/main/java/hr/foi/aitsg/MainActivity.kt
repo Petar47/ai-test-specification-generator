@@ -115,7 +115,14 @@ class MainActivity : ComponentActivity() {
                             addUsersToProject(
                                 navHostController = navController,
                                 dataViewModel = viewModel,
-                                project_id = _project_id)
+                                project_id = _project_id,
+                                deletedUser = {
+                                    Toast.makeText(
+                                        applicationContext,
+                                        "Korisnik uspješno obrisan s projekta!",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                })
                         }
                         composable("search-users/{id}" ){ navBackStack ->
                             val _project_id = navBackStack.arguments?.getString("id")
