@@ -164,6 +164,7 @@ class MainActivity : ComponentActivity() {
                         }
                         composable("statistics"){
                             StatisticsPage(
+                                viewModel = viewModel,
                                 onMenuClick = {
                                     navController.navigate("menu")
                                 }
