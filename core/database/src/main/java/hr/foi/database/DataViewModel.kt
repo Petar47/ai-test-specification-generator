@@ -86,7 +86,7 @@ class DataViewModel @Inject constructor(
     fun deleteProjectUser(projectUser: Project_user){
         viewModelScope.launch {
             repository.deleteProjectUser(projectUser).collectLatest { data ->
-                _uiState.update { data }
+                //_uiState.update { data }
             }
         }
     }
