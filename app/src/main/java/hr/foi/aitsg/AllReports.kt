@@ -16,29 +16,35 @@ import kotlinx.coroutines.launch
 
 @Composable
 @SuppressLint("CoroutineCreationDuringComposition")
-fun getAllReports(dataViewModel: DataViewModel): List<Report> {
-    var reports by remember { mutableStateOf<List<Report>>(emptyList()) }
+fun getNumberOfProjectReports(dataViewModel: DataViewModel, projectId : Int) : Int {
+    var counter : Int = 0
     var coroutine = rememberCoroutineScope()
-        //dataViewModel.getAllReports
-        coroutine.launch {
-            dataViewModel.uiState.collectLatest { data ->
-                when (data) {
-                    is APIResult.Error -> {
-                        Log.e("Error Data - getAllReports", "error getAllReports: ${data.message}")
-                    }
-                    APIResult.Loading -> {
-                        Log.d("Loading Data - getAllReports", "loading getAllReports")
-                    }
-                    is APIResult.Success -> {
-                        if (data.data is List<*>) {
-                            val dataList = data.data as List<*>
-                            if (dataList.isNotEmpty() && dataList[0] is Report) {
-                                reports = data.data as List<Report>
-                            }
-                        }
-                    }
+    dataViewModel.noOfProjectReports(projectId)
+    coroutine.launch {
+        dataViewModel.uiState.collectLatest {data ->
+            when (data) {
+                is APIResult.Error -> {
+                    Log.e("Error Data - getNumberOfProjectReports", "error getNumberOfProjectReports: ${data.message}")
+                }
+                APIResult.Loading -> {
+                    Log.d("Loading Data - getNumberOfProjectReports", "loading getNumberOfProjectReports")
+                }
+                is APIResult.Success -> {
+                    counter = data.data as Int
+                    Log.d("Success Data", counter.toString())
                 }
             }
         }
-    return reports
+    }
+    return counter
+}
+@Composable
+@SuppressLint("CoroutineCreationDuringComposition")
+fun getNumberOfAllUserReports(dataViewModel: DataViewModel): Int {
+    var counter : Int = 0
+    var projects = UserProjects.projects
+    projects.forEach{
+        counter += getNumberOfProjectReports(dataViewModel, it.id_project!! )
+    }
+    return counter
 }
