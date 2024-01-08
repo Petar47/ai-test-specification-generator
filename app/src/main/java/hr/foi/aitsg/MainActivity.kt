@@ -80,7 +80,7 @@ class MainActivity : ComponentActivity() {
                 ) {
                     val navController = rememberNavController()
 
-                    NavHost(navController, startDestination = "login"){
+                    NavHost(navController, startDestination = "statistics"){
                         composable("login"){
                             LoginPage(navController = navController, dataViewModel = viewModel,
                                 successfulLogin = {
@@ -141,6 +141,7 @@ class MainActivity : ComponentActivity() {
                             MenuPage(onMenuButtonClick =  {page ->
                                 when(page){
                                     "workspaces" -> navController.navigate("workspaces")
+                                    "statistics" -> navController.navigate("statistics")
                                     else -> Toast.makeText(
                                         applicationContext,
                                         "Not implemented yet",
@@ -160,6 +161,13 @@ class MainActivity : ComponentActivity() {
                             }, onEditProfileButtonClick = {
                                 navController.navigate("profile")
                             })
+                        }
+                        composable("statistics"){
+                            StatisticsPage(
+                                onMenuClick = {
+                                    navController.navigate("menu")
+                                }
+                            )
                         }
                         composable("testPreview/{id}"){
                             val coroutineScope = rememberCoroutineScope()

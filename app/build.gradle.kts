@@ -103,6 +103,9 @@ dependencies {
     implementation("com.github.SUPERCILEX.poi-android:poi:3.17")
     compileOnly("org.apache.poi:poi-ooxml:3.17")
 
+    //For generating charts
+    implementation ("co.yml:ycharts:2.1.0")
+
 }
 kapt {
     correctErrorTypes = true
