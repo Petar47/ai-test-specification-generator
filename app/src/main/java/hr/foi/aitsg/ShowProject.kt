@@ -17,11 +17,14 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -124,8 +127,6 @@ class ShowProject {
             ) {
                 BodyView(reports, navHostController, project_id, context)
             }
-
-
         }
     }
 
@@ -141,7 +142,7 @@ class ShowProject {
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .clickable { navHostController.navigate("search-users/$project_id") },
+                        .clickable { navHostController.navigate("add-users/$project_id") },
                     contentAlignment = Alignment.BottomEnd
                 ) {
                     Image(
@@ -159,82 +160,94 @@ class ShowProject {
 
             }
             if (reports.isNotEmpty()) {
-                reports.forEach() {
-                    val generated = it.generated!!.split('T')
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(16.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Image(
-                            painter = painterResource(id = R.drawable.xlsx),
-                            contentDescription = null,
-                            modifier = Modifier
-                                .size(40.dp)
-                                .clip(shape = CircleShape)
-                                .background(MaterialTheme.colorScheme.primary)
-                                .padding(5.dp),
-                            colorFilter = ColorFilter.tint(Color.White)
-                        )
-
-                        Spacer(modifier = Modifier.width(16.dp))
-                        Column{
-                            Spacer(modifier = Modifier.height(10.dp))
-                            Text(
-                                text = it.name,
-                                fontSize = 18.sp,
-                                color = MaterialTheme.colorScheme.primary,
-                                //modifier = Modifier.width(230.dp)
-                                modifier = Modifier.fillMaxWidth(0.7f)
-                            )
-                            Spacer(modifier = Modifier.height(5.dp))
-                            Text(
-                                text = generated[0],
-                                fontSize = 10.sp,
-                                color = MaterialTheme.colorScheme.tertiary,
-                            )
-                        }
-                        Spacer(modifier = Modifier.width(5.dp))
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth(),
-                            contentAlignment = Alignment.CenterEnd
-                        ) {
-                            Row {
-                                Image(
-                                    painter = painterResource(id = R.drawable.share),
-                                    contentDescription = null,
-                                    modifier = Modifier
-                                        .size(30.dp)
-                                        .clip(shape = CircleShape)
-                                        .background(MaterialTheme.colorScheme.tertiary)
-                                        .padding(5.dp)
-                                        .clickable {
-                                            sendEmail(context,it.name, it.JSON_response)
-                                        },
-                                    colorFilter = ColorFilter.tint(Color.White)
-                                )
-                                Spacer(modifier = Modifier.width(15.dp))
-                                Image(
-                                    painter = painterResource(id = R.drawable.download),
-                                    contentDescription = null,
-                                    modifier = Modifier
-                                        .size(30.dp)
-                                        .clip(shape = CircleShape)
-                                        .background(MaterialTheme.colorScheme.tertiary)
-                                        .padding(5.dp)
-                                        .clickable{
-                                            DownloadReport(context,it.JSON_response,it.name)
-                                        },
-                                    colorFilter = ColorFilter.tint(Color.White)
-                                )
-                            }
-                        }
+                LazyColumn {
+                    item {
+                        //Spacer(modifier = Modifier.height(65.dp))
+                    }
+                    items(reports) { report ->
+                        Divider(modifier = Modifier.fillMaxWidth())
+                        ReportItem(report, navHostController, context)
                     }
                 }
             }
 
         }
     }
+
+    @Composable
+    fun ReportItem(report: Report, navHostController: NavHostController, context: Context) {
+        val generated = report.generated!!.split('T')
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable.xlsx),
+                contentDescription = null,
+                modifier = Modifier
+                    .size(40.dp)
+                    .clip(shape = CircleShape)
+                    .background(MaterialTheme.colorScheme.primary)
+                    .padding(5.dp),
+                colorFilter = ColorFilter.tint(Color.White)
+            )
+
+            Spacer(modifier = Modifier.width(16.dp))
+            Column{
+                Spacer(modifier = Modifier.height(10.dp))
+                Text(
+                    text = report.name,
+                    fontSize = 18.sp,
+                    color = MaterialTheme.colorScheme.primary,
+                    //modifier = Modifier.width(230.dp)
+                    modifier = Modifier.fillMaxWidth(0.7f)
+                )
+                Spacer(modifier = Modifier.height(5.dp))
+                Text(
+                    text = generated[0],
+                    fontSize = 10.sp,
+                    color = MaterialTheme.colorScheme.tertiary,
+                )
+            }
+            Spacer(modifier = Modifier.width(5.dp))
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                contentAlignment = Alignment.CenterEnd
+            ) {
+                Row {
+                    Image(
+                        painter = painterResource(id = R.drawable.share),
+                        contentDescription = null,
+                        modifier = Modifier
+                            .size(30.dp)
+                            .clip(shape = CircleShape)
+                            .background(MaterialTheme.colorScheme.tertiary)
+                            .padding(5.dp)
+                            .clickable {
+                                sendEmail(context, report.name, report.JSON_response)
+                            },
+                        colorFilter = ColorFilter.tint(Color.White)
+                    )
+                    Spacer(modifier = Modifier.width(15.dp))
+                    Image(
+                        painter = painterResource(id = R.drawable.download),
+                        contentDescription = null,
+                        modifier = Modifier
+                            .size(30.dp)
+                            .clip(shape = CircleShape)
+                            .background(MaterialTheme.colorScheme.tertiary)
+                            .padding(5.dp)
+                            .clickable {
+                                DownloadReport(context, report.JSON_response, report.name)
+                            },
+                        colorFilter = ColorFilter.tint(Color.White)
+                    )
+                }
+            }
+        }
+    }
+
 }

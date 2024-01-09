@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
@@ -86,7 +87,7 @@ class DataViewModel @Inject constructor(
     fun deleteProjectUser(projectUser: Project_user){
         viewModelScope.launch {
             repository.deleteProjectUser(projectUser).collectLatest { data ->
-                _uiState.update { data }
+                //_uiState.update { data }
             }
         }
     }
@@ -118,4 +119,25 @@ class DataViewModel @Inject constructor(
             }
         }
     }
+    fun noOfProjectReports(projectId: Int) {
+        viewModelScope.launch {
+            repository.noOfProjectReports(projectId).collectLatest { data ->
+                _uiState.update { data }
+            }
+        }
+    }
+    fun getUserReports(userId: Int){
+        viewModelScope.launch {
+            repository.getUserReports(userId).collectLatest { data ->
+                _uiState.update { data }
+            }
+        }
+    }
+    /*fun noOfAllReports(userId: Int){
+        viewModelScope.launch {
+            repository.noOfAllReports(userId).collectLatest { data ->
+                _uiState.update { data }
+            }
+        }
+    }*/
 }

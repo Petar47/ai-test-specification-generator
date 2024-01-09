@@ -30,7 +30,7 @@ fun ReportPreviewPage(navController: NavHostController, viewModel: DataViewModel
     var editingName by remember { mutableStateOf(response.name) }
     var editingDescription by remember { mutableStateOf(response.description) }
     var time = response.JSONresponse.length * 0.3;
-    var newReport = Report(null, response.name, response.description, response.JSONresponse,null,time.toString(),id_project)
+    var newReport = Report(null, response.name, response.description, response.JSONresponse,null,time.toString(),id_project, Authenticated.loggedInUser!!.id_user)
     // Use mutableStateOf for concatenatedValues
     var concatenatedValues by remember {
         mutableStateOf(response.testSteps.map { it }.toMutableList())
