@@ -150,7 +150,6 @@ fun ProjectItem(project: Project, navController: NavHostController, viewModel: D
                 navController.navigate("show-project/" + "${project.id_project}")
             },
         verticalAlignment = Alignment.CenterVertically
-
     ) {
         Image(
             painter = painterResource(id = R.drawable.file),
@@ -169,7 +168,7 @@ fun ProjectItem(project: Project, navController: NavHostController, viewModel: D
             text = project.name,
             fontSize = 18.sp,
             color = MaterialTheme.colorScheme.primary,
-            modifier = Modifier.align(Alignment.CenterVertically)
+            modifier = Modifier.weight(1f)
         )
 
         if (isEditing) {
@@ -183,7 +182,7 @@ fun ProjectItem(project: Project, navController: NavHostController, viewModel: D
             )
             IconButton(
                 onClick = {
-                    project.id_project?.let { viewModel.updateProject(it,editedProjectName) }
+                    project.id_project?.let { viewModel.updateProject(it, editedProjectName) }
                     isEditing = false
                 }
             ) {
@@ -194,29 +193,29 @@ fun ProjectItem(project: Project, navController: NavHostController, viewModel: D
                 )
             }
         } else {
+            Spacer(modifier = Modifier.width(8.dp))
+
             IconButton(
                 onClick = { isEditing = true },
                 modifier = Modifier.padding(end = 8.dp)
             ) {
                 Icon(
                     imageVector = Icons.Default.Edit,
-                    contentDescription = "Edit",
+                    contentDescription = "Uredi",
                     modifier = Modifier.size(24.dp)
                 )
             }
+
+            Icon(
+                imageVector = Icons.Default.Delete,
+                contentDescription = "Obriši",
+                modifier = Modifier
+                    .size(24.dp)
+                    .clickable {
+                        project.id_project?.let { viewModel.deleteProject(it) }
+                    }
+            )
         }
-
-        Spacer(modifier = Modifier.width(8.dp))
-
-        Icon(
-            imageVector = Icons.Default.Delete,
-            contentDescription = "Delete",
-            modifier = Modifier
-                .size(24.dp)
-                .clickable {
-                    project.id_project?.let { viewModel.deleteProject(it) }
-                }
-        )
     }
 }
 
