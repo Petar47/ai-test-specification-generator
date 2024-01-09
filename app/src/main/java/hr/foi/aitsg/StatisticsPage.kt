@@ -39,6 +39,16 @@ import co.yml.charts.common.utils.DataUtils
 import co.yml.charts.ui.barchart.BarChart
 import co.yml.charts.ui.barchart.models.BarChartData
 import co.yml.charts.ui.barchart.models.BarData
+import co.yml.charts.ui.linechart.LineChart
+import co.yml.charts.ui.linechart.model.GridLines
+import co.yml.charts.ui.linechart.model.IntersectionPoint
+import co.yml.charts.ui.linechart.model.Line
+import co.yml.charts.ui.linechart.model.LineChartData
+import co.yml.charts.ui.linechart.model.LinePlotData
+import co.yml.charts.ui.linechart.model.LineStyle
+import co.yml.charts.ui.linechart.model.SelectionHighlightPoint
+import co.yml.charts.ui.linechart.model.SelectionHighlightPopUp
+import co.yml.charts.ui.linechart.model.ShadowUnderLine
 import co.yml.charts.ui.piechart.charts.PieChart
 import co.yml.charts.ui.piechart.models.PieChartConfig
 import co.yml.charts.ui.piechart.models.PieChartData
@@ -92,7 +102,7 @@ fun StatisticsPage(viewModel: DataViewModel, onMenuClick: () -> Unit){
         Spacer(modifier = Modifier.height(20.dp))
         NumberOfReports(numberOfReports)
         Spacer(modifier = Modifier.height(20.dp))
-        ScanningFrequency()
+        ScanningFrequency(reports)
     }
 }
 
@@ -135,20 +145,27 @@ fun SavedTimeGraph(timeData: ArrayList<Pair<String, Float>>){
         modifier = Modifier
             .fillMaxWidth()
     ){
-        Row(
-            modifier = Modifier
-                .fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
-        ){
-            Text(
-                text = "Ušteđeno vrijeme",
-                fontSize = 18.sp,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.inversePrimary
-            )
-            Text(text = savedTime,color = MaterialTheme.colorScheme.inversePrimary)
+        Row(modifier = Modifier.fillMaxWidth()){
+            Spacer(modifier = Modifier.width(10.dp))
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ){
+                Text(
+                    text = "Ušteđeno vrijeme",
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.inversePrimary
+                )
+                Text(text = savedTime,color = MaterialTheme.colorScheme.inversePrimary)
+            }
+            Spacer(modifier = Modifier.width(10.dp))
         }
+
+        Spacer(modifier = Modifier.height(10.dp))
+
         if(!timeData.isEmpty()){
             val barChartData = barChart(timeData)
             Row (
@@ -224,6 +241,7 @@ fun NumberOfReports(data: ArrayList<Pair<String, Int>>){
             modifier = Modifier
                 .fillMaxWidth()
         ){
+            Spacer(modifier = Modifier.width(10.dp))
             Text(
                 text = "Broj generiranih izvještaja",
                 fontSize = 18.sp,
@@ -231,6 +249,7 @@ fun NumberOfReports(data: ArrayList<Pair<String, Int>>){
                 color = MaterialTheme.colorScheme.inversePrimary
             )
         }
+        Spacer(modifier = Modifier.height(10.dp))
         if(!data.isEmpty()){
             Row (
                 modifier = Modifier
@@ -292,7 +311,7 @@ fun pieChart(data: ArrayList<Pair<String, Int>>){
 }
 
 @Composable
-fun ScanningFrequency(){
+fun ScanningFrequency(reports: List<Report>){
     //TODO linijski graf sa ucestalosti skeniranja
     Column(
         modifier = Modifier
@@ -302,6 +321,7 @@ fun ScanningFrequency(){
             modifier = Modifier
                 .fillMaxWidth()
         ){
+            Spacer(modifier = Modifier.width(10.dp))
             Text(
                 text = "Učestalost skeniranja",
                 fontSize = 18.sp,
@@ -309,8 +329,58 @@ fun ScanningFrequency(){
                 color = MaterialTheme.colorScheme.inversePrimary
             )
         }
+        Spacer(modifier = Modifier.height(10.dp))
         //graf
     }
+}
+
+@Composable
+fun lineChart(){
+    val pointsData: List<Point> =
+        listOf(Point(0f, 40f), Point(1f, 90f), Point(2f, 0f), Point(3f, 60f), Point(4f, 10f))
+
+    val xAxisData = AxisData.Builder()
+        .axisStepSize(100.dp)
+        .backgroundColor(Color.Blue)
+        .steps(pointsData.size - 1)
+        .labelData { i -> i.toString() }
+        .labelAndAxisLinePadding(15.dp)
+        .build()
+
+    val yAxisData = AxisData.Builder()
+        .steps(steps)
+        .backgroundColor(Color.Red)
+        .labelAndAxisLinePadding(20.dp)
+        .labelData { i ->
+            val yScale = 100 / steps
+            (i * yScale).formatToSinglePrecision()
+        }.build()
+
+    val lineChartData = LineChartData(
+        linePlotData = LinePlotData(
+            lines = listOf(
+                Line(
+                    dataPoints = pointsData,
+                    LineStyle(),
+                    IntersectionPoint(),
+                    SelectionHighlightPoint(),
+                    ShadowUnderLine(),
+                    SelectionHighlightPopUp()
+                )
+            ),
+        ),
+        xAxisData = xAxisData,
+        yAxisData = yAxisData,
+        gridLines = GridLines(),
+        backgroundColor = Color.White
+    )
+
+    LineChart(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(300.dp),
+        lineChartData = lineChartData
+    )
 }
 
 fun formatSeconds(seconds: Float): String {
