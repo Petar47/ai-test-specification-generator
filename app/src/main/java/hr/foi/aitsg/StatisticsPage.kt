@@ -1,5 +1,7 @@
 package hr.foi.aitsg
 
+import android.annotation.SuppressLint
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -7,6 +9,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -17,6 +20,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -29,15 +33,27 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import co.yml.charts.axis.AxisData
+import co.yml.charts.common.model.PlotType
+import co.yml.charts.common.model.Point
 import co.yml.charts.common.utils.DataUtils
+import co.yml.charts.ui.barchart.BarChart
 import co.yml.charts.ui.barchart.models.BarChartData
 import co.yml.charts.ui.barchart.models.BarData
+import co.yml.charts.ui.piechart.charts.PieChart
+import co.yml.charts.ui.piechart.models.PieChartConfig
+import co.yml.charts.ui.piechart.models.PieChartData
 import hr.foi.aitsg.auth.getAllProjectReports
 import hr.foi.aitsg.auth.getProjects
+import hr.foi.database.APIResult
 import hr.foi.database.DataViewModel
+import hr.foi.database.Project
 import hr.foi.database.Report
 import hr.foi.database.User
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import org.apache.poi.sl.usermodel.VerticalAlignment
+import kotlin.random.Random
 
 @Composable
 fun StatisticsPage(viewModel: DataViewModel, onMenuClick: () -> Unit){
@@ -46,32 +62,36 @@ fun StatisticsPage(viewModel: DataViewModel, onMenuClick: () -> Unit){
         "Viktor", "Coric")
 
     //var savedTimeSum by remember { mutableStateOf("0h 0m 0s") }
-    var savedTimeData = HashMap<String, Float>()
+    var savedTimeData: ArrayList<Pair<String, Float>> = ArrayList<Pair<String, Float>>()
+    var numberOfReports: ArrayList<Pair<String, Int>> = ArrayList<Pair<String, Int>>()
     var coroutine = rememberCoroutineScope()
-    val projects = getProjects(dataViewModel = viewModel, id_user = mockUser.id_user!!, coroutine)
-    /*val reports = List<Report>() // TODO dohvatiti izvjestaje od korisnika
+    val projects = getProjects(dataViewModel = viewModel, id_user = mockUser.id_user!!, coroutine = coroutine)
+    val reports = getReports(dataViewModel = viewModel, id_user = mockUser.id_user!!, coroutine = coroutine)
     projects.forEach { project ->
         var timeSum = 0f
+        var reportSum = 0
         reports.forEach { report ->
             if(report.id_project == project.id_project){
                 timeSum += report.saved_time.toFloat()
+                reportSum += 1
             }
         }
-        savedTimeData.put(project.name, timeSum)
-    }*/
+        if(timeSum != 0f){
+            savedTimeData.add(Pair(project.name, timeSum))
+        }
+        numberOfReports.add(Pair(project.name, reportSum))
+
+    }
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .fillMaxHeight()
     ){
-        var mockSavedTimeData = HashMap<String, Float>()
-        mockSavedTimeData.put("Projekt 1", 333.12f)
-        mockSavedTimeData.put("Projekt 2", 123114.4548f)
-        mockSavedTimeData.put("Projekt 3", 34578.111f)
-        mockSavedTimeData.put("Projekt 4", 88755124.13287f)
         TopAppBar(onMenu = {onMenuClick()})
-        SavedTimeGraph(mockSavedTimeData)
-        NumberOfReports()
+        SavedTimeGraph(savedTimeData)
+        Spacer(modifier = Modifier.height(20.dp))
+        NumberOfReports(numberOfReports)
+        Spacer(modifier = Modifier.height(20.dp))
         ScanningFrequency()
     }
 }
@@ -104,12 +124,11 @@ fun TopAppBar(onMenu: () -> Unit){
 }
 
 @Composable
-fun SavedTimeGraph(timeData: HashMap<String, Float>){
-    //TODO stupicasti sa ustedjenim vremenima po projektu
+fun SavedTimeGraph(timeData: ArrayList<Pair<String, Float>>){
     var savedTime = "0s"
     var timeSum = 0f
-    timeData.forEach{k, v ->
-        timeSum += v
+    timeData.forEach{pair ->
+        timeSum += pair.second
     }
     savedTime = formatSeconds(timeSum)
     Column(
@@ -128,50 +147,74 @@ fun SavedTimeGraph(timeData: HashMap<String, Float>){
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.inversePrimary
             )
-            Text(text = savedTime)
+            Text(text = savedTime,color = MaterialTheme.colorScheme.inversePrimary)
         }
-        //Graf
+        if(!timeData.isEmpty()){
+            val barChartData = barChart(timeData)
+            Row (
+                modifier = Modifier
+                    .fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center
+            ){
+                BarChart(
+                    modifier = Modifier
+                        .height(300.dp)
+                        .width(400.dp)
+                        .background(color = Color.Transparent),
+                    barChartData = barChartData
+                )
+            }
+        }
     }
 }
-/*
-fun barChart(data: HashMap<String, Float>): BarChartData{
-    var labels = data.keys
-    var floats = data.values
-    var barchartData: List<BarData>
-    data.forEach{k, v ->
-
-
+@Composable
+fun barChart(data: ArrayList<Pair<String, Float>>): BarChartData{
+    var barDataList: ArrayList<BarData> = ArrayList<BarData>()
+    var maxNum = 0f
+    data.forEachIndexed{i, item ->
+        var barData = BarData(point = Point((i+1).toFloat(), item.second), label = item.first)
+        barDataList.add(barData)
+        if(item.second > maxNum){
+            maxNum = item.second
+        }
     }
 
     val xAxisData = AxisData.Builder()
-        .axisStepSize(30.dp)
-        .steps(labels.size - 1)
+        .axisOffset(10.dp)
+        .axisStepSize(70.dp)
+        .steps(barDataList.size - 1)
         .bottomPadding(40.dp)
         .axisLabelAngle(20f)
-        .labelData { index -> labels.elementAt(index)}
+        .axisLineColor(MaterialTheme.colorScheme.inversePrimary)
+        .axisLabelColor(MaterialTheme.colorScheme.inversePrimary)
+        .labelData { i -> barDataList[i].label}
+        .backgroundColor(MaterialTheme.colorScheme.background)
         .build()
 
     val yAxisData = AxisData.Builder()
-        .steps(100)
-        .labelAndAxisLinePadding(20.dp)
+        .steps(5)
+        .labelAndAxisLinePadding(50.dp)
         .axisOffset(20.dp)
-        .labelData { index -> (index * (100000 / 100)).toString() }
+        .axisLineColor(MaterialTheme.colorScheme.inversePrimary)
+        .axisLabelColor(MaterialTheme.colorScheme.inversePrimary)
+        .labelData { index -> formatSeconds((index * (maxNum / 5))) }
+        .backgroundColor(MaterialTheme.colorScheme.background)
         .build()
-/*
+
     val barChartData = BarChartData(
-        chartData = data,
+        chartData = barDataList,
         xAxisData = xAxisData,
         yAxisData = yAxisData,
-        paddingBetweenBars = 20.dp,
-        barWidth = 25.dp
+        backgroundColor = MaterialTheme.colorScheme.background
     )
 
- */
+
     return barChartData
 }
-*/
+
 @Composable
-fun NumberOfReports(){
+fun NumberOfReports(data: ArrayList<Pair<String, Int>>){
     //TODO Broj izvjesca po projektu, piechart
     Column(
         modifier = Modifier
@@ -188,8 +231,64 @@ fun NumberOfReports(){
                 color = MaterialTheme.colorScheme.inversePrimary
             )
         }
-        //graf
+        if(!data.isEmpty()){
+            Row (
+                modifier = Modifier
+                    .fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center
+            ){
+                pieChart(data)
+            }
+        }
     }
+}
+
+fun getRandomColor(): Color {
+    val predefinedColors = arrayOf(
+        Color.Red,
+        Color.Green,
+        Color.Blue,
+        Color.Yellow,
+        Color.Magenta,
+        Color.Cyan,
+        Color.LightGray,
+        Color.Gray,
+        Color.Black,
+        Color.DarkGray,
+        Color.Magenta
+    )
+
+
+    return predefinedColors[Random.nextInt(predefinedColors.size)]
+}
+@Composable
+fun pieChart(data: ArrayList<Pair<String, Int>>){
+    var chartData: ArrayList<PieChartData.Slice> = ArrayList<PieChartData.Slice>()
+    var colors =
+    data.forEach{pair ->
+        chartData.add(PieChartData.Slice(pair.first, pair.second.toFloat(), color = getRandomColor()))
+    }
+    val pieChartData = PieChartData(
+        slices = chartData,
+        plotType = PlotType.Pie
+    )
+
+    val pieChartConfig = PieChartConfig(
+        isAnimationEnable = false,
+        showSliceLabels = true,
+        backgroundColor = MaterialTheme.colorScheme.background,
+        labelColor = MaterialTheme.colorScheme.inversePrimary
+    )
+
+    PieChart(
+        modifier = Modifier
+            .height(250.dp)
+            .width(250.dp)
+            .background(MaterialTheme.colorScheme.background),
+        pieChartData,
+        pieChartConfig
+    )
 }
 
 @Composable
@@ -239,4 +338,41 @@ fun formatSeconds(seconds: Float): String {
     }
 
     return formattedTime.toString().trim()
+}
+
+@Composable
+@SuppressLint("CoroutineCreationDuringComposition")
+fun getReports(
+    dataViewModel: DataViewModel,
+    id_user: Int,
+    coroutine: CoroutineScope
+): List<Report> {
+    var reports by remember { mutableStateOf<List<Report>>(emptyList()) }
+    LaunchedEffect(key1 = id_user) {
+        dataViewModel.getUserReports(id_user)
+        coroutine.launch {
+            dataViewModel.uiState.collectLatest { data ->
+                when (data) {
+                    is APIResult.Error -> {
+                        Log.e("Error Data - getReports", "error getAllReports")
+                    }
+
+                    APIResult.Loading -> {
+                        Log.d("Loading Data - getReports", "loading getAllReports")
+                    }
+
+                    is APIResult.Success -> {
+                        if(data.data is List<*>) {
+                            val dataList = data.data as List<*>
+                            if (dataList.isNotEmpty() && dataList[0] is Report) {
+                                reports = data.data as List<Report>
+                            }
+                        }
+                        Log.d("Success - getProjects", reports.toString())
+                    }
+                }
+            }
+        }
+    }
+    return reports
 }
