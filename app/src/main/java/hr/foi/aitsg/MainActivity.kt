@@ -35,23 +35,25 @@ import hr.foi.aitsg.auth.searchUsers
 import hr.foi.aitsg.ui.theme.AITSGTheme
 import hr.foi.database.DataViewModel
 import hr.foi.interfaces.TestRetriever
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
-import hr.foi.scanner.ScannerTestRetriever
-import androidx.activity.result.contract.ActivityResultContracts.GetContent
 import androidx.compose.ui.platform.LocalContext
 import dagger.hilt.android.qualifiers.ApplicationContext
 import androidx.core.content.ContextCompat
 import hr.foi.scanner.ScannerPage
 import com.google.gson.Gson
+import hr.foi.interfaces.Scanner
+import hr.foi.testupload.FileScanner
+import hr.foi.scanner.ScannerTestRetriever
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     private val viewModel by viewModels<DataViewModel>()
-    private val _showProject: ShowProject = ShowProject()
+    private val _showProject: ShowProject = ShowProject() // maknuti ove crte kaj su ispot
+    companion object {
+        val scannersList: List<Scanner> = listOf(FileScanner(), ScannerTestRetriever())
+    }
+
+    //contains the content of the test -> its use is to save the test when the app is navigating from scanner to preview
+    var testContent: String = ""
     @SuppressLint("SuspiciousIndentation")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -73,10 +75,7 @@ class MainActivity : ComponentActivity() {
                             }
                     }
                 )
-                //contains the type of the retriever: scanner, import -> users selects the type and then the factory creates the type class
-                var testRetrieverType: String = "scanner"
-                //contains the content of the test -> its use is to save the test when the app is navigating from scanner to preview
-                var testContent: String = ""
+
 
 
                 Surface(
@@ -116,7 +115,14 @@ class MainActivity : ComponentActivity() {
                             addUsersToProject(
                                 navHostController = navController,
                                 dataViewModel = viewModel,
-                                project_id = _project_id)
+                                project_id = _project_id,
+                                deletedUser = {
+                                    Toast.makeText(
+                                        applicationContext,
+                                        "Korisnik uspješno obrisan s projekta!",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                })
                         }
                         composable("search-users/{id}" ){ navBackStack ->
                             val _project_id = navBackStack.arguments?.getString("id")
@@ -166,32 +172,10 @@ class MainActivity : ComponentActivity() {
                                 navController.navigate("profile")
                             })
                         }
-
-                        composable("tests/{type}/{projectId}"){navBackStack ->
-                            multiplePermissionResultLauncher.launch(
-                                arrayOf(
-                                    android.Manifest.permission.CAMERA,
-                                    android.Manifest.permission.READ_EXTERNAL_STORAGE
-                                )
-                            )
-                            testRetrieverType = navBackStack.arguments?.getString("type").toString()
-                            //on report page when the user tries to create new report then he chooses the type and navigates here
-                            val testRetriever: TestRetriever = TestRetrieverFactory.getRetriever(testRetrieverType)
-                            val projectId = navBackStack.arguments?.getString("projectId")
-                            Column(){
-                                testRetriever.showUI(getTestData = {testData ->
-                                    testContent = testData
-                                    navController.navigate("testPreview/$projectId")
-                                })
-                            }
-
-                            //TODO add to report page when the user chooses to scan the file with camera
-                            //asks for permissions
-
-                        }
                         composable("testPreview/{id}"){
                             val coroutineScope = rememberCoroutineScope()
                             val projectId = it.arguments?.getString("id")
+                            Log.d("Preview", testContent)
                             TestPreviewPage(
                                 testData = testContent,
                                 onClickNext = {testData ->
@@ -200,7 +184,7 @@ class MainActivity : ComponentActivity() {
                                     //TODO navigate to the report generation
                                 },
                                 onClickBack = {
-                                    navController.navigate("tests")
+                                    navController.popBackStack()
                                 }
                             )
                         }
@@ -229,6 +213,24 @@ class MainActivity : ComponentActivity() {
                                 response = oar,
                                 projectId = reportId
                             )
+
+                        scannersList.map {scanner ->
+                            composable(scanner.getRoute()+ "{id}"){navBackStack ->
+                                multiplePermissionResultLauncher.launch(
+                                    arrayOf(
+                                        android.Manifest.permission.CAMERA,
+                                        android.Manifest.permission.READ_EXTERNAL_STORAGE
+                                    )
+                                )
+                                val projectId = navBackStack.arguments?.getString("id")
+                                Column(){
+                                    scanner.TestRetrieverUI(getTestData = { testData ->
+                                        testContent = testData
+                                        Log.d("Datoteka - MainAct", testContent)
+                                        navController.navigate("testPreview/$projectId")
+                                    })
+                                }
+                            }
                         }
                     }
                 }

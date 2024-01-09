@@ -64,7 +64,9 @@ dependencies {
 
     implementation(project(mapOf("path" to ":core:database")))
     implementation(project(mapOf("path" to ":scanner")))
+
     implementation(project(mapOf("path" to ":core:interfaces")))
+    implementation(project(mapOf("path" to ":testupload")))
 
     val nav_version = "2.7.4"
     implementation ("androidx.compose.material3:material3:1.2.0-alpha12")
