@@ -133,6 +133,13 @@ class DataViewModel @Inject constructor(
             }
         }
     }
+    fun updateProject(projectId: Int, project: Project){
+        viewModelScope.launch {
+            repository.updateProject(projectId, project).collectLatest { data ->
+                _uiState.update { data }
+            }
+        }
+    }
     /*fun noOfAllReports(userId: Int){
         viewModelScope.launch {
             repository.noOfAllReports(userId).collectLatest { data ->
