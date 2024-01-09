@@ -10,6 +10,10 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Done
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
@@ -17,9 +21,11 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -58,14 +64,14 @@ fun ListofProjects(navController: NavHostController, viewModel: DataViewModel) {
         modifier = Modifier.fillMaxSize(),
         color = MaterialTheme.colorScheme.background
     ) {
-        ProjectList(projects, navController)
+        ProjectList(projects, navController, viewModel)
     }
 }
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ProjectList(projects: List<Project>, navController: NavHostController) {
+fun ProjectList(projects: List<Project>, navController: NavHostController, viewModel: DataViewModel) {
     Scaffold(
         topBar = {
             TopAppBar(
@@ -114,26 +120,28 @@ fun ProjectList(projects: List<Project>, navController: NavHostController) {
         }
     ) {
         if (projects.isNotEmpty()) {
-            ProjectListView(projects, navController)
+            ProjectListView(projects, navController,viewModel)
         }
     }
 }
 
 @Composable
-fun ProjectListView(projects: List<Project>, navController: NavHostController) {
+fun ProjectListView(projects: List<Project>, navController: NavHostController, viewModel: DataViewModel) {
     LazyColumn {
         item {
             Spacer(modifier = Modifier.height(65.dp))
         }
         items(projects) { project ->
             Divider(modifier = Modifier.fillMaxWidth())
-            ProjectItem(project, navController)
+            ProjectItem(project, navController, viewModel)
         }
     }
 }
 
 @Composable
-fun ProjectItem(project: Project, navController: NavHostController) {
+fun ProjectItem(project: Project, navController: NavHostController, viewModel: DataViewModel) {
+    var isEditing by remember { mutableStateOf(false) }
+    var editedProjectName by remember { mutableStateOf(project.name) }
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -162,6 +170,52 @@ fun ProjectItem(project: Project, navController: NavHostController) {
             fontSize = 18.sp,
             color = MaterialTheme.colorScheme.primary,
             modifier = Modifier.align(Alignment.CenterVertically)
+        )
+
+        if (isEditing) {
+            TextField(
+                value = editedProjectName,
+                onValueChange = { editedProjectName = it },
+                label = { Text("Napisi novo ime projekta") },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(end = 8.dp)
+            )
+            IconButton(
+                onClick = {
+                    project.id_project?.let { viewModel.updateProject(it,editedProjectName) }
+                    isEditing = false
+                }
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Done,
+                    contentDescription = "Spremi",
+                    modifier = Modifier.size(24.dp)
+                )
+            }
+        } else {
+            IconButton(
+                onClick = { isEditing = true },
+                modifier = Modifier.padding(end = 8.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Edit,
+                    contentDescription = "Edit",
+                    modifier = Modifier.size(24.dp)
+                )
+            }
+        }
+
+        Spacer(modifier = Modifier.width(8.dp))
+
+        Icon(
+            imageVector = Icons.Default.Delete,
+            contentDescription = "Delete",
+            modifier = Modifier
+                .size(24.dp)
+                .clickable {
+                    project.id_project?.let { viewModel.deleteProject(it) }
+                }
         )
     }
 }
