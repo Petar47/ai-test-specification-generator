@@ -81,6 +81,19 @@ class UserDataSource @Inject constructor(
             }
         }
     }
+    fun updateProject(projectId: Int, project: Project): Flow<APIResult<Unit>>{
+        return flow {
+            emit(APIResult.Loading)
+            try {
+                supabaseClient.postgrest["Project"].update(project) {
+                    filter("id_project", FilterOperator.EQ, projectId)
+                }
+                emit(APIResult.Success(Unit))
+            } catch (e: Exception) {
+                emit(APIResult.Error(e.message))
+            }
+        }
+    }
 
     fun findProjects(userId: Int): Flow<APIResult<List<Project>>> {
         return flow {
