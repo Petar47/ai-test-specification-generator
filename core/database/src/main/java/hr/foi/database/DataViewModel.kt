@@ -131,7 +131,7 @@ class DataViewModel @Inject constructor(
             }
         }
     }
-    fun updateProject(projectId: Int, project: String){
+    fun updateProject(projectId: Int, project: Project){
         viewModelScope.launch {
             repository.updateProject(projectId, project).collectLatest { data ->
                 _uiState.update { data }

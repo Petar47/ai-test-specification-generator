@@ -177,21 +177,20 @@ fun ProjectItem(project: Project, navController: NavHostController, viewModel: D
                 onValueChange = { editedProjectName = it },
                 label = { Text("Napisi novo ime projekta") },
                 modifier = Modifier
-                    .fillMaxWidth()
                     .padding(end = 8.dp)
             )
-            IconButton(
-                onClick = {
-                    project.id_project?.let { viewModel.updateProject(it, editedProjectName) }
-                    isEditing = false
-                }
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Done,
-                    contentDescription = "Spremi",
-                    modifier = Modifier.size(24.dp)
-                )
-            }
+            Icon(
+                imageVector = Icons.Default.Done,
+                contentDescription = "Spremi",
+                modifier = Modifier
+                    .size(24.dp)
+                    .clickable{
+                        val novi = Project(project.id_project,editedProjectName,project.created,project.owner)
+                        project.id_project?.let { viewModel.updateProject(it, novi) }
+                        isEditing = false
+                        navController.navigate("workspaces")
+                    }
+            )
         } else {
             Spacer(modifier = Modifier.width(8.dp))
 
@@ -213,6 +212,7 @@ fun ProjectItem(project: Project, navController: NavHostController, viewModel: D
                     .size(24.dp)
                     .clickable {
                         project.id_project?.let { viewModel.deleteProject(it) }
+                        navController.navigate("workspaces")
                     }
             )
         }
