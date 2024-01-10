@@ -125,7 +125,7 @@ fun StatisticsPage(viewModel: DataViewModel, onMenuClick: () -> Unit){
             ) {
                 SavedTimeGraph(savedTimeData)
                 Spacer(modifier = Modifier.height(20.dp))
-                NumberOfReports(numberOfReports)
+                NumberOfReports(numberOfReports, reports.size)
                 Spacer(modifier = Modifier.height(20.dp))
                 ScanningFrequency(reports)
             }
@@ -217,7 +217,7 @@ fun barChart(data: ArrayList<Pair<String, Float>>): BarChartData{
     var barDataList: ArrayList<BarData> = ArrayList<BarData>()
     var maxNum = 0f
     data.forEachIndexed{i, item ->
-        var barData = BarData(point = Point((i+1).toFloat(), item.second), label = item.first)
+        var barData = BarData(point = Point((i+1).toFloat(), item.second), label = item.first, color = MaterialTheme.colorScheme.primary)
         barDataList.add(barData)
         if(item.second > maxNum){
             maxNum = item.second
@@ -258,23 +258,30 @@ fun barChart(data: ArrayList<Pair<String, Float>>): BarChartData{
 }
 
 @Composable
-fun NumberOfReports(data: ArrayList<Pair<String, Int>>){
-    //TODO Broj izvjesca po projektu, piechart
+fun NumberOfReports(data: ArrayList<Pair<String, Int>>, reportsSum: Int){
+    var projectName by remember{mutableStateOf("")}
+    var numReportsOnProject by remember {mutableStateOf(0)}
     Column(
         modifier = Modifier
             .fillMaxWidth()
     ){
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-        ){
+        Row(modifier = Modifier.fillMaxWidth()){
             Spacer(modifier = Modifier.width(10.dp))
-            Text(
-                text = "Broj generiranih izvještaja",
-                fontSize = 18.sp,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.inversePrimary
-            )
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ){
+                Text(
+                    text = "Broj generiranih izvještaja",
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.inversePrimary
+                )
+                Text(text = reportsSum.toString(),color = MaterialTheme.colorScheme.inversePrimary)
+            }
+            Spacer(modifier = Modifier.width(10.dp))
         }
         Spacer(modifier = Modifier.height(10.dp))
         if(!data.isEmpty()){
@@ -284,13 +291,34 @@ fun NumberOfReports(data: ArrayList<Pair<String, Int>>){
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Center
             ){
-                pieChart(data)
+                pieChart(data, onSliceClick = {slice ->
+                    projectName = slice.label
+                    numReportsOnProject = slice.value.toInt()
+                })
+            }
+        }
+        if(numReportsOnProject > 0){
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceEvenly
+            ){
+                Text(
+                    text = projectName,
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.inversePrimary
+                )
+                Text(
+                    text = numReportsOnProject.toString(),
+                    color = MaterialTheme.colorScheme.inversePrimary
+                )
             }
         }
     }
 }
 
-fun getRandomColor(): Color {
+fun getColor(index: Int): Color {
     val predefinedColors = arrayOf(
         Color.Red,
         Color.Green,
@@ -306,14 +334,14 @@ fun getRandomColor(): Color {
     )
 
 
-    return predefinedColors[Random.nextInt(predefinedColors.size)]
+    return predefinedColors[index%predefinedColors.size]
 }
 @Composable
-fun pieChart(data: ArrayList<Pair<String, Int>>){
+fun pieChart(data: ArrayList<Pair<String, Int>>, onSliceClick: (PieChartData.Slice) -> Unit){
     var chartData: ArrayList<PieChartData.Slice> = ArrayList<PieChartData.Slice>()
     var colors =
-    data.forEach{pair ->
-        chartData.add(PieChartData.Slice(pair.first, pair.second.toFloat(), color = getRandomColor()))
+    data.forEachIndexed{index, pair ->
+        chartData.add(PieChartData.Slice(pair.first, pair.second.toFloat(), color = getColor(index)))
     }
     val pieChartData = PieChartData(
         slices = chartData,
@@ -324,7 +352,9 @@ fun pieChart(data: ArrayList<Pair<String, Int>>){
         isAnimationEnable = false,
         showSliceLabels = true,
         backgroundColor = MaterialTheme.colorScheme.background,
-        labelColor = MaterialTheme.colorScheme.inversePrimary
+        labelColor = MaterialTheme.colorScheme.inversePrimary,
+        labelType = PieChartConfig.LabelType.VALUE,
+        isSumVisible = true
     )
 
     PieChart(
@@ -333,7 +363,10 @@ fun pieChart(data: ArrayList<Pair<String, Int>>){
             .width(250.dp)
             .background(MaterialTheme.colorScheme.background),
         pieChartData,
-        pieChartConfig
+        pieChartConfig,
+        onSliceClick = {slice ->
+            onSliceClick(slice)
+        }
     )
 }
 
@@ -407,7 +440,7 @@ fun lineChart(data: List<Report>){
             lines = listOf(
                 Line(
                     dataPoints = pointsData,
-                    LineStyle(),
+                    LineStyle(color = MaterialTheme.colorScheme.primary),
                     IntersectionPoint(),
                     SelectionHighlightPoint(),
                     ShadowUnderLine(),
