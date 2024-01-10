@@ -79,6 +79,9 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import org.apache.poi.sl.usermodel.VerticalAlignment
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import kotlin.random.Random
 
 @Composable
@@ -366,14 +369,23 @@ fun ScanningFrequency(reports: List<Report>){
 @Composable
 fun lineChart(data: List<Report>){
     val steps = 5
-    val pointsData: List<Point> =
-        listOf(Point(0f, 40f), Point(1f, 90f), Point(2f, 0f), Point(3f, 60f), Point(4f, 10f))
+    var listOfDates: ArrayList<String> = ArrayList<String>()
+    var pointsData: ArrayList<Point> = ArrayList<Point>()
+    val datesPointsData = getPoints(data)
+    var maxRange = 0
+    datesPointsData.forEach{pair ->
+        listOfDates.add(pair.first)
+        pointsData.add(pair.second)
+        if(maxRange < pair.second.y){
+            maxRange = pair.second.y.toInt()
+        }
+    }
 
     val xAxisData = AxisData.Builder()
         .axisStepSize(100.dp)
         .backgroundColor(MaterialTheme.colorScheme.background)
         .steps(pointsData.size - 1)
-        .labelData { i -> i.toString() }
+        .labelData { i -> listOfDates[i] }
         .labelAndAxisLinePadding(15.dp)
         .axisLabelColor(MaterialTheme.colorScheme.inversePrimary)
         .axisLineColor(MaterialTheme.colorScheme.inversePrimary)
@@ -386,7 +398,7 @@ fun lineChart(data: List<Report>){
         .axisLabelColor(MaterialTheme.colorScheme.inversePrimary)
         .axisLineColor(MaterialTheme.colorScheme.inversePrimary)
         .labelData { i ->
-            val yScale = 100 / steps
+            val yScale = maxRange / steps
             (i * yScale).toString()
         }.build()
 
@@ -415,6 +427,42 @@ fun lineChart(data: List<Report>){
             .height(300.dp),
         lineChartData = lineChartData
     )
+}
+
+fun getPoints(reports: List<Report>): List<Pair<String, Point>>{
+    var list: ArrayList<Pair<String, Point>> = ArrayList<Pair<String, Point>>()
+    var dateList: ArrayList<String> = ArrayList<String>()
+    reports.forEach{report ->
+        dateList.add(formatDateString(report.generated.toString()))
+    }
+    dateList = dateList.distinct() as ArrayList<String>
+    dateList.forEachIndexed {index, s ->
+        var reportSum = 0
+        reports.forEach{report ->
+            if(s == formatDateString(report.generated.toString())){
+                reportSum++
+            }
+        }
+        list.add(Pair(s, Point(x = (index+1).toFloat(), y = reportSum.toFloat())))
+    }
+    return list
+}
+
+fun formatDateString(input: String): String {
+    val inputDate = input.split("T").first()
+    val inputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+    val outputFormatter = DateTimeFormatter.ofPattern("dd-MM-yy")
+
+    val dateTime = LocalDate.parse(inputDate, inputFormatter)
+    return dateTime.format(outputFormatter)
+}
+
+fun sortDates(dateList: List<Pair<String, Point>>): List<Pair<String, Point>> {
+    val formatter = DateTimeFormatter.ofPattern("dd-MM-yy")
+
+    val sortedList = dateList.sortedBy { LocalDate.parse(it.first, formatter) }
+
+    return sortedList
 }
 
 fun formatSeconds(seconds: Float): String {
