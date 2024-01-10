@@ -48,12 +48,14 @@ import hr.foi.scanner.ScannerTestRetriever
 class MainActivity : ComponentActivity() {
     private val viewModel by viewModels<DataViewModel>()
     private val _showProject: ShowProject = ShowProject() // maknuti ove crte kaj su ispot
+
     companion object {
         val scannersList: List<Scanner> = listOf(FileScanner(), ScannerTestRetriever())
     }
 
     //contains the content of the test -> its use is to save the test when the app is navigating from scanner to preview
     var testContent: String = ""
+
     @SuppressLint("SuspiciousIndentation")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -66,13 +68,13 @@ class MainActivity : ComponentActivity() {
 
                 val multiplePermissionResultLauncher = rememberLauncherForActivityResult(
                     contract = ActivityResultContracts.RequestMultiplePermissions(),
-                    onResult = {perms ->
-                            perms.keys.forEach{permission ->
-                                permissionViewModel.onPermissionResult(
-                                    permission = permission,
-                                    isGranted = perms[permission] == true
-                                )
-                            }
+                    onResult = { perms ->
+                        perms.keys.forEach { permission ->
+                            permissionViewModel.onPermissionResult(
+                                permission = permission,
+                                isGranted = perms[permission] == true
+                            )
+                        }
                     }
                 )
 
@@ -84,33 +86,34 @@ class MainActivity : ComponentActivity() {
                 ) {
                     val navController = rememberNavController()
 
-                    NavHost(navController, startDestination = "login"){
-                        composable("login"){
+                    NavHost(navController, startDestination = "login") {
+                        composable("login") {
                             LoginPage(navController = navController, dataViewModel = viewModel,
                                 successfulLogin = {
-                                navController.navigate("workspaces")
-                            })
+                                    navController.navigate("workspaces")
+                                })
 
                         }
-                        composable("register"){
+                        composable("register") {
                             RegistrationPage(navController = navController, viewModel = viewModel)
                         }
-                        composable("addProject"){
-                            AddProject(navController = navController,viewModel =viewModel)
+                        composable("addProject") {
+                            AddProject(navController = navController, viewModel = viewModel)
                         }
-                        composable("workspaces"){
-                            ListofProjects(navController = navController,viewModel =viewModel)
+                        composable("workspaces") {
+                            ListofProjects(navController = navController, viewModel = viewModel)
                         }
-                        composable("show-project/{id}" ){ navBackStack ->
+                        composable("show-project/{id}") { navBackStack ->
                             val context = LocalContext.current
                             val counter = navBackStack.arguments?.getString("id")
-                                _showProject.showProject(
-                                    navHostController = navController,
-                                    dataViewModel = viewModel,
-                                    project_id = counter,
-                                    context)
-                            }
-                        composable("add-users/{id}" ){ navBackStack ->
+                            _showProject.showProject(
+                                navHostController = navController,
+                                dataViewModel = viewModel,
+                                project_id = counter,
+                                context
+                            )
+                        }
+                        composable("add-users/{id}") { navBackStack ->
                             val _project_id = navBackStack.arguments?.getString("id")
                             addUsersToProject(
                                 navHostController = navController,
@@ -124,7 +127,7 @@ class MainActivity : ComponentActivity() {
                                     ).show()
                                 })
                         }
-                        composable("search-users/{id}" ){ navBackStack ->
+                        composable("search-users/{id}") { navBackStack ->
                             val _project_id = navBackStack.arguments?.getString("id")
                             searchUsers(
                                 navHostController = navController,
@@ -138,7 +141,7 @@ class MainActivity : ComponentActivity() {
                                     ).show()
                                 })
                         }
-                        composable("profile"){
+                        composable("profile") {
                             UpdateProfile(navHostController = navController, viewModel = viewModel,
                                 onUpdateUser = {
                                     Toast.makeText(
@@ -148,9 +151,9 @@ class MainActivity : ComponentActivity() {
                                     ).show()
                                 })
                         }
-                        composable("menu"){
-                            MenuPage(onMenuButtonClick =  {page ->
-                                when(page){
+                        composable("menu") {
+                            MenuPage(onMenuButtonClick = { page ->
+                                when (page) {
                                     "workspaces" -> navController.navigate("workspaces")
                                     else -> Toast.makeText(
                                         applicationContext,
@@ -172,13 +175,13 @@ class MainActivity : ComponentActivity() {
                                 navController.navigate("profile")
                             })
                         }
-                        composable("testPreview/{id}"){
+                        composable("testPreview/{id}") {
                             val coroutineScope = rememberCoroutineScope()
                             val projectId = it.arguments?.getString("id")
                             Log.d("Preview", testContent)
                             TestPreviewPage(
                                 testData = testContent,
-                                onClickNext = {testData ->
+                                onClickNext = { testData ->
                                     testContent = testData
                                     navController.navigate("report-preview/$projectId")
                                     //TODO navigate to the report generation
@@ -200,7 +203,14 @@ class MainActivity : ComponentActivity() {
                                     isLoading = false
                                 }
                             }
-                            response?.let { it1 -> ReportPreviewPage(navController ,viewModel, it1, projectId) }
+                            response?.let { it1 ->
+                                ReportPreviewPage(
+                                    navController,
+                                    viewModel,
+                                    it1,
+                                    projectId
+                                )
+                            }
                         }
                         composable("report-view/{id}/{data}") {
                             val reportId = it.arguments?.getString("id")
@@ -214,63 +224,83 @@ class MainActivity : ComponentActivity() {
                                 projectId = reportId
                             )
 
-                        scannersList.map {scanner ->
-                            composable(scanner.getRoute()+ "{id}"){navBackStack ->
-                                multiplePermissionResultLauncher.launch(
-                                    arrayOf(
-                                        android.Manifest.permission.CAMERA,
-                                        android.Manifest.permission.READ_EXTERNAL_STORAGE
+                            scannersList.map { scanner ->
+                                composable(scanner.getRoute() + "{id}") { navBackStack ->
+                                    multiplePermissionResultLauncher.launch(
+                                        arrayOf(
+                                            android.Manifest.permission.CAMERA,
+                                            android.Manifest.permission.READ_EXTERNAL_STORAGE
+                                        )
                                     )
-                                )
-                                val projectId = navBackStack.arguments?.getString("id")
-                                Column(){
-                                    scanner.TestRetrieverUI(getTestData = { testData ->
-                                        testContent = testData
-                                        Log.d("Datoteka - MainAct", testContent)
-                                        navController.navigate("testPreview/$projectId")
-                                    })
+                                    val projectId = navBackStack.arguments?.getString("id")
+                                    Column() {
+                                        scanner.TestRetrieverUI(getTestData = { testData ->
+                                            testContent = testData
+                                            Log.d("Datoteka - MainAct", testContent)
+                                            navController.navigate("testPreview/$projectId")
+                                        })
+                                    }
                                 }
                             }
                         }
                     }
-                }
 
-                //Permission handler
-                dialogQueue
-                    .reversed()
-                    .forEach {permission ->
-                        PermissionDialog(
-                            permissionTextProvider = when (permission) {
-                                android.Manifest.permission.CAMERA -> CameraPermissionTextProvider()
-                                else -> return@forEach
-                                //TODO add more permissions if needed
-                            },
-                            isPermanentlyDeclined = !shouldShowRequestPermissionRationale(permission),
-                            onDismiss = permissionViewModel::dismissDialog,
-                            onOkClick= {
-                                permissionViewModel.dismissDialog()
-                                multiplePermissionResultLauncher.launch(arrayOf(permission))
-                            },
-                            onGoToAppSettingsClick = ::openAppSettings,
-                        )
-                    }
+                    //Permission handler
+                    dialogQueue
+                        .reversed()
+                        .forEach { permission ->
+                            PermissionDialog(
+                                permissionTextProvider = when (permission) {
+                                    android.Manifest.permission.CAMERA -> CameraPermissionTextProvider()
+                                    else -> return@forEach
+                                    //TODO add more permissions if needed
+                                },
+                                isPermanentlyDeclined = !shouldShowRequestPermissionRationale(
+                                    permission
+                                ),
+                                onDismiss = permissionViewModel::dismissDialog,
+                                onOkClick = {
+                                    permissionViewModel.dismissDialog()
+                                    multiplePermissionResultLauncher.launch(arrayOf(permission))
+                                },
+                                onGoToAppSettingsClick = ::openAppSettings,
+                            )
+                        }
+                }
             }
         }
     }
 }
+    fun Activity.openAppSettings() {
+        Intent(
+            Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+            Uri.fromParts("package", packageName, null)
+        ).also(::startActivity)
+    }
 
-fun Activity.openAppSettings(){
-    Intent(
-        Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
-        Uri.fromParts("package", packageName, null)
-    ).also(::startActivity)
-}
-
-private fun setProperties(){
-    System.setProperty("javax.xml.stream.XMLInputFactory", "com.fasterxml.aalto.stax.InputFactoryImpl")
-    System.setProperty("javax.xml.stream.XMLOutputFactory", "com.fasterxml.aalto.stax.OutputFactoryImpl")
-    System.setProperty("javax.xml.stream.XMLEventFactory", "com.fasterxml.aalto.stax.EventFactoryImpl")
-    System.setProperty("org.apache.poi.javax.xml.stream.XMLInputFactory", "com.fasterxml.aalto.stax.InputFactoryImpl")
-    System.setProperty("org.apache.poi.javax.xml.stream.XMLOutputFactory", "com.fasterxml.aalto.stax.OutputFactoryImpl")
-    System.setProperty("org.apache.poi.javax.xml.stream.XMLEventFactory", "com.fasterxml.aalto.stax.EventFactoryImpl")
-}
+    private fun setProperties() {
+        System.setProperty(
+            "javax.xml.stream.XMLInputFactory",
+            "com.fasterxml.aalto.stax.InputFactoryImpl"
+        )
+        System.setProperty(
+            "javax.xml.stream.XMLOutputFactory",
+            "com.fasterxml.aalto.stax.OutputFactoryImpl"
+        )
+        System.setProperty(
+            "javax.xml.stream.XMLEventFactory",
+            "com.fasterxml.aalto.stax.EventFactoryImpl"
+        )
+        System.setProperty(
+            "org.apache.poi.javax.xml.stream.XMLInputFactory",
+            "com.fasterxml.aalto.stax.InputFactoryImpl"
+        )
+        System.setProperty(
+            "org.apache.poi.javax.xml.stream.XMLOutputFactory",
+            "com.fasterxml.aalto.stax.OutputFactoryImpl"
+        )
+        System.setProperty(
+            "org.apache.poi.javax.xml.stream.XMLEventFactory",
+            "com.fasterxml.aalto.stax.EventFactoryImpl"
+        )
+    }

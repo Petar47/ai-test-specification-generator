@@ -47,7 +47,7 @@ fun ListofProjects(navController: NavHostController, viewModel: DataViewModel) {
     }
     var coroutine = rememberCoroutineScope()
     val projects = getProjects(dataViewModel = viewModel, id_user = id!!, coroutine)
-
+    UserProjects.projects = projects
 
     //var isLoading by remember { mutableStateOf(false) }
 
