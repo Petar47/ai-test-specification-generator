@@ -86,16 +86,15 @@ import kotlin.random.Random
 
 @Composable
 fun StatisticsPage(viewModel: DataViewModel, onMenuClick: () -> Unit){
-    //val loggedInUser = Authenticated.loggedInUser as User
-    val mockUser: User = User(8, "vcor@foi.hr", "3eaf108c3f000e30b201863c6a58ec8174bec1d0c0602695d97da586ed94ff3b",
-        "Viktor", "Coric")
+    val loggedInUser = Authenticated.loggedInUser as User
+    //val mockUser: User = User(8, "vcor@foi.hr", "3eaf108c3f000e30b201863c6a58ec8174bec1d0c0602695d97da586ed94ff3b", "Viktor", "Coric")
 
     //var savedTimeSum by remember { mutableStateOf("0h 0m 0s") }
     var savedTimeData: ArrayList<Pair<String, Float>> = ArrayList<Pair<String, Float>>()
     var numberOfReports: ArrayList<Pair<String, Int>> = ArrayList<Pair<String, Int>>()
     var coroutine = rememberCoroutineScope()
-    val projects = getProjects(dataViewModel = viewModel, id_user = mockUser.id_user!!, coroutine = coroutine)
-    val reports = getReports(dataViewModel = viewModel, id_user = mockUser.id_user!!, coroutine = coroutine)
+    val projects = getProjects(dataViewModel = viewModel, id_user = loggedInUser.id_user!!, coroutine = coroutine)
+    val reports = getReports(dataViewModel = viewModel, id_user = loggedInUser.id_user!!, coroutine = coroutine)
     projects.forEach { project ->
         var timeSum = 0f
         var reportSum = 0
@@ -226,7 +225,7 @@ fun barChart(data: ArrayList<Pair<String, Float>>): BarChartData{
 
     val xAxisData = AxisData.Builder()
         .axisOffset(10.dp)
-        .axisStepSize(70.dp)
+        .axisStepSize(100.dp)
         .steps(barDataList.size - 1)
         .bottomPadding(40.dp)
         .axisLabelAngle(20f)
@@ -414,10 +413,14 @@ fun lineChart(data: List<Report>){
         }
     }
 
+    while(maxRange%5 != 0){
+        maxRange++
+    }
+
     val xAxisData = AxisData.Builder()
         .axisStepSize(100.dp)
         .backgroundColor(MaterialTheme.colorScheme.background)
-        .steps(pointsData.size - 1)
+        .steps(pointsData.size-1)
         .labelData { i -> listOfDates[i] }
         .labelAndAxisLinePadding(15.dp)
         .axisLabelColor(MaterialTheme.colorScheme.inversePrimary)

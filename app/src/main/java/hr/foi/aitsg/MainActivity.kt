@@ -85,7 +85,7 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
                     val navController = rememberNavController()
-                    NavHost(navController, startDestination = "statistics"){
+                    NavHost(navController, startDestination = "login"){
                         composable("login"){
                             LoginPage(navController = navController, dataViewModel = viewModel,
                                 successfulLogin = {
