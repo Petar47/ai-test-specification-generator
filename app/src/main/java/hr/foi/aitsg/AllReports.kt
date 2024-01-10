@@ -10,6 +10,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import hr.foi.database.APIResult
 import hr.foi.database.DataViewModel
+import hr.foi.database.Project
 import hr.foi.database.Report
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -40,11 +41,25 @@ fun getNumberOfProjectReports(dataViewModel: DataViewModel, projectId : Int) : I
 }
 @Composable
 @SuppressLint("CoroutineCreationDuringComposition")
-fun getNumberOfAllUserReports(dataViewModel: DataViewModel): Int {
-    var counter : Int = 0
-    var projects = UserProjects.projects
-    projects.forEach{
-        counter += getNumberOfProjectReports(dataViewModel, it.id_project!! )
+fun getNumberOfAllUserReports(dataViewModel: DataViewModel): Map<Project, Int> {
+    var countOfProjectReports by remember { mutableStateOf<Map<Project,Int>>(emptyMap()) }
+    var coroutine = rememberCoroutineScope()
+    dataViewModel.noOfAllReports(Authenticated.loggedInUser?.id_user!!)
+    coroutine.launch {
+        dataViewModel.uiState.collectLatest {data ->
+            when (data) {
+                is APIResult.Error -> {
+                    Log.e("Error Data - allUserReportsCount", "error allUserReportsCount: ${data.message}")
+                }
+                APIResult.Loading -> {
+                    Log.d("Loading Data - allUserReportsCount", "loading allUserReportsCount")
+                }
+                is APIResult.Success -> {
+                    countOfProjectReports = data.data as Map<Project, Int>
+                    Log.d("Success Data - allUserReportsCount", countOfProjectReports.toString())
+                }
+            }
+        }
     }
-    return counter
+    return countOfProjectReports
 }
