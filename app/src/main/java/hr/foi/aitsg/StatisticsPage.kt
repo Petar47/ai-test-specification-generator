@@ -21,6 +21,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.rounded.Check
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
@@ -68,6 +69,7 @@ import co.yml.charts.ui.piechart.models.PieChartConfig
 import co.yml.charts.ui.piechart.models.PieChartData
 import hr.foi.aitsg.auth.getAllProjectReports
 import hr.foi.aitsg.auth.getProjects
+import hr.foi.aitsg.composables.CircularLoadingBar
 import hr.foi.database.APIResult
 import hr.foi.database.DataViewModel
 import hr.foi.database.Project
@@ -110,17 +112,20 @@ fun StatisticsPage(viewModel: DataViewModel, onMenuClick: () -> Unit){
         modifier = Modifier.fillMaxSize()
     ){
         TopAppBar(onMenu = {onMenuClick()})
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .verticalScroll(rememberScrollState())
-        ){
-
-            SavedTimeGraph(savedTimeData)
-            Spacer(modifier = Modifier.height(20.dp))
-            NumberOfReports(numberOfReports)
-            Spacer(modifier = Modifier.height(20.dp))
-            ScanningFrequency(reports)
+        if (projects.isEmpty() || reports.isEmpty()) {
+            CircularLoadingBar()
+        }else {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .verticalScroll(rememberScrollState())
+            ) {
+                SavedTimeGraph(savedTimeData)
+                Spacer(modifier = Modifier.height(20.dp))
+                NumberOfReports(numberOfReports)
+                Spacer(modifier = Modifier.height(20.dp))
+                ScanningFrequency(reports)
+            }
         }
     }
 }
@@ -366,16 +371,20 @@ fun lineChart(data: List<Report>){
 
     val xAxisData = AxisData.Builder()
         .axisStepSize(100.dp)
-        .backgroundColor(Color.Blue)
+        .backgroundColor(MaterialTheme.colorScheme.background)
         .steps(pointsData.size - 1)
         .labelData { i -> i.toString() }
         .labelAndAxisLinePadding(15.dp)
+        .axisLabelColor(MaterialTheme.colorScheme.inversePrimary)
+        .axisLineColor(MaterialTheme.colorScheme.inversePrimary)
         .build()
 
     val yAxisData = AxisData.Builder()
         .steps(steps)
-        .backgroundColor(Color.Red)
+        .backgroundColor(MaterialTheme.colorScheme.background)
         .labelAndAxisLinePadding(20.dp)
+        .axisLabelColor(MaterialTheme.colorScheme.inversePrimary)
+        .axisLineColor(MaterialTheme.colorScheme.inversePrimary)
         .labelData { i ->
             val yScale = 100 / steps
             (i * yScale).toString()
@@ -397,7 +406,7 @@ fun lineChart(data: List<Report>){
         xAxisData = xAxisData,
         yAxisData = yAxisData,
         gridLines = GridLines(),
-        backgroundColor = Color.White
+        backgroundColor = MaterialTheme.colorScheme.background
     )
 
     LineChart(
@@ -500,7 +509,7 @@ fun SelectableDropdownMenu(names: List<String>){
             modifier = Modifier
                 .menuAnchor()
                 .focusRequester(focusRequester)
-                .clickable{focusRequester.requestFocus()}
+                .clickable { focusRequester.requestFocus() }
         )
         ExposedDropdownMenuBox(
             expanded = isExpanded,

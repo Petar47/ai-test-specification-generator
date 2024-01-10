@@ -37,3 +37,14 @@ data class Project_user(
     val id_project: Int,
     val id_user: Int
 )
+
+@Serializable
+data class ProjectReportTest(
+    val id_report: Int,
+    val Project: Project
+)
+@Serializable
+data class UserProjectTest(
+    val Project: Project,
+    val id_user: Int
+)
