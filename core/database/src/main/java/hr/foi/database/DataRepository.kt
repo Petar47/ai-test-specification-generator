@@ -21,7 +21,7 @@ interface DataRepository {
     fun getAllReports(projectId: Int): Flow<APIResult<List<Report>>>
     fun getUserByProject(projectId: Int): Flow<APIResult<List<User>>>
     fun noOfProjectReports(projectId: Int): Flow<APIResult<Int>>
-    /*fun noOfAllReports(userId: Int): Flow<APIResult<Map<String, Int>>>*/
+    fun noOfAllReports(userId: Int): Flow<APIResult<MutableMap<Project?, Int>>>
     fun getUserReports(userId: Int): Flow<APIResult<List<Report>>>
     fun updateProject(projectId: Int, project: Project): Flow<APIResult<Unit>>
 }
@@ -97,9 +97,9 @@ class DefaultDataRepository @Inject constructor(
         return dataSource.updateProject(projectId, project)
     }
 
-    /*override fun noOfAllReports(userId: Int): Flow<APIResult<Map<String, Int>>> {
+    override fun noOfAllReports(userId: Int): Flow<APIResult<MutableMap<Project?, Int>>> {
         return dataSource.noOfAllReports(userId)
-    }*/
+    }
 
 
 }
