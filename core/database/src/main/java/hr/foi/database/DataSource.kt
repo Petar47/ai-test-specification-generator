@@ -278,6 +278,22 @@ class UserDataSource @Inject constructor(
             }
         }
     }
+    fun getUserReportsWithProject(userId: Int): Flow<APIResult<List<UserReportsWithProjects>>>{
+        return flow {
+            emit(APIResult.Loading)
+            try {
+                val columns = Columns.list(("""id_report, name, description, JSON_response, generated, saved_time, Project(id_project, name, created, owner)"""))
+                val res = supabaseClient.postgrest.from("Report").select(columns){filter("user", FilterOperator.EQ, userId)}.decodeList<UserReportsWithProjects>()
+                val res1 = supabaseClient.postgrest["Report"].select {
+                    filter("user", FilterOperator.EQ, userId)
+                }.decodeList<Report>()
+                val reports = res
+                emit(APIResult.Success(reports))
+            } catch (e: Exception) {
+                emit(APIResult.Error(e.message))
+            }
+        }
+    }
     fun noOfAllReports(userId: Int): Flow<APIResult<MutableMap<Project?, Int>>> {
         return flow {
             emit(APIResult.Loading)
