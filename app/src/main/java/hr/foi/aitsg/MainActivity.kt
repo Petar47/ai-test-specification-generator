@@ -176,21 +176,6 @@ class MainActivity : ComponentActivity() {
                                 navController.navigate("profile")
                             })
                         }
-                        composable("statistics"){
-                            StatisticsPage(
-                                viewModel = viewModel,
-                                onMenuClick = {
-                                    navController.navigate("menu")
-                                }
-                            )
-                        }
-                        composable("history"){
-                            val context = LocalContext.current
-                            History(
-                                navController = navController,
-                                viewModel = viewModel,
-                                context)
-                        }
                         composable("testPreview/{id}"){
                             val coroutineScope = rememberCoroutineScope()
                             val projectId = it.arguments?.getString("id")
@@ -283,17 +268,12 @@ class MainActivity : ComponentActivity() {
                             )
                         }
                 }
-            }
-        }
-    }
-}
     fun Activity.openAppSettings() {
         Intent(
             Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
             Uri.fromParts("package", packageName, null)
         ).also(::startActivity)
     }
-
     private fun setProperties() {
         System.setProperty(
             "javax.xml.stream.XMLInputFactory",
