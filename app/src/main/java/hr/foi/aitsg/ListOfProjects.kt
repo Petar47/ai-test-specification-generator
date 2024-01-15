@@ -79,7 +79,7 @@ fun ProjectList(projects: List<Project>, navController: NavHostController) {
                             Icon(
                                 imageVector = Icons.Default.Menu,
                                 contentDescription = null,
-                                tint = Color.White,
+                                tint = MaterialTheme.colorScheme.onSecondary,
                                 modifier = Modifier.size(45.dp)
                             )
                         }
@@ -94,7 +94,7 @@ fun ProjectList(projects: List<Project>, navController: NavHostController) {
                             Icon(
                                 imageVector = Icons.Default.Search,
                                 contentDescription = null,
-                                tint = Color.White,
+                                tint = MaterialTheme.colorScheme.onSecondary,
                                 modifier = Modifier.size(45.dp)
                             )
                         }

@@ -85,9 +85,8 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
                     val navController = rememberNavController()
-
-                    NavHost(navController, startDestination = "login") {
-                        composable("login") {
+                    NavHost(navController, startDestination = "login"){
+                        composable("login"){
                             LoginPage(navController = navController, dataViewModel = viewModel,
                                 successfulLogin = {
                                     navController.navigate("workspaces")
@@ -155,6 +154,7 @@ class MainActivity : ComponentActivity() {
                             MenuPage(onMenuButtonClick = { page ->
                                 when (page) {
                                     "workspaces" -> navController.navigate("workspaces")
+                                    "statistics" -> navController.navigate("statistics")
                                     else -> Toast.makeText(
                                         applicationContext,
                                         "Not implemented yet",
@@ -175,7 +175,15 @@ class MainActivity : ComponentActivity() {
                                 navController.navigate("profile")
                             })
                         }
-                        composable("testPreview/{id}") {
+                        composable("statistics"){
+                            StatisticsPage(
+                                viewModel = viewModel,
+                                onMenuClick = {
+                                    navController.navigate("menu")
+                                }
+                            )
+                        }
+                        composable("testPreview/{id}"){
                             val coroutineScope = rememberCoroutineScope()
                             val projectId = it.arguments?.getString("id")
                             Log.d("Preview", testContent)
