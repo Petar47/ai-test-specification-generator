@@ -27,7 +27,10 @@ fun getAllProjectReports(dataViewModel: DataViewModel, id_project: Int): List<Re
             dataViewModel.uiState.collectLatest { data ->
                 when (data) {
                     is APIResult.Error -> {
-                        Log.e("Error Data - getReports", "error getAllProjectReports: ${data.message}")
+                        Log.e(
+                            "Error Data - getReports",
+                            "error getAllProjectReports: ${data.message}"
+                        )
                     }
 
                     APIResult.Loading -> {
@@ -35,11 +38,43 @@ fun getAllProjectReports(dataViewModel: DataViewModel, id_project: Int): List<Re
                     }
 
                     is APIResult.Success -> {
-                        if(data.data is List<*>) {
+                        if (data.data is List<*>) {
                             val dataList = data.data as List<*>
                             if (dataList.isNotEmpty() && dataList[0] is Report) {
                                 reports = data.data as List<Report>
                             }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    Log.d("Success - getReports", reports.toString())
+    return reports
+}
+
+@Composable
+@SuppressLint("CoroutineCreationDuringComposition")
+fun getAllUserReports(userId: Int, dataViewModel: DataViewModel): List<Report> {
+    var reports by remember { mutableStateOf<List<Report>>(emptyList()) }
+    var coroutine = rememberCoroutineScope()
+    dataViewModel.getUserReports(userId)
+    coroutine.launch {
+        dataViewModel.uiState.collectLatest { data ->
+            when (data) {
+                is APIResult.Error -> {
+                    Log.e("Error Data - getReports", "error getAllProjectReports: ${data.message}")
+                }
+
+                APIResult.Loading -> {
+                    Log.d("Loading Data - getReports", "loading getAllProjectReports")
+                }
+
+                is APIResult.Success -> {
+                    if (data.data is List<*>) {
+                        val dataList = data.data as List<*>
+                        if (dataList.isNotEmpty() && dataList[0] is Report) {
+                            reports = data.data as List<Report>
                         }
                     }
                 }
