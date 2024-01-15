@@ -155,6 +155,7 @@ class MainActivity : ComponentActivity() {
                                 when (page) {
                                     "workspaces" -> navController.navigate("workspaces")
                                     "statistics" -> navController.navigate("statistics")
+                                    "history" ->navController.navigate("history")
                                     else -> Toast.makeText(
                                         applicationContext,
                                         "Not implemented yet",
@@ -182,6 +183,13 @@ class MainActivity : ComponentActivity() {
                                     navController.navigate("menu")
                                 }
                             )
+                        }
+                        composable("history"){
+                            val context = LocalContext.current
+                            History(
+                                navController = navController,
+                                viewModel = viewModel,
+                                context)
                         }
                         composable("testPreview/{id}"){
                             val coroutineScope = rememberCoroutineScope()

@@ -1,6 +1,7 @@
 package hr.foi.aitsg
 
 import android.annotation.SuppressLint
+import android.content.Context
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -40,7 +41,7 @@ import hr.foi.database.Report
 
 
 @Composable
-fun History(navController: NavHostController, viewModel: DataViewModel) {
+fun History(navController: NavHostController, viewModel: DataViewModel, context: Context) {
     val user: User
     var id: Int? = null
     if (Authenticated.loggedInUser != null) {
@@ -54,14 +55,14 @@ fun History(navController: NavHostController, viewModel: DataViewModel) {
         modifier = Modifier.fillMaxSize(),
         color = MaterialTheme.colorScheme.background
     ) {
-        ListOfReports(reports, navController)
+        ListOfReports(reports, navController, context)
     }
 }
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ListOfReports(reports: List<Report>, navController: NavHostController) {
+fun ListOfReports(reports: List<Report>, navController: NavHostController, context: Context) {
     Scaffold(
         topBar = {
             TopAppBar(
@@ -101,26 +102,26 @@ fun ListOfReports(reports: List<Report>, navController: NavHostController) {
         }
     ) {
         if (reports.isNotEmpty()) {
-            ReportsView(reports, navController)
+            ReportsView(reports, navController, context)
         }
     }
 }
 
 @Composable
-fun ReportsView(reports: List<Report>, navController: NavHostController) {
+fun ReportsView(reports: List<Report>, navController: NavHostController, context: Context) {
     LazyColumn {
         item {
             Spacer(modifier = Modifier.height(65.dp))
         }
         items(reports) { report ->
             Divider(modifier = Modifier.fillMaxWidth())
-            ReportItem(report, navController)
+            ReportItem(report, navController, context)
         }
     }
 }
 
 @Composable
-fun ReportItem(report: Report, navController: NavHostController) {
+fun ReportItem(report: Report, navController: NavHostController, context: Context) {
     val generated = report.generated!!.split('T')
     Row(
         modifier = Modifier
@@ -171,9 +172,9 @@ fun ReportItem(report: Report, navController: NavHostController) {
                         .clip(shape = CircleShape)
                         .background(MaterialTheme.colorScheme.tertiary)
                         .padding(5.dp)
-/*                        .clickable {
+                        .clickable {
                             sendEmail(context, report.name, report.JSON_response)
-                        }*/,
+                        },
                     colorFilter = ColorFilter.tint(Color.White)
                 )
                 Spacer(modifier = Modifier.width(15.dp))
@@ -185,9 +186,9 @@ fun ReportItem(report: Report, navController: NavHostController) {
                         .clip(shape = CircleShape)
                         .background(MaterialTheme.colorScheme.tertiary)
                         .padding(5.dp)
-/*                        .clickable {
+                        .clickable {
                             DownloadReport(context, report.JSON_response, report.name)
-                        }*/,
+                        },
                     colorFilter = ColorFilter.tint(Color.White)
                 )
             }
