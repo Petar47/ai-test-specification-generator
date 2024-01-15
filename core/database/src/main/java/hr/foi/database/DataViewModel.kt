@@ -138,11 +138,11 @@ class DataViewModel @Inject constructor(
             }
         }
     }
-    /*fun noOfAllReports(userId: Int){
+    fun noOfAllReports(userId: Int){
         viewModelScope.launch {
             repository.noOfAllReports(userId).collectLatest { data ->
                 _uiState.update { data }
             }
         }
-    }*/
+    }
 }

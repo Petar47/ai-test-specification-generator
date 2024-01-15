@@ -104,6 +104,9 @@ dependencies {
     implementation("com.google.code.gson:gson:2.8.9")
     compileOnly("org.apache.poi:poi-ooxml:3.17")
 
+    //For generating charts
+    implementation ("co.yml:ycharts:2.1.0")
+
 }
 kapt {
     correctErrorTypes = true

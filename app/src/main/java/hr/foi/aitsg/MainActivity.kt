@@ -85,9 +85,8 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
                     val navController = rememberNavController()
-
-                    NavHost(navController, startDestination = "login") {
-                        composable("login") {
+                    NavHost(navController, startDestination = "login"){
+                        composable("login"){
                             LoginPage(navController = navController, dataViewModel = viewModel,
                                 successfulLogin = {
                                     navController.navigate("workspaces")
@@ -155,6 +154,8 @@ class MainActivity : ComponentActivity() {
                             MenuPage(onMenuButtonClick = { page ->
                                 when (page) {
                                     "workspaces" -> navController.navigate("workspaces")
+                                    "statistics" -> navController.navigate("statistics")
+                                    "history" ->navController.navigate("history")
                                     else -> Toast.makeText(
                                         applicationContext,
                                         "Not implemented yet",
@@ -175,7 +176,7 @@ class MainActivity : ComponentActivity() {
                                 navController.navigate("profile")
                             })
                         }
-                        composable("testPreview/{id}") {
+                        composable("testPreview/{id}"){
                             val coroutineScope = rememberCoroutineScope()
                             val projectId = it.arguments?.getString("id")
                             Log.d("Preview", testContent)
@@ -267,18 +268,12 @@ class MainActivity : ComponentActivity() {
                             )
                         }
                 }
-                }
-            }
-        }
-    }
-
     fun Activity.openAppSettings() {
         Intent(
             Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
             Uri.fromParts("package", packageName, null)
         ).also(::startActivity)
     }
-
     private fun setProperties() {
         System.setProperty(
             "javax.xml.stream.XMLInputFactory",

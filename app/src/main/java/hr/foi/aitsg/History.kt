@@ -1,6 +1,7 @@
 package hr.foi.aitsg
 
 import android.annotation.SuppressLint
+import android.content.Context
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -10,10 +11,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Done
-import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
@@ -21,11 +18,9 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -37,41 +32,37 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import hr.foi.aitsg.auth.getAllUserReports
 import hr.foi.database.User
 import hr.foi.database.DataViewModel
 import hr.foi.database.Project
 import hr.foi.aitsg.auth.getProjects
+import hr.foi.database.Report
 
 
 @Composable
-fun ListofProjects(navController: NavHostController, viewModel: DataViewModel) {
+fun History(navController: NavHostController, viewModel: DataViewModel, context: Context) {
     val user: User
     var id: Int? = null
     if (Authenticated.loggedInUser != null) {
         user = Authenticated.loggedInUser!!
-        id = user.id_user
+        id=user.id_user
     }
     var coroutine = rememberCoroutineScope()
-    val projects = getProjects(dataViewModel = viewModel, id_user = id!!, coroutine)
-    UserProjects.projects = projects
+    val reports = getAllUserReports(userId = id!!, dataViewModel = viewModel)
 
-    //var isLoading by remember { mutableStateOf(false) }
-
-    /*if (isLoading){
-        CircularLoadingBar()
-    }*/
     Surface(
         modifier = Modifier.fillMaxSize(),
         color = MaterialTheme.colorScheme.background
     ) {
-        ProjectList(projects, navController, viewModel)
+        ListOfReports(reports, navController, context)
     }
 }
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ProjectList(projects: List<Project>, navController: NavHostController, viewModel: DataViewModel) {
+fun ListOfReports(reports: List<Report>, navController: NavHostController, context: Context) {
     Scaffold(
         topBar = {
             TopAppBar(
@@ -91,7 +82,7 @@ fun ProjectList(projects: List<Project>, navController: NavHostController, viewM
                         }
 
                         Text(
-                            text = "Projekti",
+                            text = "Povijest",
                             color = MaterialTheme.colorScheme.onSecondary,
                             fontWeight = FontWeight.Bold
                         )
@@ -108,51 +99,38 @@ fun ProjectList(projects: List<Project>, navController: NavHostController, viewM
                 },
                 colors = TopAppBarDefaults.smallTopAppBarColors(containerColor = MaterialTheme.colorScheme.tertiary)
             )
-        },
-        floatingActionButton = {
-            FloatingActionButton(
-                onClick = {
-                    navController.navigate("addProject")
-                },
-                content = { Icon(imageVector = Icons.Default.Add, contentDescription = null) },
-                containerColor = MaterialTheme.colorScheme.primary
-            )
         }
     ) {
-        if (projects.isNotEmpty()) {
-            ProjectListView(projects, navController,viewModel)
+        if (reports.isNotEmpty()) {
+            ReportsView(reports, navController, context)
         }
     }
 }
 
 @Composable
-fun ProjectListView(projects: List<Project>, navController: NavHostController, viewModel: DataViewModel) {
+fun ReportsView(reports: List<Report>, navController: NavHostController, context: Context) {
     LazyColumn {
         item {
             Spacer(modifier = Modifier.height(65.dp))
         }
-        items(projects) { project ->
+        items(reports) { report ->
             Divider(modifier = Modifier.fillMaxWidth())
-            ProjectItem(project, navController, viewModel)
+            ReportItem(report, navController, context)
         }
     }
 }
 
 @Composable
-fun ProjectItem(project: Project, navController: NavHostController, viewModel: DataViewModel) {
-    var isEditing by remember { mutableStateOf(false) }
-    var editedProjectName by remember { mutableStateOf(project.name) }
+fun ReportItem(report: Report, navController: NavHostController, context: Context) {
+    val generated = report.generated!!.split('T')
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(16.dp)
-            .clickable {
-                navController.navigate("show-project/" + "${project.id_project}")
-            },
+            .padding(16.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Image(
-            painter = painterResource(id = R.drawable.file),
+            painter = painterResource(id = R.drawable.xlsx),
             contentDescription = null,
             modifier = Modifier
                 .size(40.dp)
@@ -163,64 +141,57 @@ fun ProjectItem(project: Project, navController: NavHostController, viewModel: D
         )
 
         Spacer(modifier = Modifier.width(16.dp))
-
-        Text(
-            text = project.name,
-            fontSize = 18.sp,
-            color = MaterialTheme.colorScheme.primary,
-            modifier = Modifier.weight(1f)
-        )
-
-        if (isEditing) {
-            TextField(
-                value = editedProjectName,
-                onValueChange = { editedProjectName = it },
-                label = { Text("Napisi novo ime projekta") },
-                modifier = Modifier
-                    .padding(end = 8.dp)
+        Column{
+            Spacer(modifier = Modifier.height(10.dp))
+            Text(
+                text = report.name,
+                fontSize = 18.sp,
+                color = MaterialTheme.colorScheme.primary,
+                //modifier = Modifier.width(230.dp)
+                modifier = Modifier.fillMaxWidth(0.7f)
             )
-            Icon(
-                imageVector = Icons.Default.Done,
-                contentDescription = "Spremi",
-                modifier = Modifier
-                    .size(24.dp)
-                    .clickable{
-                        val novi = Project(project.id_project,editedProjectName,project.created,project.owner)
-                        project.id_project?.let { viewModel.updateProject(it, novi) }
-                        isEditing = false
-                        navController.navigate("workspaces")
-                    }
-            )
-        } else {
-            Spacer(modifier = Modifier.width(8.dp))
-
-            IconButton(
-                onClick = { isEditing = true },
-                modifier = Modifier.padding(end = 8.dp)
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Edit,
-                    contentDescription = "Uredi",
-                    modifier = Modifier.size(24.dp)
-                )
-            }
-
-            Icon(
-                imageVector = Icons.Default.Delete,
-                contentDescription = "Obriši",
-                modifier = Modifier
-                    .size(24.dp)
-                    .clickable {
-                        project.id_project?.let { viewModel.deleteProject(it) }
-                        navController.navigate("workspaces")
-                    }
+            Spacer(modifier = Modifier.height(5.dp))
+            Text(
+                text = generated[0],
+                fontSize = 10.sp,
+                color = MaterialTheme.colorScheme.tertiary,
             )
         }
+        Spacer(modifier = Modifier.width(5.dp))
+        Box(
+            modifier = Modifier
+                .fillMaxWidth(),
+            contentAlignment = Alignment.CenterEnd
+        ) {
+            Row {
+                Image(
+                    painter = painterResource(id = R.drawable.share),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .size(30.dp)
+                        .clip(shape = CircleShape)
+                        .background(MaterialTheme.colorScheme.tertiary)
+                        .padding(5.dp)
+                        .clickable {
+                            sendEmail(context, report.name, report.JSON_response)
+                        },
+                    colorFilter = ColorFilter.tint(Color.White)
+                )
+                Spacer(modifier = Modifier.width(15.dp))
+                Image(
+                    painter = painterResource(id = R.drawable.download),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .size(30.dp)
+                        .clip(shape = CircleShape)
+                        .background(MaterialTheme.colorScheme.tertiary)
+                        .padding(5.dp)
+                        .clickable {
+                            DownloadReport(context, report.JSON_response, report.name)
+                        },
+                    colorFilter = ColorFilter.tint(Color.White)
+                )
+            }
+        }
     }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun ProjectItemPreview() {
-    //ProjectItem(Project(1, "ime","marko", 1))
 }
