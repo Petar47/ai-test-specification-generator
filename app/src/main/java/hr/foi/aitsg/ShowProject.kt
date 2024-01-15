@@ -158,81 +158,13 @@ class ShowProject {
 
             }
             if (reports.isNotEmpty()) {
-                reports.forEach() {
-                    val generated = it.generated!!.split('T')
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(16.dp)
-                            .clickable {
-                                navHostController.navigate("report-view/${it.id_report}/${it.JSON_response}")
-                            },
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Image(
-                            painter = painterResource(id = R.drawable.xlsx),
-                            contentDescription = null,
-                            modifier = Modifier
-                                .size(40.dp)
-                                .clip(shape = CircleShape)
-                                .background(MaterialTheme.colorScheme.primary)
-                                .padding(5.dp),
-                            colorFilter = ColorFilter.tint(Color.White)
-                        )
-
-                        Spacer(modifier = Modifier.width(16.dp))
-                        Column{
-                            Spacer(modifier = Modifier.height(10.dp))
-                            Text(
-                                text = it.name,
-                                fontSize = 18.sp,
-                                color = MaterialTheme.colorScheme.primary,
-                                //modifier = Modifier.width(230.dp)
-                                modifier = Modifier.fillMaxWidth(0.7f)
-                            )
-                            Spacer(modifier = Modifier.height(5.dp))
-                            Text(
-                                text = generated[0],
-                                fontSize = 10.sp,
-                                color = MaterialTheme.colorScheme.tertiary,
-                            )
-                        }
-                        Spacer(modifier = Modifier.width(5.dp))
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth(),
-                            contentAlignment = Alignment.CenterEnd
-                        ) {
-                            Row {
-                                Image(
-                                    painter = painterResource(id = R.drawable.share),
-                                    contentDescription = null,
-                                    modifier = Modifier
-                                        .size(30.dp)
-                                        .clip(shape = CircleShape)
-                                        .background(MaterialTheme.colorScheme.tertiary)
-                                        .padding(5.dp)
-                                        .clickable {
-                                            sendEmail(context,it.name, it.JSON_response)
-                                        },
-                                    colorFilter = ColorFilter.tint(Color.White)
-                                )
-                                Spacer(modifier = Modifier.width(15.dp))
-                                Image(
-                                    painter = painterResource(id = R.drawable.download),
-                                    contentDescription = null,
-                                    modifier = Modifier
-                                        .size(30.dp)
-                                        .clip(shape = CircleShape)
-                                        .background(MaterialTheme.colorScheme.tertiary)
-                                        .padding(5.dp)
-                                        .clickable{
-                                            DownloadReport(context,it.JSON_response,it.name)
-                                        },
-                                    colorFilter = ColorFilter.tint(Color.White)
-                                )
-                            }
-                        }
+                LazyColumn {
+                    item {
+                        //Spacer(modifier = Modifier.height(65.dp))
+                    }
+                    items(reports) { report ->
+                        Divider(modifier = Modifier.fillMaxWidth())
+                        ReportItem(report, navHostController, context)
                     }
                 }
             }
@@ -246,7 +178,10 @@ class ShowProject {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp),
+                .padding(16.dp)
+                .clickable {
+                    navHostController.navigate("report-view/${report.id_report}/${report.JSON_response}")
+                },
             verticalAlignment = Alignment.CenterVertically
         ) {
             Image(
