@@ -12,6 +12,7 @@ import androidx.compose.runtime.setValue
 import hr.foi.database.APIResult
 import hr.foi.database.DataViewModel
 import hr.foi.database.Report
+import hr.foi.database.UserReportsWithProjects
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -55,10 +56,10 @@ fun getAllProjectReports(dataViewModel: DataViewModel, id_project: Int): List<Re
 
 @Composable
 @SuppressLint("CoroutineCreationDuringComposition")
-fun getAllUserReports(userId: Int, dataViewModel: DataViewModel): List<Report> {
-    var reports by remember { mutableStateOf<List<Report>>(emptyList()) }
+fun getAllUserReports(userId: Int, dataViewModel: DataViewModel): List<UserReportsWithProjects> {
+    var reports by remember { mutableStateOf<List<UserReportsWithProjects>>(emptyList()) }
     var coroutine = rememberCoroutineScope()
-    dataViewModel.getUserReports(userId)
+    dataViewModel.getUserReportsWithProject(userId)
     coroutine.launch {
         dataViewModel.uiState.collectLatest { data ->
             when (data) {
@@ -73,8 +74,8 @@ fun getAllUserReports(userId: Int, dataViewModel: DataViewModel): List<Report> {
                 is APIResult.Success -> {
                     if (data.data is List<*>) {
                         val dataList = data.data as List<*>
-                        if (dataList.isNotEmpty() && dataList[0] is Report) {
-                            reports = data.data as List<Report>
+                        if (dataList.isNotEmpty() && dataList[0] is UserReportsWithProjects) {
+                            reports = data.data as List<UserReportsWithProjects>
                         }
                     }
                 }

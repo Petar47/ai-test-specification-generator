@@ -40,6 +40,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import androidx.core.content.ContextCompat
 import hr.foi.scanner.ScannerPage
 import com.google.gson.Gson
+import hr.foi.database.Project
 import hr.foi.interfaces.Scanner
 import hr.foi.testupload.FileScanner
 import hr.foi.scanner.ScannerTestRetriever
@@ -55,6 +56,7 @@ class MainActivity : ComponentActivity() {
 
     //contains the content of the test -> its use is to save the test when the app is navigating from scanner to preview
     var testContent: String = ""
+
 
     @SuppressLint("SuspiciousIndentation")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -85,8 +87,8 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
                     val navController = rememberNavController()
-                    NavHost(navController, startDestination = "login"){
-                        composable("login"){
+                    NavHost(navController, startDestination = "login") {
+                        composable("login") {
                             LoginPage(navController = navController, dataViewModel = viewModel,
                                 successfulLogin = {
                                     navController.navigate("workspaces")
@@ -155,7 +157,7 @@ class MainActivity : ComponentActivity() {
                                 when (page) {
                                     "workspaces" -> navController.navigate("workspaces")
                                     "statistics" -> navController.navigate("statistics")
-                                    "history" ->navController.navigate("history")
+                                    "history" -> navController.navigate("history")
                                     else -> Toast.makeText(
                                         applicationContext,
                                         "Not implemented yet",
@@ -176,7 +178,7 @@ class MainActivity : ComponentActivity() {
                                 navController.navigate("profile")
                             })
                         }
-                        composable("statistics"){
+                        composable("statistics") {
                             StatisticsPage(
                                 viewModel = viewModel,
                                 onMenuClick = {
@@ -184,14 +186,15 @@ class MainActivity : ComponentActivity() {
                                 }
                             )
                         }
-                        composable("history"){
+                        composable("history") {
                             val context = LocalContext.current
                             History(
                                 navController = navController,
                                 viewModel = viewModel,
-                                context)
+                                context
+                            )
                         }
-                        composable("testPreview/{id}"){
+                        composable("testPreview/{id}") {
                             val coroutineScope = rememberCoroutineScope()
                             val projectId = it.arguments?.getString("id")
                             Log.d("Preview", testContent)
@@ -287,36 +290,37 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
-    fun Activity.openAppSettings() {
-        Intent(
-            Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
-            Uri.fromParts("package", packageName, null)
-        ).also(::startActivity)
-    }
 
-    private fun setProperties() {
-        System.setProperty(
-            "javax.xml.stream.XMLInputFactory",
-            "com.fasterxml.aalto.stax.InputFactoryImpl"
-        )
-        System.setProperty(
-            "javax.xml.stream.XMLOutputFactory",
-            "com.fasterxml.aalto.stax.OutputFactoryImpl"
-        )
-        System.setProperty(
-            "javax.xml.stream.XMLEventFactory",
-            "com.fasterxml.aalto.stax.EventFactoryImpl"
-        )
-        System.setProperty(
-            "org.apache.poi.javax.xml.stream.XMLInputFactory",
-            "com.fasterxml.aalto.stax.InputFactoryImpl"
-        )
-        System.setProperty(
-            "org.apache.poi.javax.xml.stream.XMLOutputFactory",
-            "com.fasterxml.aalto.stax.OutputFactoryImpl"
-        )
-        System.setProperty(
-            "org.apache.poi.javax.xml.stream.XMLEventFactory",
-            "com.fasterxml.aalto.stax.EventFactoryImpl"
-        )
-    }
+fun Activity.openAppSettings() {
+    Intent(
+        Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+        Uri.fromParts("package", packageName, null)
+    ).also(::startActivity)
+}
+
+private fun setProperties() {
+    System.setProperty(
+        "javax.xml.stream.XMLInputFactory",
+        "com.fasterxml.aalto.stax.InputFactoryImpl"
+    )
+    System.setProperty(
+        "javax.xml.stream.XMLOutputFactory",
+        "com.fasterxml.aalto.stax.OutputFactoryImpl"
+    )
+    System.setProperty(
+        "javax.xml.stream.XMLEventFactory",
+        "com.fasterxml.aalto.stax.EventFactoryImpl"
+    )
+    System.setProperty(
+        "org.apache.poi.javax.xml.stream.XMLInputFactory",
+        "com.fasterxml.aalto.stax.InputFactoryImpl"
+    )
+    System.setProperty(
+        "org.apache.poi.javax.xml.stream.XMLOutputFactory",
+        "com.fasterxml.aalto.stax.OutputFactoryImpl"
+    )
+    System.setProperty(
+        "org.apache.poi.javax.xml.stream.XMLEventFactory",
+        "com.fasterxml.aalto.stax.EventFactoryImpl"
+    )
+}
