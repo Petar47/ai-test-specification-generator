@@ -102,6 +102,12 @@ class MainActivity : ComponentActivity() {
                         }
                     }
                 )
+                fun Activity.openAppSettings() {
+                    Intent(
+                        Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                        Uri.fromParts("package", packageName, null)
+                    ).also(::startActivity)
+                }
 
 
 
@@ -201,6 +207,21 @@ class MainActivity : ComponentActivity() {
                                 navController.navigate("profile")
                             })
                         }
+                        composable("history"){
+                            val context = LocalContext.current
+                            History(
+                                navController = navController,
+                                viewModel = viewModel,
+                                context)
+                        }
+                        composable("statistics"){
+                            StatisticsPage(
+                                viewModel = viewModel,
+                                onMenuClick = {
+                                    navController.navigate("menu")
+                                }
+                            )
+                        }
                         composable("testPreview/{id}") {
                             val coroutineScope = rememberCoroutineScope()
                             val projectId = it.arguments?.getString("id")
@@ -292,12 +313,6 @@ class MainActivity : ComponentActivity() {
                                 onGoToAppSettingsClick = ::openAppSettings,
                             )
                         }
-                }
-                fun Activity.openAppSettings() {
-                    Intent(
-                        Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
-                        Uri.fromParts("package", packageName, null)
-                    ).also(::startActivity)
                 }
             }
         }
