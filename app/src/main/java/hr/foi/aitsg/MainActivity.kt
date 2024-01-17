@@ -57,7 +57,6 @@ class MainActivity : ComponentActivity() {
     //contains the content of the test -> its use is to save the test when the app is navigating from scanner to preview
     var testContent: String = ""
 
-
     @SuppressLint("SuspiciousIndentation")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
