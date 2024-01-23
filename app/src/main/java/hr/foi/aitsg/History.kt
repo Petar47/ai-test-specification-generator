@@ -2,11 +2,13 @@ package hr.foi.aitsg
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.util.Log
 import android.widget.Spinner
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -38,8 +40,10 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.PopupProperties
 import androidx.navigation.NavHostController
 import hr.foi.aitsg.auth.getAllUserReports
 import hr.foi.database.User
@@ -140,16 +144,13 @@ fun ReportsView(reports: List<UserReportsWithProjects>, navController: NavHostCo
         item {
             Spacer(modifier = Modifier.height(65.dp))
         }
-        item {
-            SelectableDropdownMenuProjects(names = projects)
+        item{
+            SelectableSort(navHostController = navController, names = projects)
         }
         item { 
             Button(onClick = { navController.navigate("history")}) {
                 Text("Filtriraj")
             }
-        }
-        item{
-            SelectableSort(navHostController = navController)
         }
         items(reports) { report ->
             Divider(modifier = Modifier.fillMaxWidth())
@@ -241,10 +242,16 @@ fun ReportItem(report: UserReportsWithProjects, navController: NavHostController
         }
     }
 }
+
+data class PreviewOptions(val id: Int, val text: String)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SelectableDropdownMenuProjects(names: List<Project>) {
+fun SelectableSort(navHostController: NavHostController, names: List<Project>) {
     var isExpanded by remember {
+        mutableStateOf(false)
+    }
+    val options = arrayOf("naziv-uzlazno","naziv-silazno", "datum-uzlazno", "datum-silazno")
+    var isExpanded1 by remember {
         mutableStateOf(false)
     }
     val selectedNames = remember {
@@ -255,110 +262,131 @@ fun SelectableDropdownMenuProjects(names: List<Project>) {
             selectedNames.add(it.name)
         }
     }
-    ExposedDropdownMenuBox(
-        expanded = isExpanded,
-        onExpandedChange = { isExpanded = it }
-    ) {
-        TextField(
-            value = selectedNames.joinToString(", "),
-            onValueChange = {},
-            placeholder = {
-                Text(text = "Projekti")
-            },
-            readOnly = true, // Makes the TextField clickable
-            trailingIcon = {
-                ExposedDropdownMenuDefaults.TrailingIcon(expanded = isExpanded)
-            },
-            colors = ExposedDropdownMenuDefaults.textFieldColors(),
-            modifier = Modifier.menuAnchor() // Needed to anchor the dropdown menu
-        )
-        ExposedDropdownMenu(
-            expanded = isExpanded,
-            onDismissRequest = { isExpanded = false }
-        ) {
-            names.forEach { name ->
-                AnimatedContent(
-                    targetState = selectedNames.contains(name.name),
-                    label = "Animate the selected item"
-                ) { isSelected ->
-                    if (isSelected) {
-                        DropdownMenuItem(
-                            text = {
-                                Text(text = name.name)
-                            },
-                            onClick = {
-                                selectedNames.remove(name.name)
-                                SelectedProjects.selectedProjects.remove(name)
-                            },
-                            leadingIcon = {
-                                Icon(
-                                    imageVector = Icons.Rounded.Check,
-                                    contentDescription = null
+    Row(modifier = Modifier
+        .fillMaxWidth()) {
+        Box(modifier = Modifier
+            .fillMaxWidth(0.8f)) {
+            ExposedDropdownMenuBox(
+                expanded = isExpanded1,
+                onExpandedChange = { isExpanded1 = it }
+            ) {
+                TextField(
+                    value = selectedNames.joinToString(", "),
+                    onValueChange = {},
+                    placeholder = {
+                        Text(text = "Projekti")
+                    },
+                    readOnly = true, // Makes the TextField clickable
+                    trailingIcon = {
+                        ExposedDropdownMenuDefaults.TrailingIcon(expanded = isExpanded1)
+                    },
+                    colors = ExposedDropdownMenuDefaults.textFieldColors(),
+                    modifier = Modifier.menuAnchor() // Needed to anchor the dropdown menu
+                )
+                ExposedDropdownMenu(
+                    expanded = isExpanded1,
+                    onDismissRequest = { isExpanded1 = false }
+                ) {
+                    names.forEach { name ->
+                        AnimatedContent(
+                            targetState = selectedNames.contains(name.name),
+                            label = "Animate the selected item"
+                        ) { isSelected ->
+                            if (isSelected) {
+                                DropdownMenuItem(
+                                    text = {
+                                        Text(text = name.name)
+                                    },
+                                    onClick = {
+                                        selectedNames.remove(name.name)
+                                        SelectedProjects.selectedProjects.remove(name)
+                                    },
+                                    leadingIcon = {
+                                        Icon(
+                                            imageVector = Icons.Rounded.Check,
+                                            contentDescription = null
+                                        )
+                                    }
+                                )
+                            } else {
+                                DropdownMenuItem(
+                                    text = {
+                                        Text(text = name.name)
+                                    },
+                                    onClick = {
+                                        selectedNames.add(name.name)
+                                        SelectedProjects.selectedProjects.add(name)
+                                    },
                                 )
                             }
+                        }
+                    }
+                }
+            }
+        }
+        Box(modifier = Modifier
+            .fillMaxWidth(),
+            contentAlignment = Alignment.CenterEnd) {
+            Row {
+                Box(
+                    contentAlignment = Alignment.Center
+                ) {
+
+                    IconButton(onClick = {
+                        isExpanded = true
+                        Log.e("Klik na gumb", isExpanded.toString())
+                    }) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.sort),
+                            contentDescription = null,
+                            modifier = Modifier
+                                .size(40.dp)
                         )
-                    } else {
-                        DropdownMenuItem(
-                            text = {
-                                Text(text = name.name)
-                            },
-                            onClick = {
-                                selectedNames.add(name.name)
-                                SelectedProjects.selectedProjects.add(name)
-                            },
-                        )
+                    }
+
+                    DropdownMenu(
+                        expanded = isExpanded,
+                        onDismissRequest = {
+                            isExpanded = false
+                        }
+                    ) {
+                        // adding items
+                        options.forEachIndexed { itemIndex, itemValue ->
+                            DropdownMenuItem(
+                                onClick = {
+                                    SelectedProjects.selectedSort =
+                                        SortTypes(itemIndex + 1, itemValue)
+                                    navHostController.navigate("history")
+                                },
+                                text = {
+                                    Text(text = itemValue)
+                                }
+                            )
+                        }
                     }
                 }
             }
         }
     }
 }
-data class PreviewOptions(val id: Int, val text: String)
-@OptIn(ExperimentalMaterial3Api::class)
+
 @Composable
-fun SelectableSort(navHostController: NavHostController) {
-    var isExpanded by remember {
-        mutableStateOf(false)
-    }
-    val options = remember {
-      listOf(
-          PreviewOptions(1, "naziv-uzlazno"),
-          PreviewOptions(2, "naziv-silazno"),
-          PreviewOptions(3, "datum-uzlazno"),
-          PreviewOptions(4, "datum-silazno")
-      )
-    }
-    ExposedDropdownMenuBox(
-        expanded = isExpanded,
-        onExpandedChange = { isExpanded = it }
-    ) {
-        TextField(
-            value = "Sortiranje",
-            onValueChange = {},
-            readOnly = true, // Makes the TextField clickable
-            leadingIcon = {Icon(painter = painterResource(id = R.drawable.sort),
-                contentDescription = null,
-                modifier = Modifier
-                    .size(40.dp)
-                )},
-            trailingIcon = {
-                ExposedDropdownMenuDefaults.TrailingIcon(expanded = isExpanded)
-            },
-            colors = ExposedDropdownMenuDefaults.textFieldColors(),
-            modifier = Modifier.menuAnchor() // Needed to anchor the dropdown menu
-        )
-        ExposedDropdownMenu(
-            expanded = isExpanded,
-            onDismissRequest = { isExpanded = false }
-        ) {
-            options.forEach(){
-                DropdownMenuItem(
-                    text = { Text(it.text) },
-                    onClick = {
-                        SelectedProjects.selectedSort = SortTypes(it.id, it.text)
-                        navHostController.navigate("history")
-                })
-            }
-        }
-    }
+fun DropdownMenu1(
+    expanded: Boolean,
+    onDismissRequest: () -> Unit,
+    modifier: Modifier = Modifier,
+    offset: DpOffset = DpOffset(-16.dp, -16.dp),
+    properties: PopupProperties = PopupProperties(focusable = true),
+    content: @Composable ColumnScope.() -> Unit
+){
 }
+
+@Composable
+fun DropdownMenuItem1(
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+    contentPadding: PaddingValues = MenuDefaults.DropdownMenuItemContentPadding,
+    interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
+    content: @Composable RowScope.() -> Unit
+){}
