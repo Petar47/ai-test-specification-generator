@@ -40,6 +40,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import androidx.core.content.ContextCompat
 import hr.foi.scanner.ScannerPage
 import com.google.gson.Gson
+import hr.foi.database.Project
 import hr.foi.interfaces.Scanner
 import hr.foi.testupload.FileScanner
 import hr.foi.scanner.ScannerTestRetriever
@@ -55,32 +56,7 @@ class MainActivity : ComponentActivity() {
 
     //contains the content of the test -> its use is to save the test when the app is navigating from scanner to preview
     var testContent: String = ""
-    fun setProperties() {
-        System.setProperty(
-            "javax.xml.stream.XMLInputFactory",
-            "com.fasterxml.aalto.stax.InputFactoryImpl"
-        )
-        System.setProperty(
-            "javax.xml.stream.XMLOutputFactory",
-            "com.fasterxml.aalto.stax.OutputFactoryImpl"
-        )
-        System.setProperty(
-            "javax.xml.stream.XMLEventFactory",
-            "com.fasterxml.aalto.stax.EventFactoryImpl"
-        )
-        System.setProperty(
-            "org.apache.poi.javax.xml.stream.XMLInputFactory",
-            "com.fasterxml.aalto.stax.InputFactoryImpl"
-        )
-        System.setProperty(
-            "org.apache.poi.javax.xml.stream.XMLOutputFactory",
-            "com.fasterxml.aalto.stax.OutputFactoryImpl"
-        )
-        System.setProperty(
-            "org.apache.poi.javax.xml.stream.XMLEventFactory",
-            "com.fasterxml.aalto.stax.EventFactoryImpl"
-        )
-    }
+
     @SuppressLint("SuspiciousIndentation")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -102,12 +78,6 @@ class MainActivity : ComponentActivity() {
                         }
                     }
                 )
-                fun Activity.openAppSettings() {
-                    Intent(
-                        Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
-                        Uri.fromParts("package", packageName, null)
-                    ).also(::startActivity)
-                }
 
 
 
@@ -207,19 +177,20 @@ class MainActivity : ComponentActivity() {
                                 navController.navigate("profile")
                             })
                         }
-                        composable("history"){
-                            val context = LocalContext.current
-                            History(
-                                navController = navController,
-                                viewModel = viewModel,
-                                context)
-                        }
-                        composable("statistics"){
+                        composable("statistics") {
                             StatisticsPage(
                                 viewModel = viewModel,
                                 onMenuClick = {
                                     navController.navigate("menu")
                                 }
+                            )
+                        }
+                        composable("history") {
+                            val context = LocalContext.current
+                            History(
+                                navController = navController,
+                                viewModel = viewModel,
+                                context
                             )
                         }
                         composable("testPreview/{id}") {
@@ -317,4 +288,38 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+}
+
+fun Activity.openAppSettings() {
+    Intent(
+        Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+        Uri.fromParts("package", packageName, null)
+    ).also(::startActivity)
+}
+
+private fun setProperties() {
+    System.setProperty(
+        "javax.xml.stream.XMLInputFactory",
+        "com.fasterxml.aalto.stax.InputFactoryImpl"
+    )
+    System.setProperty(
+        "javax.xml.stream.XMLOutputFactory",
+        "com.fasterxml.aalto.stax.OutputFactoryImpl"
+    )
+    System.setProperty(
+        "javax.xml.stream.XMLEventFactory",
+        "com.fasterxml.aalto.stax.EventFactoryImpl"
+    )
+    System.setProperty(
+        "org.apache.poi.javax.xml.stream.XMLInputFactory",
+        "com.fasterxml.aalto.stax.InputFactoryImpl"
+    )
+    System.setProperty(
+        "org.apache.poi.javax.xml.stream.XMLOutputFactory",
+        "com.fasterxml.aalto.stax.OutputFactoryImpl"
+    )
+    System.setProperty(
+        "org.apache.poi.javax.xml.stream.XMLEventFactory",
+        "com.fasterxml.aalto.stax.EventFactoryImpl"
+    )
 }

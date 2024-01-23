@@ -48,3 +48,13 @@ data class UserProjectTest(
     val Project: Project,
     val id_user: Int
 )
+@Serializable
+data class UserReportsWithProjects(
+    val id_report: Int?=null,
+    val name: String,
+    val description: String?=null,
+    val JSON_response: String,
+    val generated: String?=null,
+    val saved_time: String,
+    val Project: Project
+)
