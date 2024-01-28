@@ -88,7 +88,7 @@ fun LoginPage(navController: NavHostController, dataViewModel: DataViewModel, su
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(10.dp),
-            label = { Text("email")},
+            label = { Text("Email")},
             colors = TextFieldDefaults.outlinedTextFieldColors(
                 focusedBorderColor = hr.foi.aitsg.ui.theme.Cyan,
                 unfocusedBorderColor = hr.foi.aitsg.ui.theme.Grey)
@@ -99,7 +99,7 @@ fun LoginPage(navController: NavHostController, dataViewModel: DataViewModel, su
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(10.dp),
-            label = { Text("lozinka")},
+            label = { Text("Lozinka")},
             keyboardOptions = KeyboardOptions.Default.copy(
                 keyboardType = KeyboardType.Password,
                 imeAction = ImeAction.Done,
@@ -107,8 +107,8 @@ fun LoginPage(navController: NavHostController, dataViewModel: DataViewModel, su
             ),
             visualTransformation = PasswordVisualTransformation(),
             colors = TextFieldDefaults.outlinedTextFieldColors(
-                focusedBorderColor = hr.foi.aitsg.ui.theme.Black,
-                unfocusedBorderColor = hr.foi.aitsg.ui.theme.Cyan)
+                focusedBorderColor = hr.foi.aitsg.ui.theme.Cyan,
+                unfocusedBorderColor = hr.foi.aitsg.ui.theme.Grey)
         )
         Spacer(modifier = Modifier.height(15.dp))
         Row(

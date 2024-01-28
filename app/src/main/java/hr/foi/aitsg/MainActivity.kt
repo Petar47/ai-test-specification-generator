@@ -241,27 +241,28 @@ class MainActivity : ComponentActivity() {
                                 response = oar,
                                 projectId = reportId
                             )
+                        }
 
-                            scannersList.map { scanner ->
-                                composable(scanner.getRoute() + "{id}") { navBackStack ->
-                                    multiplePermissionResultLauncher.launch(
-                                        arrayOf(
-                                            android.Manifest.permission.CAMERA,
-                                            android.Manifest.permission.READ_EXTERNAL_STORAGE
-                                        )
+                        scannersList.map { scanner ->
+                            composable(scanner.getRoute() + "{id}") { navBackStack ->
+                                multiplePermissionResultLauncher.launch(
+                                    arrayOf(
+                                        android.Manifest.permission.CAMERA,
+                                        android.Manifest.permission.READ_EXTERNAL_STORAGE
                                     )
-                                    val projectId = navBackStack.arguments?.getString("id")
-                                    Column() {
-                                        scanner.TestRetrieverUI(getTestData = { testData ->
-                                            testContent = testData
-                                            Log.d("Datoteka - MainAct", testContent)
-                                            navController.navigate("testPreview/$projectId")
-                                        })
-                                    }
+                                )
+                                val projectId = navBackStack.arguments?.getString("id")
+                                Column() {
+                                    scanner.TestRetrieverUI(getTestData = { testData ->
+                                        testContent = testData
+                                        Log.d("Datoteka - MainAct", testContent)
+                                        navController.navigate("testPreview/$projectId")
+                                    })
                                 }
                             }
                         }
                     }
+
 
                     //Permission handler
                     dialogQueue

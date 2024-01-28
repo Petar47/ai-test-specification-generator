@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -11,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
@@ -67,10 +69,12 @@ fun UpdateProfile(navHostController: NavHostController, viewModel: DataViewModel
                     .fillMaxWidth()
                     .padding(5.dp),
                 fontSize = 30.sp,
-                textAlign = TextAlign.Center
+                textAlign = TextAlign.Center,
+                color = MaterialTheme.colorScheme.inversePrimary
             )
         }
-        Text(text = email)
+        Spacer(modifier = Modifier.height(20.dp))
+        Text(text = email, color = MaterialTheme.colorScheme.inversePrimary)
         OutlinedTextField(
             value = first_name,
             onValueChange = { first_name = it},
@@ -109,8 +113,8 @@ fun UpdateProfile(navHostController: NavHostController, viewModel: DataViewModel
             ),
             visualTransformation = PasswordVisualTransformation(),
             colors = TextFieldDefaults.outlinedTextFieldColors(
-                focusedBorderColor = hr.foi.aitsg.ui.theme.Black,
-                unfocusedBorderColor = hr.foi.aitsg.ui.theme.Cyan)
+                focusedBorderColor = hr.foi.aitsg.ui.theme.Cyan,
+                unfocusedBorderColor = hr.foi.aitsg.ui.theme.Grey)
         )
         OutlinedTextField(
             value = new_password,
@@ -126,8 +130,8 @@ fun UpdateProfile(navHostController: NavHostController, viewModel: DataViewModel
             ),
             visualTransformation = PasswordVisualTransformation(),
             colors = TextFieldDefaults.outlinedTextFieldColors(
-                focusedBorderColor = hr.foi.aitsg.ui.theme.Black,
-                unfocusedBorderColor = hr.foi.aitsg.ui.theme.Cyan)
+                focusedBorderColor = hr.foi.aitsg.ui.theme.Cyan,
+                unfocusedBorderColor = hr.foi.aitsg.ui.theme.Grey)
         )
         OutlinedTextField(
             value = confirm_password,
@@ -143,10 +147,11 @@ fun UpdateProfile(navHostController: NavHostController, viewModel: DataViewModel
             ),
             visualTransformation = PasswordVisualTransformation(),
             colors = TextFieldDefaults.outlinedTextFieldColors(
-                focusedBorderColor = hr.foi.aitsg.ui.theme.Black,
-                unfocusedBorderColor = hr.foi.aitsg.ui.theme.Cyan)
+                focusedBorderColor = hr.foi.aitsg.ui.theme.Cyan,
+                unfocusedBorderColor = hr.foi.aitsg.ui.theme.Grey)
         )
         var coroutine  = rememberCoroutineScope()
+        Spacer(modifier = Modifier.height(20.dp))
         Button(
             onClick = {
                 var user = Authenticated.loggedInUser
@@ -194,6 +199,7 @@ fun UpdateProfile(navHostController: NavHostController, viewModel: DataViewModel
             },
             modifier = Modifier
                 .fillMaxWidth()
+                .height(56.dp)
                 .padding(5.dp)
         )
         {

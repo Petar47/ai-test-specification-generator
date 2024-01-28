@@ -22,9 +22,13 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.materialIcon
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -87,15 +91,6 @@ class ShowProject {
                                     color = MaterialTheme.colorScheme.onSecondary,
                                     fontWeight = FontWeight.Bold
                                 )
-
-                                IconButton(onClick = { }) {
-                                    Icon(
-                                        imageVector = Icons.Default.Search,
-                                        contentDescription = null,
-                                        tint = Color.White,
-                                        modifier = Modifier.size(45.dp)
-                                    )
-                                }
                             }
                         },
                         colors = TopAppBarDefaults.smallTopAppBarColors(containerColor = MaterialTheme.colorScheme.tertiary)
@@ -117,7 +112,7 @@ class ShowProject {
                                 },
                                 containerColor = MaterialTheme.colorScheme.primary
                             )
-
+                            Spacer(modifier = Modifier.height(15.dp))
                         }
                     }
                 }
@@ -134,9 +129,15 @@ class ShowProject {
         Column {
             Spacer(modifier = Modifier.height(65.dp))
             Row(
-                modifier = Modifier.padding(10.dp)
+                modifier = Modifier.padding(10.dp),
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(text = "Izvještaji")
+                Text(
+                    text = "Izvještaji",
+                    color = MaterialTheme.colorScheme.inversePrimary,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 18.sp
+                )
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -150,7 +151,7 @@ class ShowProject {
                             .size(40.dp)
                             .clip(shape = CircleShape)
                             .background(MaterialTheme.colorScheme.primary)
-                            .padding(5.dp),
+                            .padding(10.dp),
                         colorFilter = ColorFilter.tint(Color.White),
                         alignment = androidx.compose.ui.Alignment.CenterEnd,
                     )
@@ -163,7 +164,7 @@ class ShowProject {
                         //Spacer(modifier = Modifier.height(65.dp))
                     }
                     items(reports) { report ->
-                        Divider(modifier = Modifier.fillMaxWidth())
+                        //HorizontalDivider(modifier = Modifier.fillMaxWidth())
                         ReportItem(report, navHostController, context)
                     }
                 }
@@ -175,77 +176,80 @@ class ShowProject {
     @Composable
     fun ReportItem(report: Report, navHostController: NavHostController, context: Context) {
         val generated = report.generated!!.split('T')
-        Row(
+        Card(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp)
-                .clickable {
-                    navHostController.navigate("report-view/${report.id_report}/${report.JSON_response}")
-                },
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Image(
-                painter = painterResource(id = R.drawable.xlsx),
-                contentDescription = null,
+                .padding(16.dp),
+            elevation = CardDefaults.cardElevation(
+                defaultElevation = 7.dp)){
+            Row(
                 modifier = Modifier
-                    .size(40.dp)
-                    .clip(shape = CircleShape)
-                    .background(MaterialTheme.colorScheme.primary)
-                    .padding(5.dp),
-                colorFilter = ColorFilter.tint(Color.White)
-            )
-
-            Spacer(modifier = Modifier.width(16.dp))
-            Column{
-                Spacer(modifier = Modifier.height(10.dp))
-                Text(
-                    text = report.name,
-                    fontSize = 18.sp,
-                    color = MaterialTheme.colorScheme.primary,
-                    //modifier = Modifier.width(230.dp)
-                    modifier = Modifier.fillMaxWidth(0.7f)
-                )
-                Spacer(modifier = Modifier.height(5.dp))
-                Text(
-                    text = generated[0],
-                    fontSize = 10.sp,
-                    color = MaterialTheme.colorScheme.tertiary,
-                )
-            }
-            Spacer(modifier = Modifier.width(5.dp))
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth(),
-                contentAlignment = Alignment.CenterEnd
+                    .fillMaxWidth()
+                    .background(MaterialTheme.colorScheme.background)
+                    .padding(16.dp)
+                    .clickable {
+                        navHostController.navigate("report-view/${report.id_report}/${report.JSON_response}")
+                    },
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Row {
-                    Image(
-                        painter = painterResource(id = R.drawable.share),
-                        contentDescription = null,
-                        modifier = Modifier
-                            .size(30.dp)
-                            .clip(shape = CircleShape)
-                            .background(MaterialTheme.colorScheme.tertiary)
-                            .padding(5.dp)
-                            .clickable {
-                                sendEmail(context, report.name, report.JSON_response)
-                            },
-                        colorFilter = ColorFilter.tint(Color.White)
+                Image(
+                    painter = painterResource(id = R.drawable.xlsx),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .size(40.dp)
+                        .clip(shape = CircleShape)
+                        .background(MaterialTheme.colorScheme.primary)
+                        .padding(10.dp),
+                    colorFilter = ColorFilter.tint(Color.White)
+                )
+
+                Spacer(modifier = Modifier.width(16.dp))
+                Column{
+                    Spacer(modifier = Modifier.height(10.dp))
+                    Text(
+                        text = report.name,
+                        fontSize = 18.sp,
+                        color = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.fillMaxWidth(0.7f)
                     )
-                    Spacer(modifier = Modifier.width(15.dp))
-                    Image(
-                        painter = painterResource(id = R.drawable.download),
-                        contentDescription = null,
-                        modifier = Modifier
-                            .size(30.dp)
-                            .clip(shape = CircleShape)
-                            .background(MaterialTheme.colorScheme.tertiary)
-                            .padding(5.dp)
-                            .clickable {
-                                DownloadReport(context, report.JSON_response, report.name)
-                            },
-                        colorFilter = ColorFilter.tint(Color.White)
+                    Spacer(modifier = Modifier.height(5.dp))
+                    Text(
+                        text = generated[0],
+                        fontSize = 10.sp,
+                        color = MaterialTheme.colorScheme.primary,
                     )
+                }
+                Spacer(modifier = Modifier.width(5.dp))
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    contentAlignment = Alignment.CenterEnd
+                ) {
+                    Row {
+                        Image(
+                            painter = painterResource(id = R.drawable.share),
+                            contentDescription = null,
+                            modifier = Modifier
+                                .size(35.dp)
+                                .padding(5.dp)
+                                .clickable {
+                                    sendEmail(context, report.name, report.JSON_response)
+                                },
+                            colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.inversePrimary)
+                        )
+                        Spacer(modifier = Modifier.width(15.dp))
+                        Image(
+                            painter = painterResource(id = R.drawable.download),
+                            contentDescription = null,
+                            modifier = Modifier
+                                .size(35.dp)
+                                .padding(5.dp)
+                                .clickable {
+                                    DownloadReport(context, report.JSON_response, report.name)
+                                },
+                            colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.inversePrimary)
+                        )
+                    }
                 }
             }
         }
