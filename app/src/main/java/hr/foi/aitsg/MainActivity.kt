@@ -241,50 +241,50 @@ class MainActivity : ComponentActivity() {
                                 response = oar,
                                 projectId = reportId
                             )
+                        }
 
-                            scannersList.map { scanner ->
-                                composable(scanner.getRoute() + "{id}") { navBackStack ->
-                                    multiplePermissionResultLauncher.launch(
-                                        arrayOf(
-                                            android.Manifest.permission.CAMERA,
-                                            android.Manifest.permission.READ_EXTERNAL_STORAGE
-                                        )
+                        scannersList.map { scanner ->
+                            composable(scanner.getRoute() + "{id}") { navBackStack ->
+                                multiplePermissionResultLauncher.launch(
+                                    arrayOf(
+                                        android.Manifest.permission.CAMERA,
+                                        android.Manifest.permission.READ_EXTERNAL_STORAGE
                                     )
-                                    val projectId = navBackStack.arguments?.getString("id")
-                                    Column() {
-                                        scanner.TestRetrieverUI(getTestData = { testData ->
-                                            testContent = testData
-                                            Log.d("Datoteka - MainAct", testContent)
-                                            navController.navigate("testPreview/$projectId")
-                                        })
-                                    }
+                                )
+                                val projectId = navBackStack.arguments?.getString("id")
+                                Column() {
+                                    scanner.TestRetrieverUI(getTestData = { testData ->
+                                        testContent = testData
+                                        Log.d("Datoteka - MainAct", testContent)
+                                        navController.navigate("testPreview/$projectId")
+                                    })
                                 }
                             }
                         }
                     }
-
-                    //Permission handler
-                    dialogQueue
-                        .reversed()
-                        .forEach { permission ->
-                            PermissionDialog(
-                                permissionTextProvider = when (permission) {
-                                    android.Manifest.permission.CAMERA -> CameraPermissionTextProvider()
-                                    else -> return@forEach
-                                    //TODO add more permissions if needed
-                                },
-                                isPermanentlyDeclined = !shouldShowRequestPermissionRationale(
-                                    permission
-                                ),
-                                onDismiss = permissionViewModel::dismissDialog,
-                                onOkClick = {
-                                    permissionViewModel.dismissDialog()
-                                    multiplePermissionResultLauncher.launch(arrayOf(permission))
-                                },
-                                onGoToAppSettingsClick = ::openAppSettings,
-                            )
-                        }
                 }
+
+                //Permission handler
+                dialogQueue
+                    .reversed()
+                    .forEach { permission ->
+                        PermissionDialog(
+                            permissionTextProvider = when (permission) {
+                                android.Manifest.permission.CAMERA -> CameraPermissionTextProvider()
+                                else -> return@forEach
+                                //TODO add more permissions if needed
+                            },
+                            isPermanentlyDeclined = !shouldShowRequestPermissionRationale(
+                                permission
+                            ),
+                            onDismiss = permissionViewModel::dismissDialog,
+                            onOkClick = {
+                                permissionViewModel.dismissDialog()
+                                multiplePermissionResultLauncher.launch(arrayOf(permission))
+                            },
+                            onGoToAppSettingsClick = ::openAppSettings,
+                        )
+                    }
             }
         }
     }
