@@ -26,13 +26,15 @@ import hr.foi.database.Report
 
 @Composable
 fun ReportPreviewPage(navController: NavHostController, viewModel: DataViewModel, response: OpenAIResponse, projectId: String?) {
-    var id_project = projectId!!.toInt()
+    val id_project = projectId!!.toInt()
     var editingName by remember { mutableStateOf(response.name) }
     var editingDescription by remember { mutableStateOf(response.description) }
-    var time = response.JSONresponse.length * 0.3;
-    var newReport = Report(null, response.name, response.description, response.JSONresponse,null,time.toString(),id_project, Authenticated.loggedInUser!!.id_user)
-    // Use mutableStateOf for concatenatedValues
+    val time = response.JSONresponse.length * 0.3;
+    val newReport = Report(null, response.name, response.description, response.JSONresponse,null,time.toString(),id_project, Authenticated.loggedInUser!!.id_user)
     var concatenatedValues by remember {
+        while(response.testSteps.size < 3) {
+            response.testSteps += ("-")
+        }
         mutableStateOf(response.testSteps.map { it }.toMutableList())
     }
 
