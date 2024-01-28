@@ -78,8 +78,8 @@ fun ProjectList(projects: List<Project>, navController: NavHostController, viewM
                 title = {
                     Row(
                         modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween
                     ) {
                         IconButton(onClick = { navController.navigate("menu") }) {
                             Icon(
@@ -89,21 +89,18 @@ fun ProjectList(projects: List<Project>, navController: NavHostController, viewM
                                 modifier = Modifier.size(45.dp)
                             )
                         }
-
                         Text(
                             text = "Projekti",
                             color = MaterialTheme.colorScheme.onSecondary,
+                            fontSize = 22.sp,
                             fontWeight = FontWeight.Bold
                         )
-
-                        IconButton(onClick = { }) {
-                            Icon(
-                                imageVector = Icons.Default.Search,
-                                contentDescription = null,
-                                tint = MaterialTheme.colorScheme.onSecondary,
-                                modifier = Modifier.size(45.dp)
-                            )
-                        }
+                        Icon(
+                            imageVector = Icons.Default.Menu,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.tertiary,
+                            modifier = Modifier.size(45.dp)
+                        )
                     }
                 },
                 colors = TopAppBarDefaults.smallTopAppBarColors(containerColor = MaterialTheme.colorScheme.tertiary)
@@ -132,7 +129,7 @@ fun ProjectListView(projects: List<Project>, navController: NavHostController, v
             Spacer(modifier = Modifier.height(65.dp))
         }
         items(projects) { project ->
-            Divider(modifier = Modifier.fillMaxWidth())
+            //HorizontalDivider(modifier = Modifier.fillMaxWidth())
             ProjectItem(project, navController, viewModel)
         }
     }
@@ -142,79 +139,90 @@ fun ProjectListView(projects: List<Project>, navController: NavHostController, v
 fun ProjectItem(project: Project, navController: NavHostController, viewModel: DataViewModel) {
     var isEditing by remember { mutableStateOf(false) }
     var editedProjectName by remember { mutableStateOf(project.name) }
-    Row(
+    Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(16.dp)
-            .clickable {
-                navController.navigate("show-project/" + "${project.id_project}")
-            },
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Image(
-            painter = painterResource(id = R.drawable.file),
-            contentDescription = null,
+            .padding(16.dp),
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = 7.dp)){
+        Row(
             modifier = Modifier
-                .size(40.dp)
-                .clip(shape = CircleShape)
-                .background(MaterialTheme.colorScheme.primary)
-                .padding(5.dp),
-            colorFilter = ColorFilter.tint(Color.White)
-        )
-
-        Spacer(modifier = Modifier.width(16.dp))
-
-        Text(
-            text = project.name,
-            fontSize = 18.sp,
-            color = MaterialTheme.colorScheme.primary,
-            modifier = Modifier.weight(1f)
-        )
-
-        if (isEditing) {
-            TextField(
-                value = editedProjectName,
-                onValueChange = { editedProjectName = it },
-                label = { Text("Napisi novo ime projekta") },
+                .fillMaxWidth()
+                .background(MaterialTheme.colorScheme.background)
+                .padding(16.dp)
+                .clickable {
+                    navController.navigate("show-project/" + "${project.id_project}")
+                },
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable.file),
+                contentDescription = null,
                 modifier = Modifier
-                    .padding(end = 8.dp)
+                    .size(40.dp)
+                    .clip(shape = CircleShape)
+                    .background(MaterialTheme.colorScheme.primary)
+                    .padding(10.dp),
+                colorFilter = ColorFilter.tint(Color.White)
             )
-            Icon(
-                imageVector = Icons.Default.Done,
-                contentDescription = "Spremi",
-                modifier = Modifier
-                    .size(24.dp)
-                    .clickable{
-                        val novi = Project(project.id_project,editedProjectName,project.created,project.owner)
-                        project.id_project?.let { viewModel.updateProject(it, novi) }
-                        isEditing = false
-                        navController.navigate("workspaces")
-                    }
-            )
-        } else {
-            Spacer(modifier = Modifier.width(8.dp))
 
-            IconButton(
-                onClick = { isEditing = true },
-                modifier = Modifier.padding(end = 8.dp)
-            ) {
+            Spacer(modifier = Modifier.width(16.dp))
+
+            Text(
+                text = project.name,
+                fontSize = 18.sp,
+                color = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.weight(1f)
+            )
+
+            if (isEditing) {
+                TextField(
+                    value = editedProjectName,
+                    onValueChange = { editedProjectName = it },
+                    label = { Text("Napisi novo ime projekta") },
+                    modifier = Modifier
+                        .padding(end = 8.dp)
+                )
                 Icon(
-                    imageVector = Icons.Default.Edit,
-                    contentDescription = "Uredi",
-                    modifier = Modifier.size(24.dp)
+                    imageVector = Icons.Default.Done,
+                    contentDescription = "Spremi",
+                    modifier = Modifier
+                        .size(24.dp)
+                        .clickable{
+                            val novi = Project(project.id_project,editedProjectName,project.created,project.owner)
+                            project.id_project?.let { viewModel.updateProject(it, novi) }
+                            isEditing = false
+                            navController.navigate("workspaces")
+                        },
+                    tint = MaterialTheme.colorScheme.inversePrimary
+                )
+            } else {
+                Spacer(modifier = Modifier.width(8.dp))
+
+                IconButton(
+                    onClick = { isEditing = true },
+                    modifier = Modifier.padding(end = 8.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Edit,
+                        contentDescription = "Uredi",
+                        modifier = Modifier.size(24.dp),
+                        tint = MaterialTheme.colorScheme.inversePrimary
+                    )
+                }
+
+                Icon(
+                    imageVector = Icons.Default.Delete,
+                    contentDescription = "Obriši",
+                    modifier = Modifier
+                        .size(24.dp)
+                        .clickable {
+                            project.id_project?.let { viewModel.deleteProject(it) }
+                            navController.navigate("workspaces")
+                        },
+                    tint = MaterialTheme.colorScheme.inversePrimary
                 )
             }
-
-            Icon(
-                imageVector = Icons.Default.Delete,
-                contentDescription = "Obriši",
-                modifier = Modifier
-                    .size(24.dp)
-                    .clickable {
-                        project.id_project?.let { viewModel.deleteProject(it) }
-                        navController.navigate("workspaces")
-                    }
-            )
         }
     }
 }

@@ -87,9 +87,6 @@ import kotlin.random.Random
 @Composable
 fun StatisticsPage(viewModel: DataViewModel, onMenuClick: () -> Unit){
     val loggedInUser = Authenticated.loggedInUser as User
-    //val mockUser: User = User(8, "vcor@foi.hr", "3eaf108c3f000e30b201863c6a58ec8174bec1d0c0602695d97da586ed94ff3b", "Viktor", "Coric")
-
-    //var savedTimeSum by remember { mutableStateOf("0h 0m 0s") }
     var savedTimeData: ArrayList<Pair<String, Float>> = ArrayList<Pair<String, Float>>()
     var numberOfReports: ArrayList<Pair<String, Int>> = ArrayList<Pair<String, Int>>()
     var coroutine = rememberCoroutineScope()
@@ -139,7 +136,8 @@ fun TopAppBar(onMenu: () -> Unit){
             .fillMaxWidth()
             .background(color = MaterialTheme.colorScheme.tertiary)
             .padding(10.dp),
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
     ){
         IconButton(onClick = { onMenu() }) {
             Icon(
@@ -149,12 +147,17 @@ fun TopAppBar(onMenu: () -> Unit){
                 modifier = Modifier.size(45.dp)
             )
         }
-        Spacer(modifier = Modifier.width(10.dp))
         Text(
             text = "Statistika",
-            fontSize = 20.sp,
+            fontSize = 22.sp,
             color = MaterialTheme.colorScheme.onSecondary,
             fontWeight = FontWeight.Bold
+        )
+        Icon(
+            imageVector = Icons.Default.Menu,
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.tertiary,
+            modifier = Modifier.size(45.dp)
         )
     }
 }

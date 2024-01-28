@@ -115,17 +115,15 @@ fun ListOfReports(reports: List<UserReportsWithProjects>, navController: NavHost
                             Text(
                                 text = "Povijest",
                                 color = MaterialTheme.colorScheme.onSecondary,
+                                fontSize = 22.sp,
                                 fontWeight = FontWeight.Bold
                             )
-
-                            IconButton(onClick = { }) {
-                                Icon(
-                                    imageVector = Icons.Default.Search,
-                                    contentDescription = null,
-                                    tint = MaterialTheme.colorScheme.onSecondary,
-                                    modifier = Modifier.size(45.dp)
-                                )
-                            }
+                            Icon(
+                                imageVector = Icons.Default.Search,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.tertiary,
+                                modifier = Modifier.size(45.dp)
+                            )
                         }
                 },
                 colors = TopAppBarDefaults.smallTopAppBarColors(containerColor = MaterialTheme.colorScheme.tertiary)
@@ -147,13 +145,19 @@ fun ReportsView(reports: List<UserReportsWithProjects>, navController: NavHostCo
         item{
             SelectableSort(navHostController = navController, names = projects)
         }
-        item { 
-            Button(onClick = { navController.navigate("history")}) {
-                Text("Filtriraj")
+        item {
+            Row(
+                modifier = Modifier.fillMaxWidth().padding(10.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.End){
+                Button(onClick = { navController.navigate("history")}) {
+                    Text("Filtriraj")
+                }
+                Spacer(modifier = Modifier.width(10.dp))
             }
+            HorizontalDivider(modifier = Modifier.fillMaxWidth())
         }
         items(reports) { report ->
-            Divider(modifier = Modifier.fillMaxWidth())
             if(SelectedProjects.selectedProjects.contains(report.Project) || SelectedProjects.selectedProjects.isEmpty()) {
                 ReportItem(report, navController, context)
             }
@@ -164,80 +168,85 @@ fun ReportsView(reports: List<UserReportsWithProjects>, navController: NavHostCo
 @Composable
 fun ReportItem(report: UserReportsWithProjects, navController: NavHostController, context: Context) {
     val generated = report.generated!!.split('T')
-    Row(
+    Card(
         modifier = Modifier
             .fillMaxWidth()
             .padding(16.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Image(
-            painter = painterResource(id = R.drawable.xlsx),
-            contentDescription = null,
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = 7.dp)){
+        Row(
             modifier = Modifier
-                .size(40.dp)
-                .clip(shape = CircleShape)
-                .background(MaterialTheme.colorScheme.primary)
-                .padding(5.dp),
-            colorFilter = ColorFilter.tint(Color.White)
-        )
-
-        Spacer(modifier = Modifier.width(16.dp))
-        Column{
-            Spacer(modifier = Modifier.height(10.dp))
-            Text(
-                text = report.name,
-                fontSize = 18.sp,
-                color = MaterialTheme.colorScheme.primary,
-                //modifier = Modifier.width(230.dp)
-                modifier = Modifier.fillMaxWidth(0.7f)
-            )
-            Spacer(modifier = Modifier.height(5.dp))
-            Text(
-                text = report.Project.name,
-                fontSize = 10.sp,
-                color = MaterialTheme.colorScheme.tertiary,
-            )
-            Spacer(modifier = Modifier.height(5.dp))
-            Text(
-                text = generated[0],
-                fontSize = 10.sp,
-                color = MaterialTheme.colorScheme.tertiary,
-            )
-        }
-        Spacer(modifier = Modifier.width(5.dp))
-        Box(
-            modifier = Modifier
-                .fillMaxWidth(),
-            contentAlignment = Alignment.CenterEnd
+                .fillMaxWidth()
+                .background(MaterialTheme.colorScheme.background)
+                .padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Row {
-                Image(
-                    painter = painterResource(id = R.drawable.share),
-                    contentDescription = null,
-                    modifier = Modifier
-                        .size(30.dp)
-                        .clip(shape = CircleShape)
-                        .background(MaterialTheme.colorScheme.tertiary)
-                        .padding(5.dp)
-                        .clickable {
-                            sendEmail(context, report.name, report.JSON_response)
-                        },
-                    colorFilter = ColorFilter.tint(Color.White)
+            Image(
+                painter = painterResource(id = R.drawable.xlsx),
+                contentDescription = null,
+                modifier = Modifier
+                    .size(40.dp)
+                    .clip(shape = CircleShape)
+                    .background(MaterialTheme.colorScheme.primary)
+                    .padding(10.dp),
+                colorFilter = ColorFilter.tint(Color.White)
+            )
+
+            Spacer(modifier = Modifier.width(16.dp))
+            Column{
+                Spacer(modifier = Modifier.height(10.dp))
+                Text(
+                    text = report.name,
+                    fontSize = 18.sp,
+                    color = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.fillMaxWidth(0.7f)
                 )
-                Spacer(modifier = Modifier.width(15.dp))
-                Image(
-                    painter = painterResource(id = R.drawable.download),
-                    contentDescription = null,
-                    modifier = Modifier
-                        .size(30.dp)
-                        .clip(shape = CircleShape)
-                        .background(MaterialTheme.colorScheme.tertiary)
-                        .padding(5.dp)
-                        .clickable {
-                            DownloadReport(context, report.JSON_response, report.name)
-                        },
-                    colorFilter = ColorFilter.tint(Color.White)
+                Spacer(modifier = Modifier.height(5.dp))
+                Text(
+                    text = report.Project.name,
+                    fontSize = 10.sp,
+                    color = MaterialTheme.colorScheme.primary,
                 )
+                Spacer(modifier = Modifier.height(5.dp))
+                Text(
+                    text = generated[0],
+                    fontSize = 10.sp,
+                    color = MaterialTheme.colorScheme.primary,
+                )
+            }
+            Spacer(modifier = Modifier.width(5.dp))
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                contentAlignment = Alignment.CenterEnd
+            ) {
+                Row {
+                    Image(
+                        painter = painterResource(id = R.drawable.share),
+                        contentDescription = null,
+                        modifier = Modifier
+                            .size(35.dp)
+                            //.clip(shape = CircleShape)
+                            //.background(MaterialTheme.colorScheme.tertiary)
+                            .padding(5.dp)
+                            .clickable {
+                                sendEmail(context, report.name, report.JSON_response)
+                            },
+                        colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.inversePrimary)
+                    )
+                    Spacer(modifier = Modifier.width(15.dp))
+                    Image(
+                        painter = painterResource(id = R.drawable.download),
+                        contentDescription = null,
+                        modifier = Modifier
+                            .size(35.dp)
+                            .padding(5.dp)
+                            .clickable {
+                                DownloadReport(context, report.JSON_response, report.name)
+                            },
+                        colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.inversePrimary)
+                    )
+                }
             }
         }
     }
@@ -262,10 +271,17 @@ fun SelectableSort(navHostController: NavHostController, names: List<Project>) {
             selectedNames.add(it.name)
         }
     }
-    Row(modifier = Modifier
-        .fillMaxWidth()) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(10.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceEvenly
+    ) {
         Box(modifier = Modifier
-            .fillMaxWidth(0.8f)) {
+            .fillMaxWidth(0.8f),
+            contentAlignment = Alignment.Center
+        ) {
             ExposedDropdownMenuBox(
                 expanded = isExpanded1,
                 onExpandedChange = { isExpanded1 = it }
@@ -326,7 +342,7 @@ fun SelectableSort(navHostController: NavHostController, names: List<Project>) {
         }
         Box(modifier = Modifier
             .fillMaxWidth(),
-            contentAlignment = Alignment.CenterEnd) {
+            contentAlignment = Alignment.Center) {
             Row {
                 Box(
                     contentAlignment = Alignment.Center
@@ -340,7 +356,8 @@ fun SelectableSort(navHostController: NavHostController, names: List<Project>) {
                             painter = painterResource(id = R.drawable.sort),
                             contentDescription = null,
                             modifier = Modifier
-                                .size(40.dp)
+                                .size(40.dp),
+                            tint = MaterialTheme.colorScheme.inversePrimary
                         )
                     }
 

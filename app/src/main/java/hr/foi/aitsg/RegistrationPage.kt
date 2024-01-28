@@ -52,7 +52,7 @@ fun RegistrationPage(navController: NavHostController, viewModel: DataViewModel)
             verticalAlignment = Alignment.CenterVertically
         ){
             Text(
-                text = "Register",
+                text = "Registracija",
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(5.dp),
@@ -181,9 +181,9 @@ fun RegistrationPage(navController: NavHostController, viewModel: DataViewModel)
                 .fillMaxWidth(),
             horizontalArrangement = Arrangement.Center
         ) {
-            Text("Already have an account? ", fontStyle = FontStyle.Italic,
+            Text("Već imaš račun? ", fontStyle = FontStyle.Italic,
                 color = MaterialTheme.colorScheme.inversePrimary)
-            Text("Login", color = MaterialTheme.colorScheme.primary)
+            Text("Prijava", color = MaterialTheme.colorScheme.primary)
         }
     }
 }
