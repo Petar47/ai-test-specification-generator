@@ -68,7 +68,8 @@ fun searchUsers(navHostController: NavHostController, dataViewModel: DataViewMod
                             navHostController.navigate("add-users/$id_project")
                             active = false
                         }
-                        .size(40.dp)
+                        .size(40.dp),
+                    tint = MaterialTheme.colorScheme.primary
                 )
                 Box(
                     Modifier.fillMaxWidth(),
@@ -79,7 +80,7 @@ fun searchUsers(navHostController: NavHostController, dataViewModel: DataViewMod
                         Modifier.padding(16.dp),
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.secondary)
+                        color = MaterialTheme.colorScheme.tertiary)
                 }
             }
             SearchBar(

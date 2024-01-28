@@ -15,6 +15,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.AddCircle
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Card
@@ -67,31 +70,44 @@ fun addUsersToProject(navHostController: NavHostController, dataViewModel: DataV
                 .padding(5.dp)
         )
         {
-            Row {
-                Icon(
-                    imageVector = Icons.Default.Search,
+            Row(modifier = Modifier) {
+                IconButton(onClick = { navHostController.navigate("show-project/$project_id") }) {
+                    Icon(
+                        imageVector = Icons.Default.ArrowBack,
+                        contentDescription = "Return",
+                        modifier = Modifier.size(45.dp),
+                        tint = MaterialTheme.colorScheme.primary
+                    )
+                }
+                Box(
+                    Modifier.fillMaxWidth(0.8f),
+                    contentAlignment = Alignment.Center
+                )
+                {
+                    Text(text="Dodani korisnici",
+                        Modifier.padding(16.dp),
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.tertiary)
+                }
+                IconButton(onClick = { navHostController.navigate("search-users/$project_id") }) {
+                    Icon(
+                        imageVector = Icons.Default.AddCircle,
+                        contentDescription = "SearchUsers",
+                        modifier = Modifier.size(45.dp),
+                        tint = MaterialTheme.colorScheme.primary
+                    )
+                }
+                /*Icon(
+                    imageVector = Icons.Default.Add,
                     contentDescription = "SearchUsers",
                     Modifier
                         .size(40.dp)
                         .clickable {
                             navHostController.navigate("search-users/$project_id")
                         },
-                    tint = MaterialTheme.colorScheme.inversePrimary)
-                Box(
-                    Modifier.fillMaxWidth(),
-                    contentAlignment = Alignment.Center
-                )
-                {
-                    Text(text="Pretraži korisnike",
-                        Modifier.padding(16.dp),
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.secondary)
-                }
+                    tint = MaterialTheme.colorScheme.primary)*/
             }
-            Text(text = "Korisnici na projektu",
-                Modifier.height(30.dp),
-                color = MaterialTheme.colorScheme.secondary)
             if(usersOfProject.isNotEmpty()){
                 usersOfProject.forEach(){
                     Card(
