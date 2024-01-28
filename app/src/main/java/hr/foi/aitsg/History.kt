@@ -145,9 +145,15 @@ fun ReportsView(reports: List<UserReportsWithProjects>, navController: NavHostCo
         item{
             SelectableSort(navHostController = navController, names = projects)
         }
-        item { 
-            Button(onClick = { navController.navigate("history")}) {
-                Text("Filtriraj")
+        item {
+            Row(
+                modifier = Modifier.fillMaxWidth().padding(10.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.End){
+                Button(onClick = { navController.navigate("history")}) {
+                    Text("Filtriraj")
+                }
+                Spacer(modifier = Modifier.width(10.dp))
             }
             HorizontalDivider(modifier = Modifier.fillMaxWidth())
         }
@@ -265,10 +271,17 @@ fun SelectableSort(navHostController: NavHostController, names: List<Project>) {
             selectedNames.add(it.name)
         }
     }
-    Row(modifier = Modifier
-        .fillMaxWidth()) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(10.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceEvenly
+    ) {
         Box(modifier = Modifier
-            .fillMaxWidth(0.8f)) {
+            .fillMaxWidth(0.8f),
+            contentAlignment = Alignment.Center
+        ) {
             ExposedDropdownMenuBox(
                 expanded = isExpanded1,
                 onExpandedChange = { isExpanded1 = it }
@@ -329,7 +342,7 @@ fun SelectableSort(navHostController: NavHostController, names: List<Project>) {
         }
         Box(modifier = Modifier
             .fillMaxWidth(),
-            contentAlignment = Alignment.CenterEnd) {
+            contentAlignment = Alignment.Center) {
             Row {
                 Box(
                     contentAlignment = Alignment.Center
@@ -343,7 +356,8 @@ fun SelectableSort(navHostController: NavHostController, names: List<Project>) {
                             painter = painterResource(id = R.drawable.sort),
                             contentDescription = null,
                             modifier = Modifier
-                                .size(40.dp)
+                                .size(40.dp),
+                            tint = MaterialTheme.colorScheme.inversePrimary
                         )
                     }
 

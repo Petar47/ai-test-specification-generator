@@ -1,9 +1,9 @@
 <resources>
     <string name="app_name">AI TSG</string>
-    <string name="password">Password</string>
-    <string name="last_name">Last Name</string>
-    <string name="first_name">First Name</string>
-    <string name="register">Register</string>
+    <string name="password">Lozinka</string>
+    <string name="last_name">Prezime</string>
+    <string name="first_name">Ime</string>
+    <string name="register">Registracija</string>
     <string name="email">Email</string>
-    <string name="passwordConfirm">Confirm password</string>
+    <string name="passwordConfirm">Potvrdi lozinku</string>
 </resources>
