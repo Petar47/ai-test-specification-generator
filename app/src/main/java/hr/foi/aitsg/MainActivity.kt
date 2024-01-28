@@ -262,30 +262,29 @@ class MainActivity : ComponentActivity() {
                             }
                         }
                     }
-
-
-                    //Permission handler
-                    dialogQueue
-                        .reversed()
-                        .forEach { permission ->
-                            PermissionDialog(
-                                permissionTextProvider = when (permission) {
-                                    android.Manifest.permission.CAMERA -> CameraPermissionTextProvider()
-                                    else -> return@forEach
-                                    //TODO add more permissions if needed
-                                },
-                                isPermanentlyDeclined = !shouldShowRequestPermissionRationale(
-                                    permission
-                                ),
-                                onDismiss = permissionViewModel::dismissDialog,
-                                onOkClick = {
-                                    permissionViewModel.dismissDialog()
-                                    multiplePermissionResultLauncher.launch(arrayOf(permission))
-                                },
-                                onGoToAppSettingsClick = ::openAppSettings,
-                            )
-                        }
                 }
+
+                //Permission handler
+                dialogQueue
+                    .reversed()
+                    .forEach { permission ->
+                        PermissionDialog(
+                            permissionTextProvider = when (permission) {
+                                android.Manifest.permission.CAMERA -> CameraPermissionTextProvider()
+                                else -> return@forEach
+                                //TODO add more permissions if needed
+                            },
+                            isPermanentlyDeclined = !shouldShowRequestPermissionRationale(
+                                permission
+                            ),
+                            onDismiss = permissionViewModel::dismissDialog,
+                            onOkClick = {
+                                permissionViewModel.dismissDialog()
+                                multiplePermissionResultLauncher.launch(arrayOf(permission))
+                            },
+                            onGoToAppSettingsClick = ::openAppSettings,
+                        )
+                    }
             }
         }
     }
