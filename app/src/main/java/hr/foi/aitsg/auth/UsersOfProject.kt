@@ -15,9 +15,14 @@ suspend fun getAllProjectUsers(dataViewModel: DataViewModel, id_project: Int, on
                 Log.e("Loading Data", "loading-get-all-pro-users")
             }
             is APIResult.Success -> {
-                val usersList = data.data as List<User>
-                onUsersFetched(usersList)
-                Log.e("Success getallprousers", "success-get-all-pro-users")
+                if (data.data is List<*>) {
+                    val dataList = data.data as List<*>
+                    if (dataList.isNotEmpty() && dataList[0] is User) {
+                        val usersList = data.data as List<User>
+                        onUsersFetched(usersList)
+                        Log.e("Success getallprousers", "success-get-all-pro-users")
+                    }
+                }
             }
         }
     }
