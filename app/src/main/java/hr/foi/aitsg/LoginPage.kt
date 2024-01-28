@@ -37,8 +37,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import hr.foi.aitsg.auth.LoginViewModel
 import hr.foi.aitsg.auth.getAllUsers
+import hr.foi.aitsg.auth.logInUser
 import hr.foi.aitsg.composables.CircularLoadingBar
 import hr.foi.authentication.LoginHandler
 import hr.foi.database.APIResult
@@ -55,7 +55,6 @@ fun LoginPage(navController: NavHostController, dataViewModel: DataViewModel, su
     var email by remember { mutableStateOf("") }
     var password by remember{ mutableStateOf("") }
     var message by remember { mutableStateOf("") }
-    val viewModel : LoginViewModel = viewModel()
     var isLoading by remember { mutableStateOf(false) }
     Column(
         modifier = Modifier
@@ -126,7 +125,7 @@ fun LoginPage(navController: NavHostController, dataViewModel: DataViewModel, su
         Button(
             onClick = {
                     Authenticated.loggedInUser = null
-                    viewModel.logInUser(
+                    logInUser(
                         dataViewModel= dataViewModel,
                         email = email,
                         password = password,
@@ -136,8 +135,9 @@ fun LoginPage(navController: NavHostController, dataViewModel: DataViewModel, su
                         successfulLogin = {
                             navController.navigate("workspaces")
                         },
-                        coroutine)
-                    message = viewModel.message
+                        coroutine,
+                        updateMessage = {newMessage -> message = newMessage})
+
 
             },
             modifier = Modifier
