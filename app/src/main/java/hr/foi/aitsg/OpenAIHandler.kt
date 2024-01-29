@@ -16,7 +16,7 @@ class OpenAIHandler() {
     private val openAI = OpenAI(openaiKey)
     val modelId = ModelId("gpt-3.5-turbo-1106")
     private var query = ""
-    suspend fun makeQuery(input: String): OpenAIResponse? {
+    suspend fun makeQuery(input: String): OpenAIResponse {
         if(input.startsWith("#include")) {
             query =
                 "U nastavku ti dajem jedan Google test (C++), ti generiraj ime testa, opis testa, i izdvoji testne korake. Objasni što se u testu radi i što se želi postići u implementacijskom kodu. Format neka bude pripremljen za objekt OpenAIResponse zapisan u JSON notaciji koji u sebi sadrži atribute name, description i testSteps. testSteps je polje stringova, a svaki string je zapisan u CSV obliku gdje je !!! delimiter, a zapis je oblika step!!!description!!!code!!!expectedResult (step je broj koraka, description opis koraka, code je ili dio relevantnog koda ili objašnjenje istog, a expected result je očekivani rezultat ili opis očekivanog ishoda. Mora imati četiri polja, znači !!! delimiter se pojavljuje točno tri puta. Ako je bilo koje od tih polja prazno, stavi crticu). Potreban je samo JSON, nikakvi dodatni komentari. Ovo je kod:\n\n$input"
@@ -30,7 +30,10 @@ class OpenAIHandler() {
             return createResponseObject(response)
         }
         else {
-            return null
+            query =
+                "U nastavku ti dajem jedan test, ti generiraj ime testa, opis testa, i izdvoji testne korake. Objasni što se u testu radi i što se želi postići u implementacijskom kodu. Format neka bude pripremljen za objekt OpenAIResponse zapisan u JSON notaciji koji u sebi sadrži atribute name, description i testSteps. testSteps je polje stringova, a svaki string je zapisan u CSV obliku gdje je !!! delimiter, a zapis je oblika step!!!description!!!code!!!expectedResult (step je broj koraka, description opis koraka, code je ili dio relevantnog koda ili objašnjenje istog, a expected result je očekivani rezultat ili opis očekivanog ishoda. Mora imati četiri polja, znači !!! delimiter se pojavljuje točno tri puta. Ako je bilo koje od tih polja prazno, stavi crticu). Potreban je samo JSON, nikakvi dodatni komentari. Ovo je kod:\n\n$input"
+            val response = sendQuery(query)
+            return createResponseObject(response)
         }
     }
 

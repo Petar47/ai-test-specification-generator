@@ -230,20 +230,20 @@ class ShowProject {
                             painter = painterResource(id = R.drawable.share),
                             contentDescription = null,
                             modifier = Modifier
-                                .size(35.dp)
-                                .padding(5.dp)
+                                .size(25.dp)
+                                //.padding(5.dp)
                                 .clickable {
                                     sendEmail(context, report.name, report.JSON_response)
                                 },
                             colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.inversePrimary)
                         )
-                        Spacer(modifier = Modifier.width(15.dp))
+                        Spacer(modifier = Modifier.width(10.dp))
                         Image(
                             painter = painterResource(id = R.drawable.download),
                             contentDescription = null,
                             modifier = Modifier
-                                .size(35.dp)
-                                .padding(5.dp)
+                                .size(25.dp)
+                                //.padding(5.dp)
                                 .clickable {
                                     DownloadReport(context, report.JSON_response, report.name)
                                 },

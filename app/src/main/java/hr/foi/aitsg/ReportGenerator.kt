@@ -202,11 +202,11 @@ class ReportGenerator {
         }
         Log.d("Generator", "Json parsed: $name, $description, $testSteps")
         val firstStep = testSteps.first().split("!!!")
-        addData(1, listOf(name, description, firstStep[1], firstStep[2]), sheet, bodyCellStyle)
+        addData(1, listOf(name, description, firstStep[1], firstStep[3]), sheet, bodyCellStyle)
         Log.d("Generator", "First row added")
-        for (i in 2 until testSteps.size){
+        for (i in 1 until testSteps.size){
             val step = testSteps[i].split("!!!")
-            addData(i, listOf("", "", step[1], step[2]), sheet, bodyCellStyle)
+            addData(i+1, listOf("", "", step[1], step[3]), sheet, bodyCellStyle)
             Log.d("Generator", "Row added")
         }
         //TODO adapt the parser to the agreed json format
